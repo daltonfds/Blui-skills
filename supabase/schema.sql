@@ -56,6 +56,7 @@ alter table public.security_audits add column if not exists project_id uuid refe
 alter table public.security_audits add column if not exists audit_type text not null default 'snippet';
 alter table public.security_audits add column if not exists target_name text;
 alter table public.security_audits add column if not exists code_snippet text;
+alter table public.security_audits alter column code_snippet drop not null;
 alter table public.security_audits add column if not exists vulnerabilities_found jsonb not null default '[]'::jsonb;
 alter table public.security_audits add column if not exists fix_prompt text not null default '';
 alter table public.security_audits add column if not exists risk_score text not null default 'MEDIUM';
