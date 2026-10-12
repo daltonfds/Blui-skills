@@ -82,6 +82,15 @@ revoke insert, update, delete on public.profiles from authenticated;
 grant select on public.profiles to authenticated;
 grant update (full_name) on public.profiles to authenticated;
 
+-- Remove equivalent legacy policies to avoid duplicate permissive policy evaluation.
+drop policy if exists "profile owner can read" on public.profiles;
+drop policy if exists "project owner can read" on public.projects;
+drop policy if exists "project owner can insert" on public.projects;
+drop policy if exists "project owner can update" on public.projects;
+drop policy if exists "project owner can delete" on public.projects;
+drop policy if exists "audit owner can read" on public.security_audits;
+drop policy if exists "audit owner can insert" on public.security_audits;
+
 drop policy if exists "Profiles can be read by owner" on public.profiles;
 create policy "Profiles can be read by owner" on public.profiles for select to authenticated using (id = (select auth.uid()));
 drop policy if exists "Profiles can be updated by owner" on public.profiles;
