@@ -1,2 +1,0 @@
-import Link from "next/link";import {AuthForm} from "@/components/auth-form";
-export default function SignupPage(){return <main className="grid min-h-screen place-items-center px-5 py-12"><section className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-950 p-7 sm:p-9"><Link href="/" className="text-xl font-bold">B<span className="text-blue-500">.</span> Blui</Link><h1 className="mt-8 text-2xl font-semibold">Cria a tua conta</h1><p className="mt-2 text-sm text-zinc-400">Começa com 10 créditos gratuitos.</p><AuthForm mode="signup"/></section></main>}
