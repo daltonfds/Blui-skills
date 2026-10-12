@@ -36,6 +36,38 @@ create table if not exists public.security_audits (
   created_at timestamptz not null default now()
 );
 
+-- Make the script safe to apply over the earlier BluiSkill schema as well.
+alter table public.profiles add column if not exists email text;
+alter table public.profiles add column if not exists full_name text;
+alter table public.profiles add column if not exists plan text not null default 'free';
+alter table public.profiles add column if not exists credits integer not null default 10;
+alter table public.profiles add column if not exists created_at timestamptz not null default now();
+alter table public.profiles add column if not exists updated_at timestamptz not null default now();
+
+alter table public.projects add column if not exists title text not null default 'Untitled project';
+alter table public.projects add column if not exists description text not null default '';
+alter table public.projects add column if not exists tech_stack jsonb not null default '{}'::jsonb;
+alter table public.projects add column if not exists roadmap jsonb not null default '{}'::jsonb;
+alter table public.projects add column if not exists master_prompt text not null default '';
+alter table public.projects add column if not exists created_at timestamptz not null default now();
+alter table public.projects add column if not exists updated_at timestamptz not null default now();
+
+alter table public.security_audits add column if not exists project_id uuid references public.projects(id) on delete set null;
+alter table public.security_audits add column if not exists audit_type text not null default 'snippet';
+alter table public.security_audits add column if not exists target_name text;
+alter table public.security_audits add column if not exists code_snippet text;
+alter table public.security_audits add column if not exists vulnerabilities_found jsonb not null default '[]'::jsonb;
+alter table public.security_audits add column if not exists fix_prompt text not null default '';
+alter table public.security_audits add column if not exists risk_score text not null default 'MEDIUM';
+alter table public.security_audits add column if not exists created_at timestamptz not null default now();
+
+alter table public.profiles drop constraint if exists profiles_plan_check;
+alter table public.profiles add constraint profiles_plan_check check (plan in ('free', 'pro'));
+alter table public.security_audits drop constraint if exists security_audits_audit_type_check;
+alter table public.security_audits add constraint security_audits_audit_type_check check (audit_type in ('snippet', 'github_repo', 'live_url'));
+alter table public.security_audits drop constraint if exists security_audits_risk_score_check;
+alter table public.security_audits add constraint security_audits_risk_score_check check (risk_score in ('CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'SAFE'));
+
 create index if not exists projects_user_created_idx on public.projects(user_id, created_at desc);
 create index if not exists security_audits_user_created_idx on public.security_audits(user_id, created_at desc);
 create index if not exists security_audits_project_idx on public.security_audits(project_id);
