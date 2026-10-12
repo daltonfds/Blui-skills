@@ -51,6 +51,9 @@ export async function GET() {
       defaultBranch: repo.default_branch, url: repo.html_url, description: repo.description, updatedAt: repo.updated_at
     })) });
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Unexpected error.";
+    if (/credit|créditos/i.test(message)) return NextResponse.json({ error: message }, { status: 402 });
+    if (/Supabase|migration|configured/i.test(message)) return NextResponse.json({ error: message }, { status: 503 });
     const result = apiError(error);
     return NextResponse.json({ error: result.message }, { status: result.status });
   }
@@ -72,7 +75,6 @@ export async function POST(request: Request) {
     const repoData = repoResponse.data;
     const branch = parsed.data.branch || repoData.default_branch;
     const branchResponse = await octokit.rest.repos.getBranch({ owner, repo, branch });
-    await consumeCredit(user.id);
     const treeResponse = await octokit.rest.git.getTree({
       owner, repo, tree_sha: branchResponse.data.commit.commit.tree.sha, recursive: "true"
     });
@@ -80,6 +82,7 @@ export async function POST(request: Request) {
       .filter((file) => file.type === "blob" && Boolean(file.path) && shouldScan(file.path || "") && (file.size || 0) <= 45000)
       .slice(0, 18);
     if (!files.length) return NextResponse.json({ error: "No supported source or configuration files were found in this branch." }, { status: 422 });
+    await consumeCredit(user.id);
 
     const collected: Array<{ path: string; code: string }> = [];
     let totalChars = 0;
