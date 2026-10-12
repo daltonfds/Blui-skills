@@ -8,12 +8,12 @@ type Finding = { title: string; severity: string; location: string; explanation:
 type Audit = { riskScore: string; summary: string; findings: Finding[]; fixPrompt: string };
 type Repository = { id: number; fullName: string; name: string; private: boolean; defaultBranch: string; url: string; description: string | null; updatedAt: string };
 type Tab = "github" | "url" | "snippet";
-const tabClass = (active: boolean) => "inline-flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition " + (active ? "bg-blue-600 text-white" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950");
+const tabClass = (active: boolean) => "inline-flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition " + (active ? "bg-black text-white" : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950");
 const riskStyles: Record<string, string> = {
   CRITICAL: "border-red-500/30 bg-red-500/10 text-red-700",
   HIGH: "border-orange-500/30 bg-orange-500/10 text-orange-700",
   MEDIUM: "border-yellow-500/30 bg-yellow-500/10 text-yellow-800",
-  LOW: "border-blue-500/30 bg-blue-500/10 text-blue-700",
+  LOW: "border-zinc-300 bg-zinc-100 text-zinc-700",
   SAFE: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700",
 };
 
@@ -100,7 +100,7 @@ export default function AuditPage() {
 
   return <>
     <p className="text-sm text-zinc-500">BluiSkill Security Auditor</p>
-    <h1 className="mt-2 text-3xl font-semibold tracking-tight">Security audit</h1>
+    <div className="mt-2 flex flex-wrap items-center gap-3"><h1 className="text-3xl font-semibold tracking-tight">Security audit</h1><span className="rounded border border-zinc-300 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Beta</span></div>
     <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-600">Review source code, a GitHub repository, or the public security configuration of a live website. This is a lightweight assistant, not a full penetration test.</p>
 
     <section className="mt-7 max-w-5xl rounded-xl border border-zinc-200 bg-white p-4 shadow-sm md:p-6">
@@ -116,19 +116,19 @@ export default function AuditPage() {
           <button type="button" onClick={() => void loadRepositories()} className="rounded-md border border-zinc-200 px-3 py-2 text-xs font-medium hover:bg-zinc-50">Refresh repositories</button>
         </div>
         {githubState === "loading" && <p className="mt-5 text-sm text-zinc-500"><LoaderCircle className="mr-2 inline animate-spin" size={15}/>Loading your repositories…</p>}
-        {githubState === "connect" && <div className="mt-5 rounded-lg border border-zinc-200 bg-zinc-50 p-4"><p className="text-sm text-zinc-700">{githubMessage}</p><button type="button" onClick={() => void connectGitHub()} className="mt-3 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-500"><Github className="mr-2 inline" size={16}/>Connect GitHub</button><p className="mt-3 text-xs leading-5 text-zinc-500">Enable GitHub in Supabase Auth and identity linking. For private repositories, configure the repo OAuth scope; the scanner only reads repository contents.</p></div>}
+        {githubState === "connect" && <div className="mt-5 rounded-lg border border-zinc-200 bg-zinc-50 p-4"><p className="text-sm text-zinc-700">{githubMessage}</p><button type="button" onClick={() => void connectGitHub()} className="mt-3 rounded-lg bg-black px-4 py-2.5 text-sm font-semibold text-white hover:bg-zinc-800"><Github className="mr-2 inline" size={16}/>Connect GitHub</button><p className="mt-3 text-xs leading-5 text-zinc-500">Enable GitHub in Supabase Auth and identity linking. For private repositories, configure the repo OAuth scope; the scanner only reads repository contents.</p></div>}
         {githubState === "error" && <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{githubMessage}<button type="button" onClick={() => void loadRepositories()} className="ml-2 underline">Try again</button></div>}
         {githubState === "ready" && <div className="mt-5 grid gap-4 md:grid-cols-[minmax(0,1fr)_220px]">
           <label className="block text-sm font-medium">Repository
-            <select value={repository} onChange={(event) => { const next = repositories.find((item) => item.fullName === event.target.value); setRepository(event.target.value); if (next) setBranch(next.defaultBranch); }} className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-3 text-sm outline-none focus:border-blue-500">
+            <select value={repository} onChange={(event) => { const next = repositories.find((item) => item.fullName === event.target.value); setRepository(event.target.value); if (next) setBranch(next.defaultBranch); }} className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-3 text-sm outline-none focus:border-zinc-900">
               {repositories.length === 0 && <option value="">No repositories found</option>}
               {repositories.map((item) => <option key={item.id} value={item.fullName}>{item.fullName}{item.private ? " · Private" : ""}</option>)}
             </select>
           </label>
           <label className="block text-sm font-medium">Branch
-            <input value={branch} onChange={(event) => setBranch(event.target.value)} maxLength={250} placeholder="main" className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-3 text-sm outline-none focus:border-blue-500"/>
+            <input value={branch} onChange={(event) => setBranch(event.target.value)} maxLength={250} placeholder="main" className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-3 text-sm outline-none focus:border-zinc-900"/>
           </label>
-          {selectedRepo && <div className="md:col-span-2 rounded-lg bg-zinc-50 p-3"><p className="text-sm font-medium">{selectedRepo.fullName}</p><p className="mt-1 text-xs text-zinc-500">{selectedRepo.description || "No repository description"} · Default branch: {selectedRepo.defaultBranch}</p><a href={selectedRepo.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-blue-700 hover:underline">Open on GitHub <ExternalLink size={12}/></a></div>}
+          {selectedRepo && <div className="md:col-span-2 rounded-lg bg-zinc-50 p-3"><p className="text-sm font-medium">{selectedRepo.fullName}</p><p className="mt-1 text-xs text-zinc-500">{selectedRepo.description || "No repository description"} · Default branch: {selectedRepo.defaultBranch}</p><a href={selectedRepo.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs text-zinc-900 hover:underline">Open on GitHub <ExternalLink size={12}/></a></div>}
           <p className="md:col-span-2 text-xs leading-5 text-zinc-500">The scanner reviews a bounded selection of source/configuration files. Secret-bearing .env files are excluded and detected secret patterns are redacted before AI analysis.</p>
         </div>}
       </div>}
@@ -136,7 +136,7 @@ export default function AuditPage() {
       {tab === "url" && <div className="pt-5">
         <h2 className="font-semibold">Scan a live website</h2><p className="mt-1 text-sm text-zinc-500">Checks common HTTP security headers and a few public exposure paths on a public HTTPS host.</p>
         <label className="mt-5 block text-sm font-medium">Target website URL
-          <input value={url} onChange={(event) => setUrl(event.target.value)} type="url" inputMode="url" placeholder="https://your-app.vercel.app" className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-3 text-sm outline-none focus:border-blue-500"/>
+          <input value={url} onChange={(event) => setUrl(event.target.value)} type="url" inputMode="url" placeholder="https://your-app.vercel.app" className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-3 text-sm outline-none focus:border-zinc-900"/>
         </label>
         <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">Only scan websites you own or are authorized to assess. Private-network targets and unsafe redirects are blocked. This is not a penetration test.</p>
       </div>}
@@ -146,12 +146,12 @@ export default function AuditPage() {
           <label className="text-sm font-medium">File name<input value={filename} onChange={(event) => setFilename(event.target.value)} maxLength={160} className="ml-3 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm"/></label>
           <span className="text-xs text-zinc-500">{code.length.toLocaleString()} / 30,000 characters</span>
         </div>
-        <textarea value={code} onChange={(event) => setCode(event.target.value)} maxLength={30000} rows={14} spellCheck={false} placeholder="// Paste code here…" className="w-full resize-y rounded-lg border border-zinc-200 bg-zinc-50 p-4 font-mono text-xs leading-6 text-zinc-800 outline-none focus:border-blue-500"/>
+        <textarea value={code} onChange={(event) => setCode(event.target.value)} maxLength={30000} rows={14} spellCheck={false} placeholder="// Paste code here…" className="w-full resize-y rounded-lg border border-zinc-200 bg-zinc-50 p-4 font-mono text-xs leading-6 text-zinc-800 outline-none focus:border-zinc-900"/>
         <p className="mt-2 text-xs text-zinc-500">Do not paste live production secrets, private keys, or personal identifiers.</p>
       </div>}
 
       {error && <p role="alert" className="mt-4 rounded-lg border border-red-500/30 bg-red-50 p-3 text-sm text-red-700">{error}</p>}
-      <button type="button" disabled={!canRun} onClick={() => void runAudit()} className="mt-5 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50">
+      <button type="button" disabled={!canRun} onClick={() => void runAudit()} className="mt-5 rounded-lg bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50">
         {busy ? <><LoaderCircle className="mr-2 inline animate-spin" size={16}/>Analyzing…</> : <><ShieldCheck className="mr-2 inline" size={16}/>{tab === "github" ? "Scan GitHub repository" : tab === "url" ? "Scan live website" : "Audit code"} · 1 credit</>}
       </button>
     </section>
