@@ -117,6 +117,9 @@ export async function POST(request: Request) {
     if (error) console.error("GitHub audit persistence failed", error.message);
     return NextResponse.json({ result, repository: repoData.full_name, branch, filesReviewed: collected.map((file) => file.path), disclaimer: "A bounded AI-assisted code review, not a complete SAST or penetration test." });
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Unexpected error.";
+    if (/credit|créditos/i.test(message)) return NextResponse.json({ error: message }, { status: 402 });
+    if (/Supabase|migration|configured/i.test(message)) return NextResponse.json({ error: message }, { status: 503 });
     const result = apiError(error);
     return NextResponse.json({ error: result.message }, { status: result.status });
   }
