@@ -58,7 +58,7 @@ export default function AuditPage() {
 
   async function connectGitHub() {
     const supabase = createClient();
-    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+    const { error: oauthError } = await supabase.auth.linkIdentity({
       provider: "github",
       options: { scopes: "repo read:user", redirectTo: window.location.origin + "/auth/callback" },
     });
@@ -116,7 +116,7 @@ export default function AuditPage() {
           <button type="button" onClick={() => void loadRepositories()} className="rounded-md border border-zinc-200 px-3 py-2 text-xs font-medium hover:bg-zinc-50">Refresh repositories</button>
         </div>
         {githubState === "loading" && <p className="mt-5 text-sm text-zinc-500"><LoaderCircle className="mr-2 inline animate-spin" size={15}/>Loading your repositories…</p>}
-        {githubState === "connect" && <div className="mt-5 rounded-lg border border-zinc-200 bg-zinc-50 p-4"><p className="text-sm text-zinc-700">{githubMessage}</p><button type="button" onClick={() => void connectGitHub()} className="mt-3 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-500"><Github className="mr-2 inline" size={16}/>Connect GitHub</button><p className="mt-3 text-xs leading-5 text-zinc-500">The GitHub OAuth provider must be enabled in Supabase Auth. For private repositories, configure an appropriate read-only repository scope.</p></div>}
+        {githubState === "connect" && <div className="mt-5 rounded-lg border border-zinc-200 bg-zinc-50 p-4"><p className="text-sm text-zinc-700">{githubMessage}</p><button type="button" onClick={() => void connectGitHub()} className="mt-3 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-500"><Github className="mr-2 inline" size={16}/>Connect GitHub</button><p className="mt-3 text-xs leading-5 text-zinc-500">Enable GitHub in Supabase Auth and identity linking. For private repositories, configure the repo OAuth scope; the scanner only reads repository contents.</p></div>}
         {githubState === "error" && <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{githubMessage}<button type="button" onClick={() => void loadRepositories()} className="ml-2 underline">Try again</button></div>}
         {githubState === "ready" && <div className="mt-5 grid gap-4 md:grid-cols-[minmax(0,1fr)_220px]">
           <label className="block text-sm font-medium">Repository
