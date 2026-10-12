@@ -1,0 +1,2 @@
+import { createClient } from "@/lib/supabase/server";
+export async function consumeCredit(userId:string){const supabase=await createClient();const {data,error}=await supabase.rpc("consume_blui_credit",{p_user_id:userId});if(error){console.error("Credit RPC error",error.message);throw new Error("Não foi possível validar os créditos. Verifica se a migração Supabase foi aplicada.");}if(data!==true)throw new Error("Ficaste sem créditos. Tenta novamente quando tiveres mais créditos.");}
