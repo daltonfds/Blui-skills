@@ -44,6 +44,11 @@ alter table public.profiles enable row level security;
 alter table public.projects enable row level security;
 alter table public.security_audits enable row level security;
 
+-- Prevent users from changing their own plan or credit balance through the Data API.
+revoke insert, update, delete on public.profiles from authenticated;
+grant select on public.profiles to authenticated;
+grant update (full_name) on public.profiles to authenticated;
+
 drop policy if exists "Profiles can be read by owner" on public.profiles;
 create policy "Profiles can be read by owner" on public.profiles for select to authenticated using (id = (select auth.uid()));
 drop policy if exists "Profiles can be updated by owner" on public.profiles;
