@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Verify your email — BluiSkill</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,Helvetica,sans-serif;color:#111111;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f5f5f5;padding:36px 12px;">
+      <tr><td align="center">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#ffffff;border:1px solid #e5e5e5;border-radius:16px;">
+          <tr><td style="padding:32px 32px 12px;">
+            <p style="margin:0;font-size:22px;font-weight:700;letter-spacing:-.5px;">B<span style="color:#2563eb;">.</span> BluiSkill</p>
+          </td></tr>
+          <tr><td style="padding:16px 32px 32px;">
+            <h1 style="margin:0 0 12px;font-size:26px;line-height:1.25;">Verify your email address</h1>
+            <p style="margin:0 0 24px;color:#525252;font-size:15px;line-height:1.7;">Thanks for creating a BluiSkill account. Confirm your email address to finish setting up your account and access your workspace.</p>
+            <p style="margin:0 0 26px;"><a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:13px 20px;border-radius:8px;">Verify email address</a></p>
+            <p style="margin:0 0 12px;color:#525252;font-size:13px;line-height:1.7;">If the button does not work, copy and paste this link into your browser:</p>
+            <p style="margin:0 0 24px;word-break:break-all;font-size:12px;line-height:1.6;"><a href="{{ .ConfirmationURL }}" style="color:#2563eb;">{{ .ConfirmationURL }}</a></p>
+            <p style="margin:0;color:#737373;font-size:12px;line-height:1.7;">If you did not create a BluiSkill account, you can safely ignore this email.</p>
+          </td></tr>
+          <tr><td style="border-top:1px solid #e5e5e5;padding:18px 32px;">
+            <p style="margin:0;color:#737373;font-size:12px;">© BluiSkill · <a href="https://blui.online" style="color:#2563eb;text-decoration:none;">blui.online</a></p>
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </body>
+</html>
