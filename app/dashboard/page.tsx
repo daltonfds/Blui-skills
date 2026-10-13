@@ -75,6 +75,9 @@ export default function DashboardPage() {
     const fullIdea = previousContext
       ? `Continue this project conversation. Use the previous context and update the project plan based on the latest request.\n\nPrevious conversation:\n${previousContext}\n\nLatest request:\n${text}${latestResult ? `\n\nCurrent project PRD:\n${latestResult.prd}\n\nCurrent architecture:\n${latestResult.architecture}\n\nCurrent roadmap:\n${JSON.stringify(latestResult.roadmap)}\n\nCurrent master prompt:\n${latestResult.masterPrompt}` : ""}`
       : text;
+    const boundedIdea = fullIdea.length <= 12000
+      ? fullIdea
+      : `Latest request:\n${text}\n\nPrevious context:\n${fullIdea.slice(0, Math.max(0, 11950 - text.length))}`;
 
     setMessages((current) => [...current, userMessage]);
     setIdea("");
