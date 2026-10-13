@@ -8,18 +8,3 @@ body { margin: 0; background: #fafafa; color: #09090b; font-family: var(--font-i
 button,a,input,textarea,select { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2px solid #18181b; outline-offset: 3px; }
 
-/* BluiSkill identity: pure black and white only. */
-body { background: #fff; color: #000; }
-[class*="text-zinc-"], [class*="text-neutral-"], [class*="text-slate-"] { color: #000 !important; }
-[class*="bg-zinc-"], [class*="bg-neutral-"], [class*="bg-slate-"] { background-color: #fff !important; }
-[class*="border-zinc-"], [class*="border-neutral-"], [class*="border-slate-"] { border-color: #000 !important; }
-[class*="ring-zinc-"], [class*="ring-neutral-"], [class*="ring-slate-"] { --tw-ring-color: #000 !important; }
-[class*="shadow-zinc-"], [class*="shadow-neutral-"], [class*="shadow-slate-"] { --tw-shadow-color: transparent !important; }
-.shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl { --tw-shadow: 0 0 #0000 !important; box-shadow: none !important; }
-
-/* Preserve contrast while eliminating gray and accent colors. */
-.bg-zinc-800, .bg-zinc-900, .bg-zinc-950, .hover\:bg-zinc-800:hover { background-color: #000 !important; }
-.text-white { color: #fff !important; }
-[class*="text-red-"], [class*="text-orange-"], [class*="text-yellow-"], [class*="text-emerald-"], [class*="text-green-"] { color: #000 !important; }
-[class*="bg-red-"], [class*="bg-orange-"], [class*="bg-yellow-"], [class*="bg-emerald-"], [class*="bg-green-"] { background-color: #fff !important; }
-[class*="border-red-"], [class*="border-orange-"], [class*="border-yellow-"], [class*="border-emerald-"], [class*="border-green-"] { border-color: #000 !important; }
