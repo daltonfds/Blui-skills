@@ -10,7 +10,6 @@ const links = [
   { href: "/dashboard", label: "Architect & Prompt", icon: Plus },
   { href: "/dashboard/docs", label: "Docs Generator", icon: FileText },
   { href: "/dashboard/docs/legal", label: "Legal & Compliance Kit", icon: ShieldCheck },
-  { href: "/dashboard/academic", label: "Academic", icon: BookOpen },
   { href: "/dashboard/toolbox", label: "Dev Toolbox", icon: Wrench },
   { href: "/dashboard/projects", label: "My Projects", icon: FolderKanban },
   { href: "/dashboard/audit", label: "Security audit", icon: ShieldCheck },
@@ -21,6 +20,8 @@ export function Sidebar({ email }: { email: string; credits?: number }) {
   const path = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isAcademic = path.startsWith("/dashboard/academic");
+  const visibleLinks = isAcademic ? links.filter((item) => item.href === "/dashboard/billing") : links;
 
   async function logout() {
     const sb = createClient();
@@ -32,8 +33,8 @@ export function Sidebar({ email }: { email: string; credits?: number }) {
   function navigation() {
     return (
       <nav className="flex flex-col gap-1">
-        <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">Navigate</p>
-        {links.map(({ href, label, icon: Icon }) => (
+        <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">{isAcademic ? "Academic Workspace" : "Developer Studio"}</p>
+        {visibleLinks.map(({ href, label, icon: Icon }) => (
           <Link key={href} href={href} onClick={() => setMobileOpen(false)}
             className={"flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path === href || (href !== "/dashboard" && path.startsWith(href + "/")) ? "bg-zinc-100 font-semibold text-zinc-950" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}>
             <Icon size={17} strokeWidth={1.8} /><span>{label}</span>
