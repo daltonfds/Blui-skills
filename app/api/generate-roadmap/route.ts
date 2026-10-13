@@ -27,7 +27,8 @@ function isRoadmapResult(value: unknown): value is RoadmapResult {
     typeof result.projectName === "string" &&
     typeof result.prd === "string" &&
     typeof result.architecture === "string" &&
-    typeof result.masterPrompt === "string" &&\n    (result.mermaid === undefined || typeof result.mermaid === "string") &&
+    typeof result.masterPrompt === "string" &&
+    (result.mermaid === undefined || typeof result.mermaid === "string") &&
     Array.isArray(result.roadmap) &&
     result.roadmap.every((phase) => {
       if (!phase || typeof phase !== "object") return false;
