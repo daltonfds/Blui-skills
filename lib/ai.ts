@@ -4,6 +4,7 @@ type GeminiResponse = {
 };
 
 const FALLBACK_MODEL = "gemini-2.5-flash";
+const FAST_FALLBACK_MODEL = "gemini-2.5-flash-lite";
 
 async function requestGemini(model: string, key: string, system: string, input: string) {
   return fetch(
@@ -61,6 +62,34 @@ export async function askGemini<T>(system: string, input: string): Promise<T> {
       throw new Error("A análise de IA demorou demasiado. Tenta novamente.");
     }
     throw new Error("Não foi possível contactar a API de IA. Verifica a ligação e tenta novamente.");
+  }
+
+  // Retry transient Google API failures once, then use the faster Flash-Lite model.
+  if ([429, 500, 502, 503, 504].includes(response.status)) {
+    const initialStatus = response.status;
+    await new Promise((resolve) => setTimeout(resolve, 900));
+    try {
+      const retry = await requestGemini(model, key, system, input);
+      if (retry.ok || ![429, 500, 502, 503, 504].includes(retry.status)) {
+        response = retry;
+      } else {
+        response = await requestGemini(FAST_FALLBACK_MODEL, key, system, input);
+      }
+    } catch {
+      try {
+        response = await requestGemini(FAST_FALLBACK_MODEL, key, system, input);
+      } catch {
+        // Preserve the initial response to return a useful service error below.
+      }
+    }
+    if (!response.ok) {
+      console.error("Gemini API failed after retry/fallback", {
+        initialStatus,
+        finalStatus: response.status,
+        model,
+        fallbackModel: FAST_FALLBACK_MODEL,
+      });
+    }
   }
 
   if (!response.ok) {
