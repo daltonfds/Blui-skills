@@ -16,3 +16,10 @@ body { background: #fff; color: #000; }
 [class*="ring-zinc-"], [class*="ring-neutral-"], [class*="ring-slate-"] { --tw-ring-color: #000 !important; }
 [class*="shadow-zinc-"], [class*="shadow-neutral-"], [class*="shadow-slate-"] { --tw-shadow-color: transparent !important; }
 .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl { --tw-shadow: 0 0 #0000 !important; box-shadow: none !important; }
+
+/* Preserve contrast while eliminating gray and accent colors. */
+.bg-zinc-800, .bg-zinc-900, .bg-zinc-950, .hover\:bg-zinc-800:hover { background-color: #000 !important; }
+.text-white { color: #fff !important; }
+[class*="text-red-"], [class*="text-orange-"], [class*="text-yellow-"], [class*="text-emerald-"], [class*="text-green-"] { color: #000 !important; }
+[class*="bg-red-"], [class*="bg-orange-"], [class*="bg-yellow-"], [class*="bg-emerald-"], [class*="bg-green-"] { background-color: #fff !important; }
+[class*="border-red-"], [class*="border-orange-"], [class*="border-yellow-"], [class*="border-emerald-"], [class*="border-green-"] { border-color: #000 !important; }
