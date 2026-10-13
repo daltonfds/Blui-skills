@@ -83,12 +83,9 @@ export default function DashboardPage() {
       <header className="mb-6 flex flex-wrap items-end justify-between gap-3 sm:mb-7">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
-            <span className="h-1.5 w-1.5 rounded-full bg-blue-600" /> Blui Architect
+            Blui
           </div>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">Architect &amp; Master Prompt Generator</h1>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-600">
-            Define your idea. AI structures the product requirements, database architecture, delivery roadmap and prompt for your coding assistant.
-          </p>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">Architect</h1>
         </div>
         <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600">
           <span className="text-amber-500">⚡</span><span>Credits are used only when a plan is saved</span>
@@ -99,11 +96,10 @@ export default function DashboardPage() {
         <section className={(mobileStep === "result" && result ? "hidden lg:block " : "") + "min-w-0 rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 sm:p-6"}>
           <div className="mb-5 flex items-start justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-700">01 / Specification</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">Specification</p>
               <h2 className="mt-2 text-lg font-semibold text-zinc-950">Describe your product</h2>
-              <p className="mt-1 text-sm leading-6 text-zinc-500">Start with the problem, the users and the features that matter most.</p>
             </div>
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-blue-50 text-blue-700"><Layers3 size={18} /></span>
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-zinc-100 text-zinc-700"><Layers3 size={18} /></span>
           </div>
 
           <form onSubmit={generate}>
@@ -111,11 +107,11 @@ export default function DashboardPage() {
             <textarea id="app-idea" required minLength={20} maxLength={12000} value={idea}
               onChange={(event) => setIdea(event.target.value)} rows={7}
               placeholder="Ex: A SaaS for barbershops with real-time booking, Stripe payments and WhatsApp notifications..."
-              className="mt-2 w-full resize-y rounded-lg border border-zinc-200 bg-zinc-50 px-3.5 py-3 text-sm leading-6 text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-600/20 sm:min-h-44" />
+              className="mt-2 w-full resize-y rounded-lg border border-zinc-200 bg-zinc-50 px-3.5 py-3 text-sm leading-6 text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-900 focus:bg-white focus:ring-2 focus:ring-zinc-900/10 sm:min-h-44" />
             <div className="mt-3 flex flex-wrap gap-2">
               {ideaChips.map((chip) => (
                 <button key={chip.label} type="button" onClick={() => chooseChip(chip.text)}
-                  className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-600 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
+                  className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-600 transition hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-950">
                   <Plus size={12} /> {chip.label}
                 </button>
               ))}
@@ -127,9 +123,9 @@ export default function DashboardPage() {
                 {stacks.map((option) => (
                   <button key={option.value} type="button" onClick={() => setStack(option.value)}
                     aria-pressed={stack === option.value}
-                    className={"flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm transition " + (stack === option.value ? "border-blue-600 bg-blue-50/70 text-blue-900 ring-1 ring-blue-600/10" : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50")}>
+                    className={"flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm transition " + (stack === option.value ? "border-zinc-900 bg-zinc-100 text-zinc-950 ring-1 ring-zinc-900/10" : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50")}>
                     <span aria-hidden="true">{option.icon}</span><span>{option.label}</span>
-                    {stack === option.value && <Check size={15} className="ml-auto shrink-0 text-blue-700" />}
+                    {stack === option.value && <Check size={15} className="ml-auto shrink-0 text-zinc-700" />}
                   </button>
                 ))}
               </div>
@@ -138,7 +134,7 @@ export default function DashboardPage() {
             {error && <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3.5 py-3 text-sm leading-6 text-red-700">{error}</p>}
 
             <button type="submit" disabled={busy || idea.trim().length < 20}
-              className="mt-6 flex min-h-12 w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50">
+              className="mt-6 flex min-h-12 w-full items-center justify-center rounded-xl bg-zinc-950 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-zinc-800 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:opacity-50">
               {busy ? <><LoaderCircle size={17} className="mr-2 animate-spin" />Generating your plan…</> : <><Sparkles size={17} className="mr-2" />Generate Architecture &amp; Master Prompt <span className="ml-2 rounded bg-white/20 px-1.5 py-0.5 text-xs">1 credit</span></>}
             </button>
             <p className="mt-3 text-center text-xs leading-5 text-zinc-500">Your plan is saved to My Projects when generation succeeds.</p>
@@ -171,7 +167,7 @@ export default function DashboardPage() {
 
           {busy && (
             <div className="flex min-h-[400px] flex-col items-center justify-center px-6 py-12 text-center" role="status">
-              <LoaderCircle size={26} className="animate-spin text-blue-600" />
+              <LoaderCircle size={26} className="animate-spin text-zinc-700" />
               <h3 className="mt-4 font-semibold text-zinc-900">Structuring your product plan</h3>
               <p className="mt-2 max-w-sm text-sm leading-6 text-zinc-500">Analysing requirements, architecture and delivery phases. Keep this workspace open.</p>
             </div>
@@ -226,7 +222,7 @@ export default function DashboardPage() {
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 px-4 py-3 sm:px-5">
                       <div><p className="text-sm font-semibold">Master Prompt</p><p className="mt-1 text-xs text-zinc-400">Cursor · Windsurf · Claude Code</p></div>
                       <button type="button" onClick={() => void copyText(result.masterPrompt)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-[#2563EB] px-3.5 py-2.5 text-xs font-semibold text-white transition hover:bg-blue-500">
+                        className="inline-flex items-center gap-2 rounded-lg bg-zinc-800 px-3.5 py-2.5 text-xs font-semibold text-white transition hover:bg-zinc-700">
                         {copied ? <Check size={14} /> : <Clipboard size={14} />}{copied ? "Copied to clipboard!" : "Copy Master Prompt"}
                       </button>
                     </div>
@@ -244,7 +240,7 @@ export default function DashboardPage() {
         <button type="button" onClick={() => setMobileStep("input")} className={"flex min-h-11 items-center justify-center gap-2 rounded-lg text-sm font-medium " + (mobileStep === "input" ? "bg-zinc-100 text-zinc-950" : "text-zinc-500")}>
           <Layers3 size={16} /> Input
         </button>
-        <button type="button" onClick={() => setMobileStep("result")} disabled={!result && !busy} className={"flex min-h-11 items-center justify-center gap-2 rounded-lg text-sm font-medium " + (mobileStep === "result" ? "bg-blue-50 text-blue-700" : "text-zinc-500") + " disabled:opacity-40"}>
+        <button type="button" onClick={() => setMobileStep("result")} disabled={!result && !busy} className={"flex min-h-11 items-center justify-center gap-2 rounded-lg text-sm font-medium " + (mobileStep === "result" ? "bg-zinc-100 text-zinc-700" : "text-zinc-500") + " disabled:opacity-40"}>
           <Smartphone size={16} /> Result {result ? <Check size={14} /> : null}
         </button>
       </nav>
