@@ -165,13 +165,7 @@ export default function DocsGeneratorPage() {
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(320px,0.82fr)_minmax(0,1.18fr)] xl:gap-6">
         <section className={(mobileStep === "result" ? "hidden lg:block " : "") + "min-w-0 rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 sm:p-6"}>
-          <div className="mb-5 flex items-start justify-between gap-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">Project</p>
-              <h2 className="mt-2 text-lg font-semibold text-zinc-950">Bring your existing code</h2>
-            </div>
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-zinc-100 text-zinc-700"><FolderOpen size={18} /></span>
-          </div>
+          <div className="mb-5"><h2 className="text-lg font-semibold text-zinc-950">Bring your existing code</h2></div>
 
           <form onSubmit={generate}>
             <label htmlFor="project-name" className="block text-sm font-medium text-zinc-900">Project name <span className="font-normal text-zinc-400">(optional)</span></label>
