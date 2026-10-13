@@ -147,6 +147,11 @@ export default function DashboardPage() {
               {stack === "Custom" && <input aria-label="Custom development stack" value={customStack} onChange={(event) => setCustomStack(event.target.value)} maxLength={240} placeholder="e.g. Next.js + PostgreSQL + Redis" className="mt-3 min-h-11 w-full rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-2 focus:ring-zinc-900/10" />}
             </fieldset>
 
+            <fieldset className="mt-5 grid gap-4 sm:grid-cols-2">
+              <label className="text-sm font-medium text-zinc-900">Visual direction<select value={visualStyle} onChange={(event) => setVisualStyle(event.target.value)} className="mt-2 min-h-11 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-600/20"><option>Inter + Clean light/dark</option><option>Minimal monochrome</option><option>Editorial and spacious</option><option>Dashboard dense and functional</option></select></label>
+              <label className="text-sm font-medium text-zinc-900">Target devices<select value={deviceSupport} onChange={(event) => setDeviceSupport(event.target.value)} className="mt-2 min-h-11 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-3.5 py-2.5 text-sm outline-none transition focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-600/20"><option>Desktop + Mobile</option><option>Mobile first</option><option>Desktop first</option><option>Mobile app</option></select></label>
+            </fieldset>
+
             {error && <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3.5 py-3 text-sm leading-6 text-red-700">{error}</p>}
 
             <button type="submit" disabled={busy || idea.trim().length < 20 || (stack === "Custom" && customStack.trim().length < 3)}
@@ -205,6 +210,11 @@ export default function DashboardPage() {
 
               {activeTab === "roadmap" && (
                 <div className="space-y-3 p-4 sm:p-5">
+                  <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-sm font-semibold text-zinc-900">Roadmap diagram</h3><div className="flex flex-wrap gap-2"><button type="button" onClick={() => void exportRoadmap("png")} className="rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700">Export PNG</button><button type="button" onClick={() => void exportRoadmap("svg")} className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-50">Download SVG</button><button type="button" onClick={() => { const blob=new Blob([mermaidSource()],{type:"text/plain;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="bluiskill-roadmap.mmd";a.click();URL.revokeObjectURL(url); }} className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-50">Mermaid .mmd</button></div></div>
+                    <div className="mt-4 space-y-2">{(result.roadmap || []).map((phase,index)=><div key={phase.title+index} className="flex items-center gap-3"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-blue-50 text-xs font-semibold text-blue-700">{index+1}</span><div className="min-w-0 flex-1 rounded-lg border border-zinc-200 bg-white px-3 py-2"><p className="text-sm font-semibold text-zinc-900">{phase.title}</p><p className="mt-0.5 text-xs text-zinc-500">{phase.goal}</p></div></div>)}</div>
+                    <details className="mt-4"><summary className="cursor-pointer text-xs font-semibold text-zinc-600">View Mermaid source</summary><pre className="mt-2 overflow-x-auto rounded-xl border border-zinc-800 bg-[#09090B] p-3 font-mono text-xs leading-5 text-zinc-100">{mermaidSource()}</pre></details>
+                  </div>
                   {(result.roadmap || []).map((phase, index) => (
                     <details key={String(index) + phase.title} open={index === 0} className="group rounded-lg border border-zinc-200">
                       <summary className="flex cursor-pointer list-none items-center gap-3 p-4 [&::-webkit-details-marker]:hidden">
