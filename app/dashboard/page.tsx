@@ -39,7 +39,8 @@ export default function DashboardPage() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const savedIdea = searchParams.get("idea");\n    const savedStack = searchParams.get("stack");
+    const savedIdea = searchParams.get("idea");
+    const savedStack = searchParams.get("stack");
     if (savedIdea) setIdea(savedIdea.slice(0, 12000));
     if (savedStack && stacks.some((option) => option.value === savedStack)) setStack(savedStack);
   }, [searchParams]);
