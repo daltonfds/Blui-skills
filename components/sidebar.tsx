@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FileText, FolderKanban, LogOut, Menu, Plus, ShieldCheck, Wrench, X, Zap } from "lucide-react";
+import { FileText, FolderKanban, LogOut, Menu, Plus, ShieldCheck, Wrench, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 const links = [
@@ -14,7 +14,7 @@ const links = [
   { href: "/dashboard/audit", label: "Security audit", icon: ShieldCheck },
 ];
 
-export function Sidebar({ email, credits }: { email: string; credits: number }) {
+export function Sidebar({ email }: { email: string; credits?: number }) {
   const path = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -44,13 +44,6 @@ export function Sidebar({ email, credits }: { email: string; credits: number }) 
   function account() {
     return (
       <div className="border-t border-zinc-200 pt-4">
-        <div className="mb-4 rounded-lg border border-zinc-200 bg-white p-3">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">Usage</p>
-          <div className="mt-2 flex items-center justify-between gap-2">
-            <span className="flex items-center gap-2 text-sm text-zinc-700"><Zap size={15} className="text-amber-500" /> Credits remaining</span>
-            <span className="rounded-md bg-zinc-100 px-2 py-1 text-sm font-semibold tabular-nums text-zinc-950">{credits}</span>
-          </div>
-        </div>
         <div className="flex items-center gap-2 px-1">
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-700">{(email.charAt(0) || "U").toUpperCase()}</span>
           <span className="min-w-0 flex-1 truncate text-xs text-zinc-600" title={email}>{email}</span>
@@ -66,11 +59,10 @@ export function Sidebar({ email, credits }: { email: string; credits: number }) 
     <aside className="relative z-40 w-full shrink-0 border-b border-zinc-200 bg-white md:sticky md:top-0 md:flex md:h-screen md:w-60 md:flex-col md:border-b-0 md:border-r">
       <div className="flex min-h-[62px] items-center justify-between gap-3 px-4 md:min-h-0 md:justify-start md:px-5 md:pb-8 md:pt-6">
         <Link href="/dashboard" className="flex items-center gap-2.5" onClick={() => setMobileOpen(false)}>
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-zinc-950 text-white shadow-sm"><Zap size={17} fill="currentColor" /></span>
-          <span><span className="block text-sm font-bold tracking-tight text-zinc-950">BLUI ARCHITECT</span><span className="mt-0.5 block text-[10px] font-medium tracking-[0.12em] text-zinc-400">WORKSPACE · V1.0</span></span>
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-zinc-950 text-sm font-bold text-white">B</span>
+          <span className="block text-sm font-bold tracking-tight text-zinc-950">BLUI</span>
         </Link>
         <div className="flex items-center gap-3 md:hidden">
-          <span className="inline-flex items-center gap-1.5 rounded-md bg-zinc-100 px-2.5 py-1.5 text-xs font-semibold text-zinc-700"><Zap size={13} className="text-amber-500" /> {credits}</span>
           <button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label={mobileOpen ? "Close menu" : "Open menu"} aria-expanded={mobileOpen} className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50">
             {mobileOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
