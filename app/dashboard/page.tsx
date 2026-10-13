@@ -85,7 +85,7 @@ export default function DashboardPage() {
       const response = await fetch("/api/generate-roadmap", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ idea: fullIdea, stack }),
+        body: JSON.stringify({ idea: boundedIdea, stack }),
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "Não foi possível gerar o plano. Tenta novamente.");
@@ -266,7 +266,7 @@ export default function DashboardPage() {
               onChange={(event) => { setIdea(event.target.value); if (error) setError(""); }}
               onKeyDown={onComposerKeyDown}
               rows={2}
-              maxLength={12000}
+              maxLength={10000}
               placeholder="Descreve o que queres construir…"
               aria-label="A tua mensagem para o Blui"
               className="max-h-52 min-h-[56px] w-full resize-y bg-transparent px-3 py-2 text-sm leading-6 text-zinc-950 outline-none placeholder:text-zinc-400"
