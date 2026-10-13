@@ -74,7 +74,7 @@ export default function DashboardPage() {
 
   const tabButton = (tab: ResultTab, label: string) => (
     <button key={tab} type="button" onClick={() => { setActiveTab(tab); setCopied(false); }}
-      className={"whitespace-nowrap border-b-2 px-3 py-3 text-sm font-medium transition " + (activeTab === tab ? "border-blue-600 text-zinc-950" : "border-transparent text-zinc-500 hover:text-zinc-900")}
+      className={"whitespace-nowrap border-b-2 px-3 py-3 text-sm font-medium transition " + (activeTab === tab ? "border-zinc-950 text-zinc-950" : "border-transparent text-zinc-500 hover:text-zinc-900")}
       role="tab" aria-selected={activeTab === tab}>{label}</button>
   );
 
