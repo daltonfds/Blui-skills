@@ -159,13 +159,7 @@ export default function DocsGeneratorPage() {
     <div className="mx-auto w-full max-w-[1600px] pb-4">
       <header className="mb-6 flex flex-wrap items-end justify-between gap-3 sm:mb-7">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
-            Blui
-          </div>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">Docs Generator</h1>
-        </div>
-        <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600">
-          <span className="text-amber-500">⚡</span> 1 credit per saved document kit
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">Docs Generator</h1>
         </div>
       </header>
 
@@ -195,7 +189,6 @@ export default function DocsGeneratorPage() {
                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-zinc-200 bg-white text-zinc-600"><Upload size={17} /></span>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-zinc-900">Upload source files</p>
-                  <p className="mt-1 text-xs leading-5 text-zinc-500">SQL, TS/TSX, JS, JSON, Markdown, YAML, Prisma, TOML and other text source files. Up to 20 files, 150 KB each.</p>
                   <label className="mt-3 inline-flex min-h-9 cursor-pointer items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 text-xs font-semibold text-zinc-700 transition hover:bg-zinc-100">
                     <Plus size={14} /> Choose files
                     <input type="file" multiple accept=".md,.txt,.json,.sql,.ts,.tsx,.js,.jsx,.mjs,.cjs,.yml,.yaml,.prisma,.toml,.css,.html,.xml,.sh,.py,.go,.rs,.java,.php,.env.example" className="sr-only" onChange={(event) => { void addFiles(event.target.files); event.currentTarget.value = ""; }} />
@@ -208,7 +201,6 @@ export default function DocsGeneratorPage() {
                   <button type="button" aria-label={"Remove " + item.name} onClick={() => setFiles((current) => current.filter((f) => f.name !== item.name))} className="grid h-6 w-6 place-items-center rounded text-zinc-400 hover:bg-zinc-100 hover:text-zinc-900"><X size={13} /></button>
                 </div>)}
               </div>}
-              <p className="mt-3 text-[11px] text-zinc-400">Selected files are read in your browser and sent for analysis. Raw source files are not saved in the database.</p>
             </div>
 
             <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-xs leading-5 text-amber-900">
@@ -221,9 +213,8 @@ export default function DocsGeneratorPage() {
 
             <button type="submit" disabled={busy || (!source.trim() && files.length === 0)}
               className="mt-5 flex min-h-12 w-full items-center justify-center rounded-lg bg-zinc-950 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:opacity-50">
-              {busy ? <><LoaderCircle size={17} className="mr-2 animate-spin" />Analysing project…</> : <><Sparkles size={17} className="mr-2" />Generate Complete Documentation <span className="ml-2 rounded bg-white/20 px-1.5 py-0.5 text-xs">1 credit</span></>}
+              {busy ? <><LoaderCircle size={17} className="mr-2 animate-spin" />Analysing project…</> : "Generate documentation"}
             </button>
-            <p className="mt-3 text-center text-xs leading-5 text-zinc-500">The four Markdown documents are saved to your account after successful generation.</p>
           </form>
 
           {saved.length > 0 && (
