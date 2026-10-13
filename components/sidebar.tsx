@@ -32,9 +32,9 @@ export function Sidebar({ email, credits }: { email: string; credits: number }) 
         <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">Navigate</p>
         {links.map(({ href, label, icon: Icon }) => (
           <Link key={href} href={href} onClick={() => setMobileOpen(false)}
-            className={"flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path === href || (href !== "/dashboard" && path.startsWith(href + "/")) ? "bg-blue-50 font-semibold text-blue-800" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}>
+            className={"flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path === href || (href !== "/dashboard" && path.startsWith(href + "/")) ? "bg-zinc-100 font-semibold text-zinc-950" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}>
             <Icon size={17} strokeWidth={1.8} /><span>{label}</span>
-            {label === "Security audit" && <span className="ml-auto rounded border border-zinc-200 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-zinc-500">Beta</span>}{label === "Docs Generator" && <span className="ml-auto rounded bg-blue-50 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-blue-700">New</span>}
+            {label === "Security audit" && <span className="ml-auto rounded border border-zinc-200 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-zinc-500">Beta</span>}{label === "Docs Generator" && <span className="ml-auto rounded bg-zinc-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-zinc-600">New</span>}
           </Link>
         ))}
       </nav>
