@@ -160,12 +160,9 @@ export default function DocsGeneratorPage() {
       <header className="mb-6 flex flex-wrap items-end justify-between gap-3 sm:mb-7">
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
-            <span className="h-1.5 w-1.5 rounded-full bg-blue-600" /> Blui Docs Generator
+            Blui
           </div>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">Document an existing project</h1>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-600">
-            Turn your project structure, schemas and source files into practical documentation for developers and coding assistants.
-          </p>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">Docs Generator</h1>
         </div>
         <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600">
           <span className="text-amber-500">⚡</span> 1 credit per saved document kit
@@ -176,23 +173,22 @@ export default function DocsGeneratorPage() {
         <section className={(mobileStep === "result" ? "hidden lg:block " : "") + "min-w-0 rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 sm:p-6"}>
           <div className="mb-5 flex items-start justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-700">01 / Project input</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">Project</p>
               <h2 className="mt-2 text-lg font-semibold text-zinc-950">Bring your existing code</h2>
-              <p className="mt-1 text-sm leading-6 text-zinc-500">Paste a folder tree and key files, or upload text-based source and configuration files.</p>
             </div>
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-blue-50 text-blue-700"><FolderOpen size={18} /></span>
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-zinc-100 text-zinc-700"><FolderOpen size={18} /></span>
           </div>
 
           <form onSubmit={generate}>
             <label htmlFor="project-name" className="block text-sm font-medium text-zinc-900">Project name <span className="font-normal text-zinc-400">(optional)</span></label>
             <input id="project-name" value={projectName} maxLength={120} onChange={(event) => setProjectName(event.target.value)}
               placeholder="e.g. MySaaS, client-dashboard"
-              className="mt-2 min-h-11 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3.5 py-2.5 text-sm text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-600/20" />
+              className="mt-2 min-h-11 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3.5 py-2.5 text-sm text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-900 focus:bg-white focus:ring-2 focus:ring-zinc-900/10" />
 
             <label htmlFor="project-source" className="mt-5 block text-sm font-medium text-zinc-900">Project structure &amp; key code</label>
             <textarea id="project-source" value={source} onChange={(event) => setSource(event.target.value)} rows={9}
               placeholder={"Paste your folder tree, package.json, schema.sql, API routes, server actions or other key files…\n\nExample:\napp/api/...\nsupabase/schema.sql\npackage.json"}
-              className="mt-2 min-h-48 w-full resize-y rounded-lg border border-zinc-200 bg-zinc-50 px-3.5 py-3 font-mono text-xs leading-6 text-zinc-800 outline-none transition placeholder:font-sans placeholder:text-zinc-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/10" />
+              className="mt-2 min-h-48 w-full resize-y rounded-lg border border-zinc-200 bg-zinc-50 px-3.5 py-3 font-mono text-xs leading-6 text-zinc-800 outline-none transition placeholder:font-sans placeholder:text-zinc-400 focus:border-zinc-900 focus:bg-white focus:ring-2 focus:ring-zinc-900/10" />
 
             <div className="mt-4 rounded-lg border border-dashed border-zinc-300 bg-zinc-50/70 p-4">
               <div className="flex items-start gap-3">
@@ -224,7 +220,7 @@ export default function DocsGeneratorPage() {
             {notice && !error && <p role="status" className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-3.5 py-3 text-sm leading-6 text-emerald-800">{notice}</p>}
 
             <button type="submit" disabled={busy || (!source.trim() && files.length === 0)}
-              className="mt-5 flex min-h-12 w-full items-center justify-center rounded-lg bg-[#2563EB] px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50">
+              className="mt-5 flex min-h-12 w-full items-center justify-center rounded-lg bg-zinc-950 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:opacity-50">
               {busy ? <><LoaderCircle size={17} className="mr-2 animate-spin" />Analysing project…</> : <><Sparkles size={17} className="mr-2" />Generate Complete Documentation <span className="ml-2 rounded bg-white/20 px-1.5 py-0.5 text-xs">1 credit</span></>}
             </button>
             <p className="mt-3 text-center text-xs leading-5 text-zinc-500">The four Markdown documents are saved to your account after successful generation.</p>
@@ -234,10 +230,10 @@ export default function DocsGeneratorPage() {
             <div className="mt-7 border-t border-zinc-200 pt-5">
               <div className="mb-3 flex items-center justify-between gap-2"><h3 className="text-sm font-semibold text-zinc-900">Recent documentation</h3><span className="text-xs text-zinc-400">{saved.length} saved</span></div>
               <div className="space-y-2">
-                {saved.slice(0, 5).map((item) => <button key={item.id} type="button" onClick={() => openSaved(item)} className="flex w-full items-center gap-3 rounded-lg border border-zinc-200 p-3 text-left transition hover:border-blue-300 hover:bg-blue-50/40">
+                {saved.slice(0, 5).map((item) => <button key={item.id} type="button" onClick={() => openSaved(item)} className="flex w-full items-center gap-3 rounded-lg border border-zinc-200 p-3 text-left transition hover:border-zinc-300 hover:bg-zinc-50/40">
                   <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-zinc-100 text-zinc-600"><FileText size={15} /></span>
                   <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium text-zinc-900">{item.project_name}</span><span className="mt-1 block text-xs text-zinc-500">{new Date(item.created_at).toLocaleDateString()}</span></span>
-                  <span className="text-xs text-blue-700">Open</span>
+                  <span className="text-xs text-zinc-700">Open</span>
                 </button>)}
               </div>
             </div>
@@ -260,7 +256,7 @@ export default function DocsGeneratorPage() {
             <div className="mt-6 grid w-full max-w-md gap-2 text-left sm:grid-cols-2">{tabs.map((tab) => { const Icon = tab.icon; return <div key={tab.id} className="flex items-center gap-2 rounded-lg border border-zinc-100 bg-zinc-50/70 px-3 py-3 text-xs text-zinc-600"><Icon size={15} className="text-zinc-400" />{tab.label}</div>; })}</div>
           </div>}
 
-          {busy && <div className="flex min-h-[420px] flex-col items-center justify-center px-6 py-12 text-center" role="status"><LoaderCircle size={26} className="animate-spin text-blue-600" /><h3 className="mt-4 font-semibold text-zinc-900">Reading your project evidence</h3><p className="mt-2 max-w-sm text-sm leading-6 text-zinc-500">Organising the README, data model, routes and context prompt. This can take a little while.</p></div>}
+          {busy && <div className="flex min-h-[420px] flex-col items-center justify-center px-6 py-12 text-center" role="status"><LoaderCircle size={26} className="animate-spin text-zinc-700" /><h3 className="mt-4 font-semibold text-zinc-900">Reading your project evidence</h3><p className="mt-2 max-w-sm text-sm leading-6 text-zinc-500">Organising the README, data model, routes and context prompt. This can take a little while.</p></div>}
 
           {result && <>
             <div className="border-b border-zinc-200 px-2 sm:px-4"><div className="flex gap-1 overflow-x-auto" role="tablist" aria-label="Generated documents">
@@ -272,7 +268,7 @@ export default function DocsGeneratorPage() {
                   <div className="flex min-w-0 items-center gap-2"><span className="text-zinc-500"><CurrentIcon size={15} /></span><div className="min-w-0"><p className="text-sm font-semibold">{currentTab.title}</p><p className="mt-1 text-xs text-zinc-400">{currentTab.filename} · Markdown</p></div></div>
                   <div className="flex shrink-0 items-center gap-2">
                     <button type="button" onClick={() => downloadMarkdown(currentTab.filename, result[activeTab])} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-zinc-700 px-3 py-2 text-xs font-medium text-zinc-200 transition hover:bg-zinc-800"><Download size={14} /> Download .md</button>
-                    <button type="button" onClick={() => void copyText(result[activeTab])} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-[#2563EB] px-3 py-2 text-xs font-semibold text-white transition hover:bg-blue-500">{copied ? <Check size={14} /> : <Clipboard size={14} />}{copied ? "Copied!" : "Copy Markdown"}</button>
+                    <button type="button" onClick={() => void copyText(result[activeTab])} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-zinc-950 px-3 py-2 text-xs font-semibold text-white transition hover:bg-zinc-700">{copied ? <Check size={14} /> : <Clipboard size={14} />}{copied ? "Copied!" : "Copy Markdown"}</button>
                   </div>
                 </div>
                 <pre className="max-h-[720px] min-h-[360px] overflow-auto whitespace-pre-wrap break-words p-4 font-mono text-xs leading-6 text-zinc-200 sm:p-5">{result[activeTab]}</pre>
@@ -285,7 +281,7 @@ export default function DocsGeneratorPage() {
 
       <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-2 border-t border-zinc-200 bg-white/95 p-2 backdrop-blur lg:hidden" aria-label="Documentation steps">
         <button type="button" onClick={() => setMobileStep("input")} className={"flex min-h-11 items-center justify-center gap-2 rounded-lg text-sm font-medium " + (mobileStep === "input" ? "bg-zinc-100 text-zinc-950" : "text-zinc-500")}><FolderOpen size={16} /> Input</button>
-        <button type="button" onClick={() => setMobileStep("result")} disabled={!result && !busy} className={"flex min-h-11 items-center justify-center gap-2 rounded-lg text-sm font-medium " + (mobileStep === "result" ? "bg-blue-50 text-blue-700" : "text-zinc-500") + " disabled:opacity-40"}><FileText size={16} /> Results {result ? <Check size={14} /> : null}</button>
+        <button type="button" onClick={() => setMobileStep("result")} disabled={!result && !busy} className={"flex min-h-11 items-center justify-center gap-2 rounded-lg text-sm font-medium " + (mobileStep === "result" ? "bg-zinc-100 text-zinc-700" : "text-zinc-500") + " disabled:opacity-40"}><FileText size={16} /> Results {result ? <Check size={14} /> : null}</button>
       </nav>
       <div className="h-16 lg:hidden" />
     </div>
