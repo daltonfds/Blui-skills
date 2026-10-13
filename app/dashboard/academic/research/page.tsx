@@ -24,12 +24,12 @@ export default function AcademicResearchPage() {
       const response=await fetch("/api/academic/research",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topic,language,depth})});
       const body=await response.json();if(!response.ok)throw new Error(body.error||"Não foi possível concluir a pesquisa.");
       setResult(body.result as ResearchResult);
-      window.localStorage.setItem("bluiskill-academic-research",JSON.stringify({topic,content:body.result.content+"\n\nFontes para verificar:\n"+(body.result.sources||[]).map((source:{title:string;url:string},i:number)=>(i+1)+". "+source.title+" — "+source.url).join("\n"),title:body.result.title,sources:body.result.sources,researchedAt:body.result.researchedAt}));
+      window.localStorage.setItem("bluiskill-academic-research",JSON.stringify({topic,content:body.result.content,title:body.result.title,sources:body.result.sources,researchedAt:body.result.researchedAt}));
       setNotice("Pesquisa guardada. Podes reutilizar este material num trabalho ou numa sessão de estudo.");
     }catch(cause){setError(cause instanceof Error?cause.message:"Ocorreu um erro ao pesquisar.");}
     finally{setBusy(false);}
   }
-  function useForWriting(){if(!result)return;window.localStorage.setItem("bluiskill-academic-research",JSON.stringify({topic,content:result.content+"\n\nFontes para verificar:\n"+result.sources.map((source,i)=>(i+1)+". "+source.title+" — "+source.url).join("\n"),title:result.title,sources:result.sources,researchedAt:result.researchedAt}));router.push("/dashboard/academic/paper");}
+  function useForWriting(){if(!result)return;window.localStorage.setItem("bluiskill-academic-research",JSON.stringify({topic,content:result.content,title:result.title,sources:result.sources,researchedAt:result.researchedAt}));router.push("/dashboard/academic/paper");}
   function useForStudy(){if(!result)return;window.localStorage.setItem("bluiskill-academic-research",JSON.stringify({topic,content:result.content+"\n\nFontes para verificar:\n"+result.sources.map((source,i)=>(i+1)+". "+source.title+" — "+source.url).join("\n"),title:result.title,sources:result.sources,researchedAt:result.researchedAt}));router.push("/dashboard/academic/study");}
   return <div className="mx-auto w-full max-w-6xl pb-12">
     <Link href="/dashboard/academic" className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-black"><ArrowLeft size={15}/> Academic</Link>
