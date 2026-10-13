@@ -155,17 +155,15 @@ export default function DevToolboxPage() {
 
   return <div className="mx-auto w-full max-w-6xl pb-8">
     <header className="mb-7">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500"><span className="h-1.5 w-1.5 rounded-full bg-blue-600" /> Blui · Vibecoder workspace</div>
+      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">Blui</div>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-950">Dev Toolbox</h1>
-      <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-600">Continue from real project context, package your documents and create configuration templates without adding another AI service.</p>
     </header>
     <div className="mb-6 flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
-      {([["context","Context refresh"],["export","Export kit"],["config","Config generator"],["cost","Stack calculator"]] as const).map(([id,label]) => <button key={id} onClick={() => setActiveTab(id)} className={"rounded-lg px-3 py-2 text-sm font-medium " + (activeTab===id ? "bg-blue-600 text-white" : "border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50")}>{label}</button>)}
+      {([["context","Context refresh"],["export","Export kit"],["config","Config generator"],["cost","Stack calculator"]] as const).map(([id,label]) => <button key={id} onClick={() => setActiveTab(id)} className={"rounded-lg px-3 py-2 text-sm font-medium " + (activeTab===id ? "bg-zinc-950 text-white" : "border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50")}>{label}</button>)}
     </div>
-    {notice && <p role="status" className="mb-4 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800">{notice}</p>}
+    {notice && <p role="status" className="mb-4 rounded-lg border border-zinc-200 bg-zinc-100 px-3 py-2 text-sm text-zinc-800">{notice}</p>}
     <section className="mb-5 rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm sm:p-5">
-      <h2 className="font-semibold text-zinc-950">Use existing Blui data</h2>
-      <p className="mt-1 text-sm text-zinc-500">Saved Architect projects and Docs Generator outputs are loaded from your authenticated account. Select what you want to continue or export.</p>
+      <h2 className="font-semibold text-zinc-950">Project sources</h2>
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         <label className="block text-sm font-medium text-zinc-700">Architect project
           <select value={selectedProject} onChange={(e)=>setSelectedProject(e.target.value)} className="mt-2 min-h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm"><option value="">Select a saved project…</option>{projects.map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select>
@@ -178,38 +176,38 @@ export default function DevToolboxPage() {
     </section>
 
     {activeTab==="context" && <section className="rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 sm:p-6">
-      <div className="flex items-center gap-2"><RefreshCw size={18} className="text-blue-600"/><h2 className="text-lg font-semibold">Context Refresh Prompt</h2></div>
+      <div className="flex items-center gap-2"><RefreshCw size={18} className="text-zinc-700"/><h2 className="text-lg font-semibold">Context Refresh Prompt</h2></div>
       <p className="mt-1 text-sm text-zinc-500">This prompt is built locally from your selected Architect project and the progress you enter. It does not claim to know your live repository state.</p>
       <label className="mt-5 block text-sm font-medium">Project name<input value={projectName} onChange={e=>setProjectName(e.target.value)} maxLength={120} className="mt-2 min-h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm" placeholder="Project name"/></label>
       <label className="mt-4 block text-sm font-medium">Architecture / current design<textarea value={architecture} onChange={e=>setArchitecture(e.target.value)} rows={5} className="mt-2 w-full rounded-lg border border-zinc-200 p-3 font-mono text-xs leading-5" placeholder="Paste confirmed architecture, important constraints and current interfaces…"/></label>
       <label className="mt-4 block text-sm font-medium">Original roadmap<textarea value={roadmap} onChange={e=>setRoadmap(e.target.value)} rows={4} className="mt-2 w-full rounded-lg border border-zinc-200 p-3 font-mono text-xs leading-5" placeholder="Roadmap phases, tasks and acceptance criteria…"/></label>
       <label className="mt-4 block text-sm font-medium">Current progress and next task<textarea value={progress} onChange={e=>setProgress(e.target.value)} rows={4} className="mt-2 w-full rounded-lg border border-zinc-200 p-3 text-sm leading-6" placeholder="Completed: …\nIn progress: …\nBlocked by: …\nNext goal: …"/></label>
       <label className="mt-4 block text-sm font-medium">Rules to preserve<textarea value={constraints} onChange={e=>setConstraints(e.target.value)} rows={3} className="mt-2 w-full rounded-lg border border-zinc-200 p-3 text-sm leading-6"/></label>
-      <div className="mt-5 flex flex-wrap gap-2"><button onClick={()=>void copy(contextPrompt,"Context Refresh Prompt")} className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"><Clipboard size={16}/>Copy prompt</button><button onClick={()=>downloadText("CONTEXT-REFRESH-PROMPT.md",contextPrompt)} className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 px-4 py-2.5 text-sm font-semibold"><Download size={16}/>Download .md</button></div>
+      <div className="mt-5 flex flex-wrap gap-2"><button onClick={()=>void copy(contextPrompt,"Context Refresh Prompt")} className="inline-flex items-center gap-2 rounded-lg bg-zinc-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-zinc-800"><Clipboard size={16}/>Copy prompt</button><button onClick={()=>downloadText("CONTEXT-REFRESH-PROMPT.md",contextPrompt)} className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 px-4 py-2.5 text-sm font-semibold"><Download size={16}/>Download .md</button></div>
       <pre className="mt-5 max-h-[520px] overflow-auto whitespace-pre-wrap break-words rounded-xl border border-zinc-800 bg-[#09090B] p-4 font-mono text-xs leading-6 text-zinc-100">{contextPrompt}</pre>
     </section>}
 
     {activeTab==="export" && <section className="rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 sm:p-6">
-      <div className="flex items-center gap-2"><Archive size={18} className="text-blue-600"/><h2 className="text-lg font-semibold">Markdown and ZIP export</h2></div>
+      <div className="flex items-center gap-2"><Archive size={18} className="text-zinc-700"/><h2 className="text-lg font-semibold">Markdown and ZIP export</h2></div>
       <p className="mt-1 text-sm text-zinc-500">Exports are generated in your browser, use no AI credits and create no database rows.</p>
-      <div className="mt-5 flex flex-wrap gap-2"><button onClick={exportZip} className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"><PackageOpen size={16}/>Download ZIP kit ({markdownFiles.length} files)</button></div>
+      <div className="mt-5 flex flex-wrap gap-2"><button onClick={exportZip} className="inline-flex items-center gap-2 rounded-lg bg-zinc-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-zinc-800"><PackageOpen size={16}/>Download ZIP kit ({markdownFiles.length} files)</button></div>
       <div className="mt-4 divide-y divide-zinc-100 rounded-lg border border-zinc-200">{markdownFiles.map(file=><div key={file.name} className="flex flex-wrap items-center gap-3 p-3"><FileText size={16} className="text-zinc-400"/><span className="min-w-0 flex-1 break-all text-sm font-medium">{file.name}</span><button onClick={()=>downloadText(file.name.split("/").pop()||file.name,file.content)} className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-3 py-2 text-xs font-semibold"><Download size={14}/> .md / file</button></div>)}</div>
       {!markdownFiles.length && <p className="mt-4 text-sm text-zinc-500">Select a saved Architect project or Docs Generator result above to populate the export kit.</p>}
     </section>}
 
     {activeTab==="config" && <section className="rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 sm:p-6">
-      <div className="flex items-center gap-2"><FileCode2 size={18} className="text-blue-600"/><h2 className="text-lg font-semibold">Configuration generator</h2></div>
+      <div className="flex items-center gap-2"><FileCode2 size={18} className="text-zinc-700"/><h2 className="text-lg font-semibold">Configuration generator</h2></div>
       <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900"><ShieldAlert size={16} className="mt-0.5 shrink-0"/>Only variable names and schema you provide are used. This tool does not infer database tables or validate SQL against a live database. Never paste secret values.</div>
       <label className="mt-5 block text-sm font-medium">Confirmed environment variable names<textarea value={envInput} onChange={e=>setEnvInput(e.target.value)} rows={5} className="mt-2 w-full rounded-lg border border-zinc-200 p-3 font-mono text-xs leading-5" placeholder="NEXT_PUBLIC_SUPABASE_URL=\nGEMINI_API_KEY="/></label>
-      <div className="mt-2 flex flex-wrap gap-2"><button onClick={()=>void copy(envExample,".env.example")} className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white"><Clipboard size={15}/>Copy .env.example</button><button onClick={()=>downloadText(".env.example",envExample,"text/plain;charset=utf-8")} className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm font-semibold"><Download size={15}/>Download .env.example</button></div>
+      <div className="mt-2 flex flex-wrap gap-2"><button onClick={()=>void copy(envExample,".env.example")} className="inline-flex items-center gap-2 rounded-lg bg-zinc-950 px-3 py-2 text-sm font-semibold text-white"><Clipboard size={15}/>Copy .env.example</button><button onClick={()=>downloadText(".env.example",envExample,"text/plain;charset=utf-8")} className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm font-semibold"><Download size={15}/>Download .env.example</button></div>
       <pre className="mt-3 whitespace-pre-wrap rounded-xl border border-zinc-800 bg-[#09090B] p-3 font-mono text-xs leading-5 text-zinc-100">{envExample || "# Add confirmed variable names above"}</pre>
       <label className="mt-6 block text-sm font-medium">Confirmed schema SQL<textarea value={schemaInput} onChange={e=>setSchemaInput(e.target.value)} rows={9} className="mt-2 w-full rounded-lg border border-zinc-200 p-3 font-mono text-xs leading-5" placeholder="Paste verified CREATE TABLE, constraints and RLS policies…"/></label>
-      <div className="mt-2 flex flex-wrap gap-2"><button onClick={()=>void copy(schemaInput,"schema.sql")} className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white"><Clipboard size={15}/>Copy schema.sql</button><button onClick={()=>downloadText("schema.sql",schemaInput,"text/sql;charset=utf-8")} className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm font-semibold"><Download size={15}/>Download schema.sql</button></div>
+      <div className="mt-2 flex flex-wrap gap-2"><button onClick={()=>void copy(schemaInput,"schema.sql")} className="inline-flex items-center gap-2 rounded-lg bg-zinc-950 px-3 py-2 text-sm font-semibold text-white"><Clipboard size={15}/>Copy schema.sql</button><button onClick={()=>downloadText("schema.sql",schemaInput,"text/sql;charset=utf-8")} className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm font-semibold"><Download size={15}/>Download schema.sql</button></div>
       <p className="mt-3 text-xs leading-5 text-zinc-500">Review constraints, foreign keys, grants and RLS policies, then test the SQL in a non-production environment before applying it.</p>
     </section>}
 
     {activeTab==="cost" && <section className="rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 sm:p-6">
-      <div className="flex items-center gap-2"><Calculator size={18} className="text-blue-600"/><h2 className="text-lg font-semibold">Stack cost estimator</h2></div>
+      <div className="flex items-center gap-2"><Calculator size={18} className="text-zinc-700"/><h2 className="text-lg font-semibold">Stack cost estimator</h2></div>
       <p className="mt-1 text-sm text-zinc-500">Illustrative planning only, not a live quote or guarantee. Provider pricing, free-tier eligibility, limits, region, storage, bandwidth and model/token usage can change.</p>
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <label className="block text-sm font-medium">Stack assumption<select value={stack} onChange={e=>setStack(e.target.value)} className="mt-2 min-h-11 w-full rounded-lg border border-zinc-200 bg-white px-3"><option value="next-supabase">Next.js + Supabase + Gemini</option><option value="next-managed">Next.js + paid managed services</option><option value="custom">Custom / unknown</option></select></label>
