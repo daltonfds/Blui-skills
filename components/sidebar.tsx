@@ -3,15 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FileText, FolderKanban, LogOut, Menu, Plus, ShieldCheck, Wrench, X } from "lucide-react";
+import { BookOpen, CreditCard, FileText, FolderKanban, LogOut, Menu, Plus, ShieldCheck, Wrench, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 const links = [
   { href: "/dashboard", label: "Architect & Prompt", icon: Plus },
   { href: "/dashboard/docs", label: "Docs Generator", icon: FileText },
+  { href: "/dashboard/academic", label: "Academic", icon: BookOpen },
   { href: "/dashboard/toolbox", label: "Dev Toolbox", icon: Wrench },
   { href: "/dashboard/projects", label: "My Projects", icon: FolderKanban },
   { href: "/dashboard/audit", label: "Security audit", icon: ShieldCheck },
+  { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
 ];
 
 export function Sidebar({ email }: { email: string; credits?: number }) {
@@ -48,7 +50,7 @@ export function Sidebar({ email }: { email: string; credits?: number }) {
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-700">{(email.charAt(0) || "U").toUpperCase()}</span>
           <span className="min-w-0 flex-1 truncate text-xs text-zinc-600" title={email}>{email}</span>
         </div>
-        <button onClick={logout} className="mt-3 flex min-h-9 w-full items-center gap-2 rounded-lg px-2 text-sm text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950">
+        <div className="mt-4 border-t border-zinc-100 pt-3"><p className="px-1 text-xs leading-5 text-zinc-500">Need help? <a className="font-medium text-zinc-700 underline underline-offset-2" href="mailto:support@bluiskill.com">support@bluiskill.com</a></p><div className="mt-2 flex gap-3 px-1 text-xs text-zinc-500"><Link href="/terms" className="hover:text-zinc-900">Terms</Link><Link href="/privacy" className="hover:text-zinc-900">Privacy</Link></div></div>\n        <button onClick={logout} className="mt-3 flex min-h-9 w-full items-center gap-2 rounded-lg px-2 text-sm text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950">
           <LogOut size={15} /> Sign out
         </button>
       </div>
