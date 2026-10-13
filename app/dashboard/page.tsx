@@ -126,7 +126,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="relative flex min-h-[calc(100dvh-2rem)] flex-col bg-white text-zinc-950">
+    <div className="relative -mx-5 -my-7 flex min-h-[100dvh] flex-col bg-white text-zinc-950 md:-mx-10 md:-my-10">
       <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between border-b border-zinc-100 bg-white/95 px-3 backdrop-blur sm:px-6">
         <div className="flex items-center gap-2">
           <button type="button" onClick={() => setMenuOpen((value) => !value)} aria-label={menuOpen ? "Close menu" : "Open menu"} className="rounded-lg p-2 text-zinc-600 hover:bg-zinc-100 hover:text-black">
