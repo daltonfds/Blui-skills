@@ -7,11 +7,11 @@ import { useEffect, useState } from "react";
 type Language = "pt" | "en" | "es" | "fr";
 type Workspace = "developer" | "academic";
 
-const labels: Record<Language, { developer: string; academic: string; billing: string; language: string; choose: string; intro: string; switch: string; ad: string; sponsored: string; learn: string }> = {
-  pt: { developer: "Developer Studio", academic: "Academic Workspace", billing: "Faturação", language: "Idioma", choose: "Selecione o seu ambiente de trabalho", intro: "Pode alternar entre ambientes a qualquer momento no cabeçalho.", switch: "Alternar ambiente", ad: "Espaço reservado para anúncios institucionais", sponsored: "Publicidade", learn: "Saiba mais" },
-  en: { developer: "Developer Studio", academic: "Academic Workspace", billing: "Billing", language: "Language", choose: "Choose your workspace", intro: "You can switch workspaces at any time from the header.", switch: "Switch workspace", ad: "Reserved space for institutional advertisements", sponsored: "Advertisement", learn: "Learn more" },
-  es: { developer: "Developer Studio", academic: "Academic Workspace", billing: "Facturación", language: "Idioma", choose: "Selecciona tu espacio de trabajo", intro: "Puedes cambiar de espacio en cualquier momento desde el encabezado.", switch: "Cambiar espacio", ad: "Espacio reservado para anuncios institucionales", sponsored: "Publicidad", learn: "Más información" },
-  fr: { developer: "Developer Studio", academic: "Academic Workspace", billing: "Facturation", language: "Langue", choose: "Choisissez votre espace de travail", intro: "Vous pouvez changer d’espace à tout moment depuis l’en-tête.", switch: "Changer d’espace", ad: "Espace réservé aux annonces institutionnelles", sponsored: "Publicité", learn: "En savoir plus" },
+const labels: Record<Language, { developer: string; academic: string; billing: string; language: string; choose: string; intro: string }> = {
+  pt: { developer: "Developer Studio", academic: "Academic Workspace", billing: "Faturação", language: "Idioma", choose: "Selecione o seu ambiente de trabalho", intro: "Pode alternar entre ambientes a qualquer momento no cabeçalho.",  },
+  en: { developer: "Developer Studio", academic: "Academic Workspace", billing: "Billing", language: "Language", choose: "Choose your workspace", intro: "You can switch workspaces at any time from the header.",  },
+  es: { developer: "Developer Studio", academic: "Academic Workspace", billing: "Facturación", language: "Idioma", choose: "Selecciona tu espacio de trabajo", intro: "Puedes cambiar de espacio en cualquier momento desde el encabezado.",  },
+  fr: { developer: "Developer Studio", academic: "Academic Workspace", billing: "Facturation", language: "Langue", choose: "Choisissez votre espace de travail", intro: "Vous pouvez changer d’espace à tout moment depuis l’en-tête.",  },
 };
 
 export function WorkspaceHeader() {
@@ -62,12 +62,6 @@ export function WorkspaceHeader() {
         </div>
       </header>
 
-      <div className="border-b border-zinc-200 bg-zinc-50 px-4 py-2 sm:px-6">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-3 text-[11px] text-zinc-500">
-          <span><span className="mr-2 font-semibold uppercase tracking-[0.12em] text-zinc-700">{t.sponsored}</span>{t.ad}</span>
-          <span className="hidden shrink-0 sm:inline">{t.learn} ↗</span>
-        </div>
-      </div>
 
       {showWelcome && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4" role="presentation">
