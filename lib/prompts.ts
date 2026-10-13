@@ -17,11 +17,11 @@ Return valid JSON only, without Markdown fences or surrounding prose:
   "prd": "Markdown covering problem, audience, goals, non-goals, functional and non-functional requirements, workflows, business rules and success criteria",
   "architecture": "Markdown covering stack and rationale, components, trust boundaries, authentication and authorization, data model, integrations, observability, costs and assumptions",
   "roadmap": [{"title":"phase","goal":"verifiable outcome","tasks":["concrete task"],"acceptanceCriteria":["testable criterion"]}],
-  "masterPrompt": "complete Markdown prompt for a coding agent"
+  "masterPrompt": "complete Markdown prompt for a coding agent",\n  "mermaid": "valid Mermaid flowchart code representing roadmap phases"
 }
 
 ROADMAP RULES
-- Provide 4–6 sequential phases: foundation/auth; schema/RLS/data; core features; integrations; UX/accessibility; tests/deployment/observability as appropriate.
+- Provide 4–6 sequential phases: foundation/auth; schema/RLS/data; core features; integrations; UX/accessibility; tests/deployment/observability as appropriate.\n- Include a valid Mermaid flowchart using flowchart TD and simple phase node IDs; no Markdown fences in the mermaid field.\n- Incorporate the requested visual style and device support into the architecture and Master Prompt, without claiming implementation is complete.
 - Start every task with a verb and describe a concrete result. Acceptance criteria must be objective and testable.
 - Mention dependencies, migrations, environment variables and validation.
 - Do not claim features are already complete; describe future work.
