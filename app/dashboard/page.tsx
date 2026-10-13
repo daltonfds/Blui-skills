@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Clipboard, LoaderCircle, Sparkles, Plus, ArrowRight, Layers3, Smartphone } from "lucide-react";\nimport { RoadmapDiagram } from "@/components/roadmap-diagram";
+import { Check, Clipboard, LoaderCircle, Sparkles, Plus, ArrowRight, Layers3, Smartphone } from "lucide-react";
+import { RoadmapDiagram } from "@/components/roadmap-diagram";
 
 type RoadmapPhase = { title: string; goal: string; tasks: string[]; acceptanceCriteria: string[] };
 type RoadmapResult = { projectName: string; prd: string; architecture: string; roadmap: RoadmapPhase[]; masterPrompt: string; mermaid?: string };
