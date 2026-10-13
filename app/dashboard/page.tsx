@@ -2,38 +2,33 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, ChevronDown, Clipboard, LoaderCircle, Sparkles } from "lucide-react";
+import { Check, Clipboard, LoaderCircle, Sparkles, Plus, ArrowRight, Layers3, Smartphone } from "lucide-react";
 
-type RoadmapPhase = {
-  title: string;
-  goal: string;
-  tasks: string[];
-  acceptanceCriteria: string[];
-};
-
-type RoadmapResult = {
-  projectName: string;
-  prd: string;
-  architecture: string;
-  roadmap: RoadmapPhase[];
-  masterPrompt: string;
-};
-
+type RoadmapPhase = { title: string; goal: string; tasks: string[]; acceptanceCriteria: string[] };
+type RoadmapResult = { projectName: string; prd: string; architecture: string; roadmap: RoadmapPhase[]; masterPrompt: string };
 type ResultTab = "architecture" | "roadmap" | "prompt";
+type MobileStep = "input" | "result";
 
 const stacks = [
-  "Next.js + Supabase",
-  "React + Firebase",
-  "Node.js + PostgreSQL",
-  "Custom",
+  { value: "Next.js + Supabase", icon: "⚡", label: "Next.js + Supabase" },
+  { value: "React + Firebase", icon: "🔥", label: "React + Firebase" },
+  { value: "Node.js + PostgreSQL", icon: "🛠️", label: "Node.js + PostgreSQL" },
+  { value: "Custom", icon: "⚙️", label: "Custom stack" },
+];
+const ideaChips = [
+  { label: "SaaS B2B", text: "A B2B SaaS for teams to manage customers, workflows, roles and subscription billing." },
+  { label: "Marketplace", text: "A marketplace connecting buyers and sellers, with product listings, checkout, order tracking and seller dashboards." },
+  { label: "App Mobile", text: "A mobile-first app with secure authentication, user profiles, push notifications and a clean responsive experience." },
+  { label: "Micro-SaaS", text: "A focused micro-SaaS that solves one specific problem with a simple onboarding flow, a core feature and paid plans." },
 ];
 
 export default function DashboardPage() {
   const router = useRouter();
   const [idea, setIdea] = useState("");
-  const [stack, setStack] = useState(stacks[0]);
+  const [stack, setStack] = useState(stacks[0].value);
   const [result, setResult] = useState<RoadmapResult | null>(null);
   const [activeTab, setActiveTab] = useState<ResultTab>("architecture");
+  const [mobileStep, setMobileStep] = useState<MobileStep>("input");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
@@ -42,9 +37,7 @@ export default function DashboardPage() {
     event.preventDefault();
     setBusy(true);
     setError("");
-    setResult(null);
     setCopied(false);
-
     try {
       const response = await fetch("/api/generate-roadmap", {
         method: "POST",
@@ -52,13 +45,10 @@ export default function DashboardPage() {
         body: JSON.stringify({ idea, stack }),
       });
       const body = await response.json();
-
-      if (!response.ok) {
-        throw new Error(body.error || "Could not generate the roadmap.");
-      }
-
+      if (!response.ok) throw new Error(body.error || "Could not generate the plan.");
       setResult(body.result as RoadmapResult);
       setActiveTab("architecture");
+      setMobileStep("result");
       router.refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Something went wrong. Please try again.");
@@ -78,179 +68,187 @@ export default function DashboardPage() {
     }
   }
 
+  function chooseChip(text: string) {
+    setIdea((current) => current.trim() ? current.trimEnd() + "\n\n" + text : text);
+  }
+
   const tabButton = (tab: ResultTab, label: string) => (
-    <button
-      key={tab}
-      type="button"
-      onClick={() => { setActiveTab(tab); setCopied(false); }}
-      className={`border-b-2 px-3 py-3 text-sm font-medium transition ${activeTab === tab
-        ? "border-blue-600 text-zinc-950"
-        : "border-transparent text-zinc-500 hover:text-zinc-900"}`}
-      role="tab"
-      aria-selected={activeTab === tab}
-    >
-      {label}
-    </button>
+    <button key={tab} type="button" onClick={() => { setActiveTab(tab); setCopied(false); }}
+      className={"whitespace-nowrap border-b-2 px-3 py-3 text-sm font-medium transition " + (activeTab === tab ? "border-blue-600 text-zinc-950" : "border-transparent text-zinc-500 hover:text-zinc-900")}
+      role="tab" aria-selected={activeTab === tab}>{label}</button>
   );
 
   return (
-    <div className="mx-auto w-full max-w-5xl">
-      <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-zinc-500">
-        <span className="h-1.5 w-1.5 rounded-full bg-blue-600" />
-        Blui Architect
-      </div>
-      <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
-        Create roadmap
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-600 sm:text-base">
-        Turn your app idea into a clear technical plan, a phased roadmap, and a master prompt for your coding AI.
-      </p>
-
-      <form onSubmit={generate} className="mt-8 rounded-xl border border-zinc-200 bg-white p-5 sm:p-7">
-        <label htmlFor="app-idea" className="block text-sm font-semibold text-zinc-900">
-          What is your app idea?
-        </label>
-        <p className="mt-1 text-xs leading-5 text-zinc-500">
-          Explain the problem, who the app is for, and the main features you want to build.
-        </p>
-        <textarea
-          id="app-idea"
-          required
-          minLength={20}
-          maxLength={12000}
-          value={idea}
-          onChange={(event) => setIdea(event.target.value)}
-          rows={7}
-          placeholder="Describe the problem, users and core features…"
-          className="mt-4 w-full resize-y rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm leading-6 text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-600/10"
-        />
-        <div className="mt-5 grid gap-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-          <label htmlFor="tech-stack" className="block text-sm font-semibold text-zinc-900">
-            Target technology stack
-            <span className="relative mt-2 block">
-              <select
-                id="tech-stack"
-                value={stack}
-                onChange={(event) => setStack(event.target.value)}
-                className="w-full appearance-none rounded-lg border border-zinc-200 bg-white px-4 py-3 pr-10 text-sm font-normal text-zinc-900 outline-none focus:border-blue-600"
-              >
-                {stacks.map((option) => <option key={option} value={option}>{option}</option>)}
-              </select>
-              <ChevronDown size={16} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500" />
-            </span>
-          </label>
-          <button
-            type="submit"
-            disabled={busy || idea.trim().length < 20}
-            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {busy
-              ? <><LoaderCircle size={16} className="mr-2 animate-spin" />Generating…</>
-              : <><Sparkles size={16} className="mr-2" />Generate architecture & roadmap <span className="ml-2 rounded bg-white/15 px-1.5 py-0.5 text-xs">1 credit</span></>}
-          </button>
-        </div>
-        {error && (
-          <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700">
-            {error}
+    <div className="mx-auto w-full max-w-[1600px]">
+      <header className="mb-6 flex flex-wrap items-end justify-between gap-3 sm:mb-7">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-600" /> Blui Architect
+          </div>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">Architect &amp; Master Prompt Generator</h1>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-600">
+            Define your idea. AI structures the product requirements, database architecture, delivery roadmap and prompt for your coding assistant.
           </p>
-        )}
-        <p className="mt-4 text-xs text-zinc-500">
-          Your roadmap is saved to My Projects when generation succeeds.
-        </p>
-      </form>
-
-      {busy && (
-        <div className="mt-8 flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-5 text-sm text-zinc-600" role="status">
-          <LoaderCircle size={18} className="animate-spin text-blue-600" />
-          Analysing your idea and structuring the implementation plan…
         </div>
-      )}
+        <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-600">
+          <span className="text-amber-500">⚡</span><span>Credits are used only when a plan is saved</span>
+        </div>
+      </header>
 
-      {result && (
-        <section className="mt-9" aria-label="Generated roadmap">
-          <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(320px,0.82fr)_minmax(0,1.18fr)] xl:gap-6">
+        <section className={(mobileStep === "result" && result ? "hidden lg:block " : "") + "min-w-0 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-6"}>
+          <div className="mb-5 flex items-start justify-between gap-3">
             <div>
-              <p className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Your project plan</p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950">{result.projectName || "Your roadmap"}</h2>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-700">01 / Specification</p>
+              <h2 className="mt-2 text-lg font-semibold text-zinc-950">Describe your product</h2>
+              <p className="mt-1 text-sm leading-6 text-zinc-500">Start with the problem, the users and the features that matter most.</p>
             </div>
-            <span className="rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-500">Saved to My Projects</span>
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-blue-50 text-blue-700"><Layers3 size={18} /></span>
           </div>
 
-          <div className="mt-5 border-b border-zinc-200">
-            <div className="-mb-px flex flex-wrap gap-1" role="tablist" aria-label="Roadmap result sections">
-              {tabButton("architecture", "PRD & Architecture")}
-              {tabButton("roadmap", "Step-by-step roadmap")}
-              {tabButton("prompt", "Master Prompt")}
-            </div>
-          </div>
-
-          {activeTab === "architecture" && (
-            <div className="mt-4 grid gap-4 lg:grid-cols-2">
-              <article className="min-w-0 rounded-xl border border-zinc-200 bg-white p-5 sm:p-6">
-                <h3 className="font-semibold text-zinc-950">Product requirements (PRD)</h3>
-                <pre className="mt-4 whitespace-pre-wrap break-words font-sans text-sm leading-7 text-zinc-700">{result.prd}</pre>
-                <button type="button" onClick={() => void copyText(result.prd)} className="mt-5 inline-flex items-center gap-2 text-xs font-medium text-zinc-600 hover:text-black">
-                  {copied ? <Check size={14} /> : <Clipboard size={14} />} Copy PRD
+          <form onSubmit={generate}>
+            <label htmlFor="app-idea" className="block text-sm font-medium text-zinc-900">Product description</label>
+            <textarea id="app-idea" required minLength={20} maxLength={12000} value={idea}
+              onChange={(event) => setIdea(event.target.value)} rows={7}
+              placeholder="Ex: A SaaS for barbershops with real-time booking, Stripe payments and WhatsApp notifications..."
+              className="mt-2 w-full resize-y rounded-lg border border-zinc-200 bg-zinc-50 px-3.5 py-3 text-sm leading-6 text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/10 sm:min-h-44" />
+            <div className="mt-3 flex flex-wrap gap-2">
+              {ideaChips.map((chip) => (
+                <button key={chip.label} type="button" onClick={() => chooseChip(chip.text)}
+                  className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-600 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800">
+                  <Plus size={12} /> {chip.label}
                 </button>
-              </article>
-              <article className="min-w-0 rounded-xl border border-zinc-200 bg-white p-5 sm:p-6">
-                <h3 className="font-semibold text-zinc-950">Technical architecture</h3>
-                <pre className="mt-4 whitespace-pre-wrap break-words font-sans text-sm leading-7 text-zinc-700">{result.architecture}</pre>
-                <button type="button" onClick={() => void copyText(result.architecture)} className="mt-5 inline-flex items-center gap-2 text-xs font-medium text-zinc-600 hover:text-black">
-                  {copied ? <Check size={14} /> : <Clipboard size={14} />} Copy architecture
-                </button>
-              </article>
-            </div>
-          )}
-
-          {activeTab === "roadmap" && (
-            <div className="mt-4 space-y-3">
-              {(result.roadmap || []).map((phase, index) => (
-                <details key={`${index}-${phase.title}`} open={index === 0} className="group rounded-xl border border-zinc-200 bg-white">
-                  <summary className="flex cursor-pointer list-none items-center gap-4 p-5 [&::-webkit-details-marker]:hidden">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-xs font-semibold text-zinc-700">{String(index + 1).padStart(2, "0")}</span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block font-semibold text-zinc-950">{phase.title}</span>
-                      <span className="mt-1 block text-sm leading-6 text-zinc-500">{phase.goal}</span>
-                    </span>
-                    <ChevronDown size={16} className="shrink-0 text-zinc-500 transition group-open:rotate-180" />
-                  </summary>
-                  <div className="border-t border-zinc-100 px-5 pb-5 pt-4 sm:ml-12">
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Tasks</h4>
-                    <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-zinc-700">
-                      {phase.tasks.map((task, taskIndex) => <li key={taskIndex}>{task}</li>)}
-                    </ul>
-                    <h4 className="mt-5 text-xs font-semibold uppercase tracking-wider text-zinc-500">Acceptance criteria</h4>
-                    <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-zinc-700">
-                      {phase.acceptanceCriteria.map((criterion, criterionIndex) => <li key={criterionIndex}>{criterion}</li>)}
-                    </ul>
-                  </div>
-                </details>
               ))}
             </div>
-          )}
 
-          {activeTab === "prompt" && (
-            <div className="mt-4 overflow-hidden rounded-xl border border-zinc-200 bg-white">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 px-4 py-3 sm:px-5">
-                <div>
-                  <h3 className="text-sm font-semibold text-zinc-950">Master Prompt</h3>
-                  <p className="mt-1 text-xs text-zinc-500">Ready to paste into Cursor, Windsurf, Lovable, v0 or Claude Code.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => void copyText(result.masterPrompt)}
-                  className="inline-flex items-center gap-2 rounded-lg bg-black px-3.5 py-2.5 text-xs font-semibold text-white hover:bg-zinc-800"
-                >
-                  {copied ? <Check size={14} /> : <Clipboard size={14} />}
-                  {copied ? "Copied!" : "Copy Master Prompt"}
-                </button>
+            <fieldset className="mt-6">
+              <legend className="text-sm font-medium text-zinc-900">Development stack</legend>
+              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {stacks.map((option) => (
+                  <button key={option.value} type="button" onClick={() => setStack(option.value)}
+                    aria-pressed={stack === option.value}
+                    className={"flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm transition " + (stack === option.value ? "border-blue-600 bg-blue-50/70 text-blue-900 ring-1 ring-blue-600/10" : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50")}>
+                    <span aria-hidden="true">{option.icon}</span><span>{option.label}</span>
+                    {stack === option.value && <Check size={15} className="ml-auto shrink-0 text-blue-700" />}
+                  </button>
+                ))}
               </div>
-              <pre className="max-h-[680px] overflow-auto whitespace-pre-wrap break-words bg-zinc-50 p-5 font-mono text-xs leading-6 text-zinc-800 sm:p-6">{result.masterPrompt}</pre>
+            </fieldset>
+
+            {error && <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3.5 py-3 text-sm leading-6 text-red-700">{error}</p>}
+
+            <button type="submit" disabled={busy || idea.trim().length < 20}
+              className="mt-6 flex min-h-12 w-full items-center justify-center rounded-lg bg-[#2563EB] px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50">
+              {busy ? <><LoaderCircle size={17} className="mr-2 animate-spin" />Generating your plan…</> : <><Sparkles size={17} className="mr-2" />Generate Architecture &amp; Master Prompt <span className="ml-2 rounded bg-white/20 px-1.5 py-0.5 text-xs">1 credit</span></>}
+            </button>
+            <p className="mt-3 text-center text-xs leading-5 text-zinc-500">Your plan is saved to My Projects when generation succeeds.</p>
+          </form>
+        </section>
+
+        <section className={(mobileStep === "input" && !result ? "hidden lg:block " : "") + "min-w-0 rounded-xl border border-zinc-200 bg-white shadow-sm"}>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 px-4 py-4 sm:px-5">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">02 / Live output</p>
+              <h2 className="mt-1 truncate text-lg font-semibold text-zinc-950">{result?.projectName || "Your project plan"}</h2>
+            </div>
+            {result ? <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"><Check size={13} /> Saved</span> : <span className="rounded-full border border-zinc-200 px-2.5 py-1 text-xs text-zinc-500">Preview</span>}
+          </div>
+
+          {!result && !busy && (
+            <div className="flex min-h-[400px] flex-col items-center justify-center px-6 py-12 text-center sm:min-h-[540px]">
+              <div className="grid h-12 w-12 place-items-center rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-500"><Layers3 size={22} /></div>
+              <h3 className="mt-4 text-base font-semibold text-zinc-900">Your plan will appear here</h3>
+              <p className="mt-2 max-w-sm text-sm leading-6 text-zinc-500">Describe your product, select a stack and generate a structured PRD, architecture, roadmap and ready-to-use coding prompt.</p>
+              <div className="mt-6 grid w-full max-w-md gap-2 text-left sm:grid-cols-2">
+                {["Product requirements", "Technical architecture", "Implementation roadmap", "Master prompt"].map((item, index) => (
+                  <div key={item} className="flex items-center gap-2 rounded-lg border border-zinc-100 bg-zinc-50/70 px-3 py-2.5 text-xs text-zinc-600">
+                    <span className="text-zinc-400">0{index + 1}</span>{item}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
+
+          {busy && (
+            <div className="flex min-h-[400px] flex-col items-center justify-center px-6 py-12 text-center" role="status">
+              <LoaderCircle size={26} className="animate-spin text-blue-600" />
+              <h3 className="mt-4 font-semibold text-zinc-900">Structuring your product plan</h3>
+              <p className="mt-2 max-w-sm text-sm leading-6 text-zinc-500">Analysing requirements, architecture and delivery phases. Keep this workspace open.</p>
+            </div>
+          )}
+
+          {result && (
+            <>
+              <div className="border-b border-zinc-200 px-2 sm:px-4">
+                <div className="flex gap-1 overflow-x-auto" role="tablist" aria-label="Generated plan sections">
+                  {tabButton("architecture", "PRD / Architecture")}
+                  {tabButton("roadmap", "Roadmap")}
+                  {tabButton("prompt", "Master Prompt")}
+                </div>
+              </div>
+
+              {activeTab === "architecture" && (
+                <div className="grid gap-4 p-4 sm:p-5">
+                  <article className="min-w-0 rounded-lg border border-zinc-200 p-4 sm:p-5">
+                    <div className="flex items-center justify-between gap-2"><h3 className="font-semibold text-zinc-950">Product requirements (PRD)</h3><button type="button" onClick={() => void copyText(result.prd)} className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-2.5 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50"><Clipboard size={13} /> Copy</button></div>
+                    <pre className="mt-4 whitespace-pre-wrap break-words font-sans text-sm leading-6 text-zinc-700">{result.prd}</pre>
+                  </article>
+                  <article className="min-w-0 rounded-lg border border-zinc-200 p-4 sm:p-5">
+                    <div className="flex items-center justify-between gap-2"><h3 className="font-semibold text-zinc-950">Technical architecture</h3><button type="button" onClick={() => void copyText(result.architecture)} className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-2.5 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50"><Clipboard size={13} /> Copy</button></div>
+                    <pre className="mt-4 whitespace-pre-wrap break-words font-sans text-sm leading-6 text-zinc-700">{result.architecture}</pre>
+                  </article>
+                </div>
+              )}
+
+              {activeTab === "roadmap" && (
+                <div className="space-y-3 p-4 sm:p-5">
+                  {(result.roadmap || []).map((phase, index) => (
+                    <details key={String(index) + phase.title} open={index === 0} className="group rounded-lg border border-zinc-200">
+                      <summary className="flex cursor-pointer list-none items-center gap-3 p-4 [&::-webkit-details-marker]:hidden">
+                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-zinc-100 text-xs font-semibold text-zinc-700">{String(index + 1).padStart(2, "0")}</span>
+                        <span className="min-w-0 flex-1"><span className="block font-semibold text-zinc-950">{phase.title}</span><span className="mt-1 block text-sm leading-6 text-zinc-500">{phase.goal}</span></span>
+                        <ArrowRight size={15} className="shrink-0 text-zinc-400 transition group-open:rotate-90" />
+                      </summary>
+                      <div className="border-t border-zinc-100 px-4 pb-5 pt-4 sm:pl-[4.25rem]">
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Tasks</h4>
+                        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-zinc-700">{(phase.tasks || []).map((task, taskIndex) => <li key={taskIndex}>{task}</li>)}</ul>
+                        <h4 className="mt-5 text-xs font-semibold uppercase tracking-wider text-zinc-500">Acceptance criteria</h4>
+                        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-zinc-700">{(phase.acceptanceCriteria || []).map((criterion, criterionIndex) => <li key={criterionIndex}>{criterion}</li>)}</ul>
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              )}
+
+              {activeTab === "prompt" && (
+                <div className="p-3 sm:p-5">
+                  <div className="overflow-hidden rounded-xl border border-zinc-800 bg-[#09090B] text-zinc-100">
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 px-4 py-3 sm:px-5">
+                      <div><p className="text-sm font-semibold">Master Prompt</p><p className="mt-1 text-xs text-zinc-400">Cursor · Windsurf · Claude Code</p></div>
+                      <button type="button" onClick={() => void copyText(result.masterPrompt)}
+                        className="inline-flex items-center gap-2 rounded-lg bg-[#2563EB] px-3.5 py-2.5 text-xs font-semibold text-white transition hover:bg-blue-500">
+                        {copied ? <Check size={14} /> : <Clipboard size={14} />}{copied ? "Copied to clipboard!" : "Copy Master Prompt"}
+                      </button>
+                    </div>
+                    <pre className="max-h-[680px] overflow-auto whitespace-pre-wrap break-words p-4 font-mono text-xs leading-6 text-zinc-200 sm:p-5">{result.masterPrompt}</pre>
+                  </div>
+                  <p className="mt-3 text-xs leading-5 text-zinc-500">Copy the prompt and paste it into your coding assistant to begin implementation.</p>
+                </div>
+              )}
+            </>
+          )}
         </section>
-      )}
+      </div>
+
+      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-2 border-t border-zinc-200 bg-white/95 p-2 backdrop-blur lg:hidden" aria-label="Workspace steps">
+        <button type="button" onClick={() => setMobileStep("input")} className={"flex min-h-11 items-center justify-center gap-2 rounded-lg text-sm font-medium " + (mobileStep === "input" ? "bg-zinc-100 text-zinc-950" : "text-zinc-500")}>
+          <Layers3 size={16} /> Input
+        </button>
+        <button type="button" onClick={() => setMobileStep("result")} disabled={!result && !busy} className={"flex min-h-11 items-center justify-center gap-2 rounded-lg text-sm font-medium " + (mobileStep === "result" ? "bg-blue-50 text-blue-700" : "text-zinc-500") + " disabled:opacity-40"}>
+          <Smartphone size={16} /> Result {result ? <Check size={14} /> : null}
+        </button>
+      </nav>
+      <div className="h-16 lg:hidden" />
     </div>
   );
 }
