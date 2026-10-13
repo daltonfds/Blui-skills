@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, ExternalLink, FileSearch, LoaderCircle, Search } from "lucide-react";
 
@@ -17,6 +17,7 @@ export default function AcademicResearchPage() {
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState("");
   const [notice,setNotice]=useState("");
+  useEffect(()=>{try{const saved=window.localStorage.getItem("bluiskill-academic-research");if(saved){const item=JSON.parse(saved) as {topic?:string;content?:string;sources?:Array<{title:string;url:string}>;researchedAt?:string};if(item.topic)setTopic(item.topic);if(item.content&&item.sources?.length)setResult({title:item.topic||"Pesquisa guardada",content:item.content,sources:item.sources,researchedAt:item.researchedAt});}}catch{}},[]);
   async function research(event:React.FormEvent<HTMLFormElement>){
     event.preventDefault();setBusy(true);setError("");setNotice("");setResult(null);
     try{
