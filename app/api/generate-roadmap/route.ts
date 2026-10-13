@@ -1,4 +1,104 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";import { askGemini } from "@/lib/ai";import { ROADMAP_SYSTEM } from "@/lib/prompts";import { roadmapInput } from "@/lib/validation";import { consumeCredit } from "@/lib/credits";
-export const runtime="nodejs";
-export async function POST(request:Request){try{const supabase=await createClient();const {data:{user}}=await supabase.auth.getUser();if(!user)return NextResponse.json({error:"Sign in to continue."},{status:401});const parsed=roadmapInput.safeParse(await request.json());if(!parsed.success)return NextResponse.json({error:parsed.error.issues[0]?.message||"Invalid input."},{status:400});await consumeCredit(user.id);const result=await askGemini<Record<string,unknown>>(ROADMAP_SYSTEM,JSON.stringify(parsed.data));const {error}=await supabase.from("projects").insert({user_id:user.id,title:String(result.projectName||"New project").slice(0,120),description:parsed.data.idea,tech_stack:{value:parsed.data.stack},roadmap:result,master_prompt:String(result.masterPrompt||"")});if(error)console.error("Roadmap persistence failed",error.message);return NextResponse.json({result});}catch(e){const message=e instanceof Error?e.message:"Unexpected error.";const status=/créditos/i.test(message)?402:/not configured|migration/i.test(message)?503:500;return NextResponse.json({error:message},{status});}}
+import { createClient } from "@/lib/supabase/server";
+import { askGemini } from "@/lib/ai";
+import { ROADMAP_SYSTEM } from "@/lib/prompts";
+import { roadmapInput } from "@/lib/validation";
+
+export const runtime = "nodejs";
+
+type RoadmapResult = {
+  projectName: string;
+  prd: string;
+  architecture: string;
+  roadmap: Array<{
+    title: string;
+    goal: string;
+    tasks: string[];
+    acceptanceCriteria: string[];
+  }>;
+  masterPrompt: string;
+};
+
+function isRoadmapResult(value: unknown): value is RoadmapResult {
+  if (!value || typeof value !== "object") return false;
+  const result = value as Record<string, unknown>;
+  return (
+    typeof result.projectName === "string" &&
+    typeof result.prd === "string" &&
+    typeof result.architecture === "string" &&
+    typeof result.masterPrompt === "string" &&
+    Array.isArray(result.roadmap) &&
+    result.roadmap.every((phase) => {
+      if (!phase || typeof phase !== "object") return false;
+      const item = phase as Record<string, unknown>;
+      return typeof item.title === "string" &&
+        typeof item.goal === "string" &&
+        Array.isArray(item.tasks) && item.tasks.every((task) => typeof task === "string") &&
+        Array.isArray(item.acceptanceCriteria) &&
+        item.acceptanceCriteria.every((criterion) => typeof criterion === "string");
+    })
+  );
+}
+
+export async function POST(request: Request) {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Sign in to continue." }, { status: 401 });
+    }
+
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Request body must be valid JSON." }, { status: 400 });
+    }
+
+    const parsed = roadmapInput.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.issues[0]?.message || "Invalid input." },
+        { status: 400 },
+      );
+    }
+
+    // Generate first: temporary AI/API failures must not consume a credit.
+    const generated = await askGemini<unknown>(
+      ROADMAP_SYSTEM,
+      JSON.stringify({ idea: parsed.data.idea, stack: parsed.data.stack }),
+    );
+
+    if (!isRoadmapResult(generated)) {
+      return NextResponse.json(
+        { error: "The AI returned an incomplete roadmap. Your credit was not used; please try again." },
+        { status: 502 },
+      );
+    }
+
+    // The RPC deducts one credit and saves the project in the same database transaction.
+    const { data: projectId, error: saveError } = await supabase.rpc("create_roadmap_project", {
+      p_title: generated.projectName.slice(0, 120) || "New project",
+      p_description: parsed.data.idea,
+      p_tech_stack: parsed.data.stack,
+      p_prd_architecture: { prd: generated.prd, architecture: generated.architecture },
+      p_roadmap_steps: generated.roadmap,
+      p_master_prompt: generated.masterPrompt,
+    });
+
+    if (saveError) {
+      console.error("Roadmap save failed", saveError.message);
+      if (/insufficient credits|no credits/i.test(saveError.message)) {
+        return NextResponse.json({ error: "You have no credits left. Please try again after adding credits." }, { status: 402 });
+      }
+      return NextResponse.json({ error: "The roadmap was generated but could not be saved. No credit was deducted; please try again." }, { status: 503 });
+    }
+
+    return NextResponse.json({ result: generated, projectId });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unexpected error.";
+    const status = /not configured|migration|supabase/i.test(message) ? 503 : 500;
+    return NextResponse.json({ error: message }, { status });
+  }
+}
