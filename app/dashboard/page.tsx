@@ -1,10 +1,11 @@
 "use client";
 
-import { FormEvent, KeyboardEvent, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import type { FormEvent, KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ArrowUp, Check, ChevronDown, Clipboard, Code2, FileText, Menu,
-  Plus, Sparkles, X, LoaderCircle, PanelLeftClose, PanelLeftOpen
+  ArrowUp, Check, ChevronDown, Clipboard, Code2, FileText,
+  Plus, Sparkles, LoaderCircle, PanelLeftClose, PanelLeftOpen
 } from "lucide-react";
 
 type RoadmapPhase = {
