@@ -83,28 +83,7 @@ export default function DevToolboxPage() {
   }, [selectedProject, projects]);
 
   const selectedDoc = docs.find((item) => item.id === selectedDocs);
-  const markdownFiles = useMemo<ExportFile[]>(() => {
-    const p = projects.find((item) => item.id === selectedProject);
-    const result: ExportFile[] = [];
-    if (p) {
-      const arch = p.prd_architecture && typeof p.prd_architecture === "object" ? p.prd_architecture as Record<string, unknown> : {};
-      result.push({ name: "01-PRD.md", content: String(arch.prd ?? "# Product requirements\n\nNot provided in the saved project.") });
-      result.push({ name: "02-ARCHITECTURE.md", content: String(arch.architecture ?? (typeof p.prd_architecture === "string" ? p.prd_architecture : "# Architecture\n\nNot provided in the saved project.")) });
-      result.push({ name: "03-ROADMAP.md", content: "# Implementation roadmap\n\n" + JSON.stringify(p.roadmap_steps ?? p.roadmap ?? [], null, 2) });
-      result.push({ name: "04-MASTER-PROMPT.md", content: p.master_prompt || "# Master Prompt\n\nNot provided in the saved project." });
-    }
-    if (selectedDoc?.documents) {
-      const d = selectedDoc.documents;
-      if (d.readme) result.push({ name: "docs/README.md", content: d.readme });
-      if (d.dataDictionary) result.push({ name: "docs/DATA-DICTIONARY.md", content: d.dataDictionary });
-      if (d.apiReference) result.push({ name: "docs/API-REFERENCE.md", content: d.apiReference });
-      if (d.contextPrompt) result.push({ name: "docs/BLUI-CONTEXT-PROMPT.md", content: d.contextPrompt });
-    }
-    if (contextPrompt.trim()) result.push({ name: "05-CONTEXT-REFRESH-PROMPT.md", content: contextPrompt });
-    if (envExample.trim()) result.push({ name: ".env.example", content: envExample });
-    if (schemaInput.trim() && schemaInput.trim() !== initialSchema.trim()) result.push({ name: "schema.sql", content: schemaInput });
-    return result;
-  }, [projects, selectedProject, selectedDoc, architecture, roadmap, progress, constraints, envInput, schemaInput]);
+
 
   const contextPrompt = useMemo(() => {
     const sections = [
@@ -128,6 +107,29 @@ export default function DevToolboxPage() {
     }
     return [...names].sort().map((name) => name + "=").join("\n") + (names.size ? "\n" : "");
   }, [envInput]);
+
+  const markdownFiles = useMemo<ExportFile[]>(() => {
+    const p = projects.find((item) => item.id === selectedProject);
+    const result: ExportFile[] = [];
+    if (p) {
+      const arch = p.prd_architecture && typeof p.prd_architecture === "object" ? p.prd_architecture as Record<string, unknown> : {};
+      result.push({ name: "01-PRD.md", content: String(arch.prd ?? "# Product requirements\n\nNot provided in the saved project.") });
+      result.push({ name: "02-ARCHITECTURE.md", content: String(arch.architecture ?? (typeof p.prd_architecture === "string" ? p.prd_architecture : "# Architecture\n\nNot provided in the saved project.")) });
+      result.push({ name: "03-ROADMAP.md", content: "# Implementation roadmap\n\n" + JSON.stringify(p.roadmap_steps ?? p.roadmap ?? [], null, 2) });
+      result.push({ name: "04-MASTER-PROMPT.md", content: p.master_prompt || "# Master Prompt\n\nNot provided in the saved project." });
+    }
+    if (selectedDoc?.documents) {
+      const d = selectedDoc.documents;
+      if (d.readme) result.push({ name: "docs/README.md", content: d.readme });
+      if (d.dataDictionary) result.push({ name: "docs/DATA-DICTIONARY.md", content: d.dataDictionary });
+      if (d.apiReference) result.push({ name: "docs/API-REFERENCE.md", content: d.apiReference });
+      if (d.contextPrompt) result.push({ name: "docs/BLUI-CONTEXT-PROMPT.md", content: d.contextPrompt });
+    }
+    if (contextPrompt.trim()) result.push({ name: "05-CONTEXT-REFRESH-PROMPT.md", content: contextPrompt });
+    if (envExample.trim()) result.push({ name: ".env.example", content: envExample });
+    if (schemaInput.trim() && schemaInput.trim() !== initialSchema.trim()) result.push({ name: "schema.sql", content: schemaInput });
+    return result;
+  }, [projects, selectedProject, selectedDoc, architecture, roadmap, progress, constraints, envInput, schemaInput]);
 
   const stackEstimates: Record<string, { title: string; base: number; variable: number; note: string }> = {
     "next-supabase": { title: "Next.js + Supabase + Gemini", base: 0, variable: 0.002, note: "Base assumes eligible free tiers and low usage; AI estimate is a placeholder per request, not a live provider quote." },
