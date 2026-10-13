@@ -26,7 +26,9 @@ export default function DashboardPage() {
   const router = useRouter();
   const [idea, setIdea] = useState("");
   const [stack, setStack] = useState(stacks[0].value);
-  const [customStack, setCustomStack] = useState("");\n  const [visualStyle, setVisualStyle] = useState("Inter + Clean light/dark");\n  const [deviceSupport, setDeviceSupport] = useState("Desktop + Mobile");
+  const [customStack, setCustomStack] = useState("");
+  const [visualStyle, setVisualStyle] = useState("Inter + Clean light/dark");
+  const [deviceSupport, setDeviceSupport] = useState("Desktop + Mobile");
   const [result, setResult] = useState<RoadmapResult | null>(null);
   const [activeTab, setActiveTab] = useState<ResultTab>("architecture");
   const [mobileStep, setMobileStep] = useState<MobileStep>("input");
