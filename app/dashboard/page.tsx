@@ -96,7 +96,7 @@ export default function DashboardPage() {
       </header>
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(320px,0.82fr)_minmax(0,1.18fr)] xl:gap-6">
-        <section className={(mobileStep === "result" && result ? "hidden lg:block " : "") + "min-w-0 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-6"}>
+        <section className={(mobileStep === "result" && result ? "hidden lg:block " : "") + "min-w-0 rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 sm:p-6"}>
           <div className="mb-5 flex items-start justify-between gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-700">01 / Specification</p>
@@ -111,7 +111,7 @@ export default function DashboardPage() {
             <textarea id="app-idea" required minLength={20} maxLength={12000} value={idea}
               onChange={(event) => setIdea(event.target.value)} rows={7}
               placeholder="Ex: A SaaS for barbershops with real-time booking, Stripe payments and WhatsApp notifications..."
-              className="mt-2 w-full resize-y rounded-lg border border-zinc-200 bg-zinc-50 px-3.5 py-3 text-sm leading-6 text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/10 sm:min-h-44" />
+              className="mt-2 w-full resize-y rounded-lg border border-zinc-200 bg-zinc-50 px-3.5 py-3 text-sm leading-6 text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-600/20 sm:min-h-44" />
             <div className="mt-3 flex flex-wrap gap-2">
               {ideaChips.map((chip) => (
                 <button key={chip.label} type="button" onClick={() => chooseChip(chip.text)}
@@ -138,14 +138,14 @@ export default function DashboardPage() {
             {error && <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3.5 py-3 text-sm leading-6 text-red-700">{error}</p>}
 
             <button type="submit" disabled={busy || idea.trim().length < 20}
-              className="mt-6 flex min-h-12 w-full items-center justify-center rounded-lg bg-[#2563EB] px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50">
+              className="mt-6 flex min-h-12 w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50">
               {busy ? <><LoaderCircle size={17} className="mr-2 animate-spin" />Generating your plan…</> : <><Sparkles size={17} className="mr-2" />Generate Architecture &amp; Master Prompt <span className="ml-2 rounded bg-white/20 px-1.5 py-0.5 text-xs">1 credit</span></>}
             </button>
             <p className="mt-3 text-center text-xs leading-5 text-zinc-500">Your plan is saved to My Projects when generation succeeds.</p>
           </form>
         </section>
 
-        <section className={(mobileStep === "input" ? "hidden lg:block " : "") + "min-w-0 rounded-xl border border-zinc-200 bg-white shadow-sm"}>
+        <section className={(mobileStep === "input" ? "hidden lg:block " : "") + "min-w-0 rounded-2xl border border-zinc-200/80 bg-white shadow-sm"}>
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 px-4 py-4 sm:px-5">
             <div className="min-w-0">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">02 / Live output</p>
