@@ -3,8 +3,12 @@
 :root { color-scheme: light; }
 * { box-sizing: border-box; }
 html, body { min-height: 100%; }
+html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: #fafafa; color: #09090b; font-family: var(--font-inter), sans-serif; }
 ::selection { background: #e4e4e7; color: #09090b; }
 button,a,input,textarea,select { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2px solid #18181b; outline-offset: 3px; }
-
+@media (max-width: 640px) {
+  input, textarea, select { font-size: 16px !important; }
+  button, a { touch-action: manipulation; }
+}
