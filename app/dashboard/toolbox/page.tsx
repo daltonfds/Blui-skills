@@ -155,16 +155,15 @@ export default function DevToolboxPage() {
 
   return <div className="mx-auto w-full max-w-6xl pb-8">
     <header className="mb-7">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">Blui</div>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-950">Dev Toolbox</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-zinc-950">Dev Toolbox</h1>
     </header>
-    <div className="mb-6 flex flex-wrap gap-2 border-b border-zinc-200 pb-3">
-      {([["context","Context refresh"],["export","Export kit"],["config","Config generator"],["cost","Stack calculator"]] as const).map(([id,label]) => <button key={id} onClick={() => setActiveTab(id)} className={"rounded-lg px-3 py-2 text-sm font-medium " + (activeTab===id ? "bg-zinc-950 text-white" : "border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50")}>{label}</button>)}
+    <div className="mb-6 flex flex-wrap gap-6 border-b border-zinc-200">
+      {([["context","Context refresh"],["export","Export"],["config","Configuration generator"],["cost","Stack calculator"]] as const).map(([id,label]) => <button key={id} onClick={() => setActiveTab(id)} className={"border-b-2 px-0 pb-3 text-sm font-medium transition " + (activeTab===id ? "border-zinc-950 text-zinc-950" : "border-transparent text-zinc-500 hover:text-zinc-900")}>{label}</button>)}
     </div>
     {notice && <p role="status" className="mb-4 rounded-lg border border-zinc-200 bg-zinc-100 px-3 py-2 text-sm text-zinc-800">{notice}</p>}
-    <section className="mb-5 rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm sm:p-5">
-      <h2 className="font-semibold text-zinc-950">Project sources</h2>
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
+    <section className="mb-7">
+      <h2 className="mb-3 text-sm font-semibold text-zinc-950">Project sources</h2>
+      <div className="grid gap-4 md:grid-cols-2">
         <label className="block text-sm font-medium text-zinc-700">Architect project
           <select value={selectedProject} onChange={(e)=>setSelectedProject(e.target.value)} className="mt-2 min-h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm"><option value="">Select a saved project…</option>{projects.map(p=><option key={p.id} value={p.id}>{p.title}</option>)}</select>
         </label>
@@ -172,7 +171,6 @@ export default function DevToolboxPage() {
           <select value={selectedDocs} onChange={(e)=>setSelectedDocs(e.target.value)} className="mt-2 min-h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm"><option value="">Select saved documentation…</option>{docs.map(d=><option key={d.id} value={d.id}>{d.project_name} · {new Date(d.created_at).toLocaleDateString()}</option>)}</select>
         </label>
       </div>
-      {projects.length===0 && docs.length===0 && <p className="mt-3 text-xs text-amber-700">No saved items loaded. You can still create a prompt manually. If you expected saved items, check your account and database migrations.</p>}
     </section>
 
     {activeTab==="context" && <section className="rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 sm:p-6">
@@ -192,12 +190,12 @@ export default function DevToolboxPage() {
       <p className="mt-1 text-sm text-zinc-500">Exports are generated in your browser, use no AI credits and create no database rows.</p>
       <div className="mt-5 flex flex-wrap gap-2"><button onClick={exportZip} className="inline-flex items-center gap-2 rounded-lg bg-zinc-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-zinc-800"><PackageOpen size={16}/>Download ZIP kit ({markdownFiles.length} files)</button></div>
       <div className="mt-4 divide-y divide-zinc-100 rounded-lg border border-zinc-200">{markdownFiles.map(file=><div key={file.name} className="flex flex-wrap items-center gap-3 p-3"><FileText size={16} className="text-zinc-400"/><span className="min-w-0 flex-1 break-all text-sm font-medium">{file.name}</span><button onClick={()=>downloadText(file.name.split("/").pop()||file.name,file.content)} className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-3 py-2 text-xs font-semibold"><Download size={14}/> .md / file</button></div>)}</div>
-      {!markdownFiles.length && <p className="mt-4 text-sm text-zinc-500">Select a saved Architect project or Docs Generator result above to populate the export kit.</p>}
+      {!markdownFiles.length && <p className="mt-4 text-sm text-zinc-500">Select a project above to export its files.</p>}
     </section>}
 
     {activeTab==="config" && <section className="rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 sm:p-6">
       <div className="flex items-center gap-2"><FileCode2 size={18} className="text-zinc-700"/><h2 className="text-lg font-semibold">Configuration generator</h2></div>
-      <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900"><ShieldAlert size={16} className="mt-0.5 shrink-0"/>Only variable names and schema you provide are used. This tool does not infer database tables or validate SQL against a live database. Never paste secret values.</div>
+      <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900"><ShieldAlert size={16} className="mt-0.5 shrink-0"/>Use confirmed variable names and schema only. Never paste passwords, API keys or tokens.</div>
       <label className="mt-5 block text-sm font-medium">Confirmed environment variable names<textarea value={envInput} onChange={e=>setEnvInput(e.target.value)} rows={5} className="mt-2 w-full rounded-lg border border-zinc-200 p-3 font-mono text-xs leading-5" placeholder="NEXT_PUBLIC_SUPABASE_URL=\nGEMINI_API_KEY="/></label>
       <div className="mt-2 flex flex-wrap gap-2"><button onClick={()=>void copy(envExample,".env.example")} className="inline-flex items-center gap-2 rounded-lg bg-zinc-950 px-3 py-2 text-sm font-semibold text-white"><Clipboard size={15}/>Copy .env.example</button><button onClick={()=>downloadText(".env.example",envExample,"text/plain;charset=utf-8")} className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm font-semibold"><Download size={15}/>Download .env.example</button></div>
       <pre className="mt-3 whitespace-pre-wrap rounded-xl border border-zinc-800 bg-[#09090B] p-3 font-mono text-xs leading-5 text-zinc-100">{envExample || "# Add confirmed variable names above"}</pre>
