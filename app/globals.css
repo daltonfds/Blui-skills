@@ -7,3 +7,12 @@ body { margin: 0; background: #fafafa; color: #09090b; font-family: var(--font-i
 ::selection { background: #e4e4e7; color: #09090b; }
 button,a,input,textarea,select { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2px solid #18181b; outline-offset: 3px; }
+
+/* BluiSkill identity: pure black and white only. */
+body { background: #fff; color: #000; }
+[class*="text-zinc-"], [class*="text-neutral-"], [class*="text-slate-"] { color: #000 !important; }
+[class*="bg-zinc-"], [class*="bg-neutral-"], [class*="bg-slate-"] { background-color: #fff !important; }
+[class*="border-zinc-"], [class*="border-neutral-"], [class*="border-slate-"] { border-color: #000 !important; }
+[class*="ring-zinc-"], [class*="ring-neutral-"], [class*="ring-slate-"] { --tw-ring-color: #000 !important; }
+[class*="shadow-zinc-"], [class*="shadow-neutral-"], [class*="shadow-slate-"] { --tw-shadow-color: transparent !important; }
+.shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl { --tw-shadow: 0 0 #0000 !important; box-shadow: none !important; }
