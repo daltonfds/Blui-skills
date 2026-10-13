@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 const links = [
   { href: "/dashboard", label: "Architect & Prompt", icon: Plus },
   { href: "/dashboard/docs", label: "Docs Generator", icon: FileText },
+  { href: "/dashboard/docs/legal", label: "Legal & Compliance Kit", icon: ShieldCheck },
   { href: "/dashboard/academic", label: "Academic", icon: BookOpen },
   { href: "/dashboard/toolbox", label: "Dev Toolbox", icon: Wrench },
   { href: "/dashboard/projects", label: "My Projects", icon: FolderKanban },
