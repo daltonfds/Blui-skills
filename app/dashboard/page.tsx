@@ -145,7 +145,7 @@ export default function DashboardPage() {
           </form>
         </section>
 
-        <section className={(mobileStep === "input" && !result ? "hidden lg:block " : "") + "min-w-0 rounded-xl border border-zinc-200 bg-white shadow-sm"}>
+        <section className={(mobileStep === "input" ? "hidden lg:block " : "") + "min-w-0 rounded-xl border border-zinc-200 bg-white shadow-sm"}>
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 px-4 py-4 sm:px-5">
             <div className="min-w-0">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">02 / Live output</p>
