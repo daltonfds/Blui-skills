@@ -8,10 +8,10 @@ type Language = "pt" | "en" | "es" | "fr";
 type Workspace = "developer" | "academic";
 
 const labels: Record<Language, { developer: string; academic: string; billing: string; language: string; choose: string; intro: string }> = {
-  pt: { developer: "Developer Studio", academic: "Academic Workspace", billing: "Faturação", language: "Idioma", choose: "Selecione o seu ambiente de trabalho", intro: "Pode alternar entre ambientes a qualquer momento no cabeçalho.",  },
-  en: { developer: "Developer Studio", academic: "Academic Workspace", billing: "Billing", language: "Language", choose: "Choose your workspace", intro: "You can switch workspaces at any time from the header.",  },
-  es: { developer: "Developer Studio", academic: "Academic Workspace", billing: "Facturación", language: "Idioma", choose: "Selecciona tu espacio de trabajo", intro: "Puedes cambiar de espacio en cualquier momento desde el encabezado.",  },
-  fr: { developer: "Developer Studio", academic: "Academic Workspace", billing: "Facturation", language: "Langue", choose: "Choisissez votre espace de travail", intro: "Vous pouvez changer d’espace à tout moment depuis l’en-tête.",  },
+  pt: { developer: "Developer Studio", academic: "Academic", billing: "Faturação", language: "Idioma", choose: "Selecione o seu ambiente de trabalho", intro: "Pode alternar entre ambientes a qualquer momento no cabeçalho.",  },
+  en: { developer: "Developer Studio", academic: "Academic", billing: "Billing", language: "Language", choose: "Choose your workspace", intro: "You can switch workspaces at any time from the header.",  },
+  es: { developer: "Developer Studio", academic: "Academic", billing: "Facturación", language: "Idioma", choose: "Selecciona tu espacio de trabajo", intro: "Puedes cambiar de espacio en cualquier momento desde el encabezado.",  },
+  fr: { developer: "Developer Studio", academic: "Academic", billing: "Facturation", language: "Langue", choose: "Choisissez votre espace de travail", intro: "Vous pouvez changer d’espace à tout moment depuis l’en-tête.",  },
 };
 
 export function WorkspaceHeader() {
@@ -23,11 +23,11 @@ export function WorkspaceHeader() {
   useEffect(() => {
     const savedLanguage = window.localStorage.getItem("bluiskill-language") as Language | null;
     if (savedLanguage && savedLanguage in labels) setLanguage(savedLanguage);
-    if (!window.localStorage.getItem("bluiskill-workspace-selected")) setShowWelcome(true);
+    if (!window.localStorage.getItem("bluiskill-workspace-selected-v2")) setShowWelcome(true);
   }, []);
 
   function chooseWorkspace(workspace: Workspace) {
-    window.localStorage.setItem("bluiskill-workspace-selected", workspace);
+    window.localStorage.setItem("bluiskill-workspace-selected-v2", workspace);
     setShowWelcome(false);
     window.location.href = workspace === "academic" ? "/dashboard/academic" : "/dashboard";
   }
@@ -45,7 +45,7 @@ export function WorkspaceHeader() {
     <>
       <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white">
         <div className="mx-auto flex min-h-16 max-w-[1600px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <Link href="/dashboard" className="shrink-0 text-sm font-bold tracking-[0.14em] text-black">BLUISKILL</Link>
+          <Link href="/dashboard" className="shrink-0 text-sm font-bold tracking-[0.14em] text-black">BluiSkill</Link>
           <nav aria-label="Workspace" className="flex flex-wrap items-center gap-1">
             <Link href="/dashboard" aria-current={active === "developer" ? "page" : undefined} className={"rounded-lg border px-3 py-2 text-xs font-semibold transition sm:text-sm " + (active === "developer" ? "border-black bg-black text-white" : "border-transparent text-zinc-600 hover:border-zinc-300 hover:text-black")}>{t.developer}</Link>
             <Link href="/dashboard/academic" aria-current={active === "academic" ? "page" : undefined} className={"rounded-lg border px-3 py-2 text-xs font-semibold transition sm:text-sm " + (active === "academic" ? "border-black bg-black text-white" : "border-transparent text-zinc-600 hover:border-zinc-300 hover:text-black")}>{t.academic}</Link>
@@ -66,7 +66,7 @@ export function WorkspaceHeader() {
       {showWelcome && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4" role="presentation">
           <section role="dialog" aria-modal="true" aria-labelledby="workspace-welcome-title" className="w-full max-w-xl rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl sm:p-8">
-            <p className="text-xs font-bold tracking-[0.18em] text-zinc-500">BLUISKILL</p>
+            <p className="text-xs font-bold tracking-[0.18em] text-zinc-500">BluiSkill</p>
             <h2 id="workspace-welcome-title" className="mt-3 text-xl font-semibold tracking-tight text-black sm:text-2xl">{t.choose}</h2>
             <p className="mt-2 text-sm leading-6 text-zinc-600">{t.intro}</p>
             <div className="mt-6 grid gap-3">
