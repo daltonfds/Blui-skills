@@ -99,9 +99,7 @@ export default function AuditPage() {
   const canRun = !busy && (tab === "github" ? Boolean(selectedRepo && branch.trim()) : tab === "url" ? /^https:\/\/\S+/i.test(url.trim()) : code.trim().length >= 20);
 
   return <>
-    <p className="text-sm text-zinc-500">BluiSkill Security Auditor</p>
     <div className="mt-2 flex flex-wrap items-center gap-3"><h1 className="text-3xl font-semibold tracking-tight">Security audit</h1><span className="rounded border border-zinc-300 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Beta</span></div>
-    <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-600">Review source code, a GitHub repository, or the public security configuration of a live website. This is a lightweight assistant, not a full penetration test.</p>
 
     <section className="mt-7 max-w-5xl rounded-xl border border-zinc-200 bg-white p-4 shadow-sm md:p-6">
       <div className="flex flex-wrap gap-2 border-b border-zinc-200 pb-4" role="tablist" aria-label="Audit source">
