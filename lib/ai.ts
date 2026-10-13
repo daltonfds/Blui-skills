@@ -20,11 +20,13 @@ async function requestGemini(model: string, key: string, system: string, input: 
         generationConfig: {
           responseMimeType: "application/json",
           temperature: 0.2,
-          maxOutputTokens: 8192,
+          maxOutputTokens: 4096,
+          // Architect needs structured output, not extended internal reasoning.
+          thinkingConfig: { thinkingBudget: 0 },
         },
       }),
       cache: "no-store",
-      signal: AbortSignal.timeout(60_000),
+      signal: AbortSignal.timeout(55_000),
     },
   );
 }
