@@ -61,8 +61,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: parsed.error.issues[0]?.message || "Invalid input." }, { status: 400 });
     }
 
-    const rawFiles = body && typeof body === "object" && Array.isArray((body as Record<string, unknown>).sourceFiles)
-      ? (body as Record<string, unknown>).sourceFiles
+    const rawFiles: unknown[] = body && typeof body === "object" && Array.isArray((body as Record<string, unknown>).sourceFiles)
+      ? (body as Record<string, unknown>).sourceFiles as unknown[]
       : [];
     const sourceFiles = rawFiles
       .filter((file): file is string => typeof file === "string")
