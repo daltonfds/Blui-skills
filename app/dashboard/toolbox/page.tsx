@@ -33,7 +33,7 @@ function makeZip(files: ExportFile[]): Blob {
   }
   const centralSize = centrals.reduce((n, b) => n + b.length, 0);
   const end = new Uint8Array([...u32(0x06054b50), ...u16(0), ...u16(0), ...u16(files.length), ...u16(files.length), ...u32(centralSize), ...u32(offset), ...u16(0)]);
-  return new Blob([...locals, ...centrals, end], { type: "application/zip" });
+  // Copy bytes into a fresh ArrayBuffer-backed buffer for TypeScript BlobPart compatibility.\n  const parts = [...locals, ...centrals, end].map((part) => {\n    const copy = new Uint8Array(part.byteLength);\n    copy.set(part);\n    return copy.buffer;\n  });\n  return new Blob(parts, { type: "application/zip" });
 }
 
 const initialEnv = "NEXT_PUBLIC_SUPABASE_URL=\nNEXT_PUBLIC_SUPABASE_ANON_KEY=\nGEMINI_API_KEY=";
