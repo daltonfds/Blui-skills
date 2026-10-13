@@ -3,11 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowUpRight, FolderKanban, LogOut, Menu, Plus, ShieldCheck, X, Zap } from "lucide-react";
+import { FileText, FolderKanban, LogOut, Menu, Plus, ShieldCheck, X, Zap } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 const links = [
-  { href: "/dashboard", label: "New Spec & Prompt", icon: Plus },
+  { href: "/dashboard", label: "Architect & Prompt", icon: Plus },
+  { href: "/dashboard/docs", label: "Docs Generator", icon: FileText },
   { href: "/dashboard/projects", label: "My Projects", icon: FolderKanban },
   { href: "/dashboard/audit", label: "Security audit", icon: ShieldCheck },
 ];
@@ -32,7 +33,7 @@ export function Sidebar({ email, credits }: { email: string; credits: number }) 
           <Link key={href} href={href} onClick={() => setMobileOpen(false)}
             className={"flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path === href || (href !== "/dashboard" && path.startsWith(href + "/")) ? "bg-zinc-100 font-medium text-zinc-950" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}>
             <Icon size={17} strokeWidth={1.8} /><span>{label}</span>
-            {label === "Security audit" && <span className="ml-auto rounded border border-zinc-200 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-zinc-500">Beta</span>}
+            {label === "Security audit" && <span className="ml-auto rounded border border-zinc-200 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-zinc-500">Beta</span>}{label === "Docs Generator" && <span className="ml-auto rounded bg-blue-50 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-blue-700">New</span>}
           </Link>
         ))}
       </nav>
