@@ -60,7 +60,7 @@ export function Sidebar({ email }: { email: string; credits?: number }) {
       <div className="flex min-h-[62px] items-center justify-between gap-3 px-4 md:min-h-0 md:justify-start md:px-5 md:pb-8 md:pt-6">
         <Link href="/dashboard" className="flex items-center gap-2.5" onClick={() => setMobileOpen(false)}>
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-zinc-950 text-sm font-bold text-white">B</span>
-          <span className="block text-sm font-bold tracking-tight text-zinc-950">BLUI</span>
+          <span className="block text-sm font-bold tracking-tight text-zinc-950">BluiSkill</span>
         </Link>
         <div className="flex items-center gap-3 md:hidden">
           <button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label={mobileOpen ? "Close menu" : "Open menu"} aria-expanded={mobileOpen} className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50">
