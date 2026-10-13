@@ -206,7 +206,7 @@ export default function DocsGeneratorPage() {
             {notice && !error && <p role="status" className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-3.5 py-3 text-sm leading-6 text-emerald-800">{notice}</p>}
 
             <button type="submit" disabled={busy || (!source.trim() && files.length === 0)}
-              className="mt-5 flex min-h-12 w-full items-center justify-center rounded-lg bg-zinc-950 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-zinc-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:opacity-50">
+              className="mt-5 flex min-h-12 w-full items-center justify-center rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:opacity-50">
               {busy ? <><LoaderCircle size={17} className="mr-2 animate-spin" />Analysing project…</> : "Generate documentation"}
             </button>
           </form>
@@ -252,8 +252,8 @@ export default function DocsGeneratorPage() {
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 px-4 py-3 sm:px-5">
                   <div className="flex min-w-0 items-center gap-2"><span className="text-zinc-500"><CurrentIcon size={15} /></span><div className="min-w-0"><p className="text-sm font-semibold">{currentTab.title}</p><p className="mt-1 text-xs text-zinc-400">{currentTab.filename} · Markdown</p></div></div>
                   <div className="flex shrink-0 items-center gap-2">
-                    <button type="button" onClick={() => downloadMarkdown(currentTab.filename, result[activeTab])} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-zinc-700 px-3 py-2 text-xs font-medium text-zinc-200 transition hover:bg-zinc-800"><Download size={14} /> Download .md</button>
-                    <button type="button" onClick={() => void copyText(result[activeTab])} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-zinc-950 px-3 py-2 text-xs font-semibold text-white transition hover:bg-zinc-700">{copied ? <Check size={14} /> : <Clipboard size={14} />}{copied ? "Copied!" : "Copy Markdown"}</button>
+                    <button type="button" onClick={() => downloadMarkdown(currentTab.filename, result[activeTab])} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-zinc-700 px-3 py-2 text-xs font-medium text-zinc-200 transition hover:bg-black"><Download size={14} /> Download .md</button>
+                    <button type="button" onClick={() => void copyText(result[activeTab])} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-black px-3 py-2 text-xs font-semibold text-white transition hover:bg-zinc-700">{copied ? <Check size={14} /> : <Clipboard size={14} />}{copied ? "Copied!" : "Copy Markdown"}</button>
                   </div>
                 </div>
                 <pre className="max-h-[720px] min-h-[360px] overflow-auto whitespace-pre-wrap break-words p-4 font-mono text-xs leading-6 text-zinc-200 sm:p-5">{result[activeTab]}</pre>
