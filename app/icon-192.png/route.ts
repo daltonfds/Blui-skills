@@ -2,8 +2,6 @@ import { ImageResponse } from "next/og";
 import { createElement as h } from "react";
 
 export const runtime = "edge";
-export const contentType = "image/png";
-export const size = { width: 192, height: 192 };
 
 export async function GET() {
   return new ImageResponse(
