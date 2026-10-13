@@ -187,7 +187,7 @@ export default function DevToolboxPage() {
 
     {activeTab==="export" && <section className="rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 sm:p-6">
       <div className="flex items-center gap-2"><Archive size={18} className="text-zinc-700"/><h2 className="text-lg font-semibold">Export project files</h2></div>
-      <p className="mt-1 text-sm text-zinc-500">Exports are generated in your browser, use no AI credits and create no database rows.</p>
+      
       <div className="mt-5 flex flex-wrap gap-2"><button onClick={exportZip} className="inline-flex items-center gap-2 rounded-lg bg-zinc-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-zinc-800"><PackageOpen size={16}/>Download ZIP kit ({markdownFiles.length} files)</button></div>
       <div className="mt-4 divide-y divide-zinc-100 rounded-lg border border-zinc-200">{markdownFiles.map(file=><div key={file.name} className="flex flex-wrap items-center gap-3 p-3"><FileText size={16} className="text-zinc-400"/><span className="min-w-0 flex-1 break-all text-sm font-medium">{file.name}</span><button onClick={()=>downloadText(file.name.split("/").pop()||file.name,file.content)} className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-3 py-2 text-xs font-semibold"><Download size={14}/> .md / file</button></div>)}</div>
       {!markdownFiles.length && <p className="mt-4 text-sm text-zinc-500">Select a project above to export its files.</p>}
@@ -206,7 +206,7 @@ export default function DevToolboxPage() {
 
     {activeTab==="cost" && <section className="rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 sm:p-6">
       <div className="flex items-center gap-2"><Calculator size={18} className="text-zinc-700"/><h2 className="text-lg font-semibold">Stack calculator</h2></div>
-      <p className="mt-1 text-sm text-zinc-500">Illustrative planning only, not a live quote or guarantee. Provider pricing, free-tier eligibility, limits, region, storage, bandwidth and model/token usage can change.</p>
+      <p className="mt-1 text-xs text-zinc-500">Estimate only · not live provider pricing.</p>
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <label className="block text-sm font-medium">Stack assumption<select value={stack} onChange={e=>setStack(e.target.value)} className="mt-2 min-h-11 w-full rounded-lg border border-zinc-200 bg-white px-3"><option value="next-supabase">Next.js + Supabase + Gemini</option><option value="next-managed">Next.js + paid managed services</option><option value="custom">Custom / unknown</option></select></label>
         <label className="block text-sm font-medium">Monthly AI requests (rough proxy)<input type="number" min="0" max="10000000" value={monthlyUsers} onChange={e=>setMonthlyUsers(e.target.value)} className="mt-2 min-h-11 w-full rounded-lg border border-zinc-200 px-3"/></label>
