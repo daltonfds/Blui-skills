@@ -1,10 +1,14 @@
-const CACHE_NAME = "bluiskill-shell-v1";
+const CACHE_NAME = "bluiskill-shell-v2";
 const OFFLINE_URL = "/offline";
+const APP_ICON = "/icon.svg";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.add(OFFLINE_URL))
+      .then(async (cache) => {
+        await cache.add(OFFLINE_URL);
+        await cache.add(APP_ICON).catch(() => undefined);
+      })
       .then(() => self.skipWaiting())
   );
 });
@@ -12,7 +16,7 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then((keys) => Promise.all(keys.filter((key) => key.startsWith("bluiskill-shell-") && key !== CACHE_NAME).map((key) => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });
@@ -28,7 +32,7 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(request).catch(async () => {
         const cached = await caches.match(OFFLINE_URL);
-        return cached || new Response("You are offline. Reconnect and try again.", {
+        return cached || new Response("Estás offline. Volta a ligar-te à internet e tenta novamente.", {
           status: 503,
           headers: { "Content-Type": "text/plain; charset=utf-8" }
         });
@@ -37,7 +41,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (url.pathname.startsWith("/_next/static/") || url.pathname === "/icon.svg") {
+  if (url.pathname.startsWith("/_next/static/") || url.pathname === APP_ICON) {
     event.respondWith(
       caches.match(request).then((cached) => cached || fetch(request).then((response) => {
         if (response.ok) {
