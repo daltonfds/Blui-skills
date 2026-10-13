@@ -64,6 +64,20 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check credits before paying for an AI request; the RPC below checks again atomically.
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("credits")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profileError || !profile) {
+      return NextResponse.json({ error: "Could not verify your credit balance. Please try again." }, { status: 503 });
+    }
+    if (profile.credits < 1) {
+      return NextResponse.json({ error: "You have no credits left. Please add credits before generating a roadmap." }, { status: 402 });
+    }
+
     // Generate first: temporary AI/API failures must not consume a credit.
     const generated = await askGemini<unknown>(
       ROADMAP_SYSTEM,
