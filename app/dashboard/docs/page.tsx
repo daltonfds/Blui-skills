@@ -260,7 +260,7 @@ export default function DocsGeneratorPage() {
 
           {result && <>
             <div className="border-b border-zinc-200 px-2 sm:px-4"><div className="flex gap-1 overflow-x-auto" role="tablist" aria-label="Generated documents">
-              {tabs.map((tab) => <button key={tab.id} type="button" role="tab" aria-selected={activeTab === tab.id} onClick={() => { setActiveTab(tab.id); setCopied(false); }} className={"whitespace-nowrap border-b-2 px-3 py-3 text-sm font-medium transition " + (activeTab === tab.id ? "border-blue-600 text-zinc-950" : "border-transparent text-zinc-500 hover:text-zinc-900")}>{tab.label}</button>)}
+              {tabs.map((tab) => <button key={tab.id} type="button" role="tab" aria-selected={activeTab === tab.id} onClick={() => { setActiveTab(tab.id); setCopied(false); }} className={"whitespace-nowrap border-b-2 px-3 py-3 text-sm font-medium transition " + (activeTab === tab.id ? "border-zinc-950 text-zinc-950" : "border-transparent text-zinc-500 hover:text-zinc-900")}>{tab.label}</button>)}
             </div></div>
             <div className="p-3 sm:p-5">
               <div className="overflow-hidden rounded-xl border border-zinc-800 bg-[#09090B] text-zinc-100">
