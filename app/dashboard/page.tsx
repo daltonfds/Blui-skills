@@ -77,7 +77,7 @@ export default function DashboardPage() {
   function mermaidSource() {
     if (result?.mermaid?.trim()) return result.mermaid;
     const phases = result?.roadmap || [];
-    return "flowchart TD\\n" + phases.map((phase, i) => `P${i + 1}["${phase.title.replace(/["\\n]/g, " ")}"]`).join("\\n") + (phases.length > 1 ? "\\n" + phases.slice(1).map((_, i) => `P${i + 1} --> P${i + 2}`).join("\\n") : "");
+    return "flowchart TD\n" + phases.map((phase, i) => `P\${i + 1}["\${phase.title.replace(/["\r\n]/g, " ")}"]`).join("\n") + (phases.length > 1 ? "\n" + phases.slice(1).map((_, i) => `P\${i + 1} --> P\${i + 2}`).join("\n") : "");
   }
 
   async function exportRoadmap(format: "svg" | "png") {
