@@ -1,0 +1,3 @@
+alter table public.profiles add column if not exists country text;
+create or replace function public.blui_handle_new_user() returns trigger language plpgsql security definer set search_path='' as $$ begin insert into public.profiles(id,email,full_name,country) values(new.id,new.email,coalesce(new.raw_user_meta_data->>'full_name',''),nullif(left(coalesce(new.raw_user_meta_data->>'country',''),100),'')) on conflict(id) do update set email=excluded.email,country=coalesce(public.profiles.country,excluded.country); return new; end; $$;
+revoke all on function public.blui_handle_new_user() from public,anon,authenticated;

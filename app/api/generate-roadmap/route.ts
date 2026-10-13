@@ -28,6 +28,7 @@ function isRoadmapResult(value: unknown): value is RoadmapResult {
     typeof result.prd === "string" &&
     typeof result.architecture === "string" &&
     typeof result.masterPrompt === "string" &&
+    (result.mermaid === undefined || typeof result.mermaid === "string") &&
     Array.isArray(result.roadmap) &&
     result.roadmap.every((phase) => {
       if (!phase || typeof phase !== "object") return false;
@@ -82,7 +83,7 @@ export async function POST(request: Request) {
     // Generate first: temporary AI/API failures must not consume a credit.
     const generated = await askGemini<unknown>(
       ROADMAP_SYSTEM,
-      JSON.stringify({ idea: parsed.data.idea, stack: parsed.data.stack }),
+      JSON.stringify({ idea: parsed.data.idea, stack: parsed.data.stack, visualStyle: parsed.data.visualStyle, deviceSupport: parsed.data.deviceSupport }),
     );
 
     if (!isRoadmapResult(generated)) {
