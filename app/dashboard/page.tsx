@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Clipboard, LoaderCircle, Sparkles, Plus, ArrowRight, Layers3, Smartphone } from "lucide-react";
+import { Check, Clipboard, LoaderCircle, Sparkles, Plus, ArrowRight, Layers3, Smartphone } from "lucide-react";\nimport { RoadmapDiagram } from "@/components/roadmap-diagram";
 
 type RoadmapPhase = { title: string; goal: string; tasks: string[]; acceptanceCriteria: string[] };
 type RoadmapResult = { projectName: string; prd: string; architecture: string; roadmap: RoadmapPhase[]; masterPrompt: string; mermaid?: string };
@@ -82,26 +82,6 @@ export default function DashboardPage() {
     return "flowchart TD\n" + phases.map((phase, i) => `P${i + 1}["${phase.title.replace(/["\r\n]/g, " ")}"]`).join("\n") + (phases.length > 1 ? "\n" + phases.slice(1).map((_, i) => `P${i + 1} --> P${i + 2}`).join("\n") : "");
   }
 
-  async function exportRoadmap(format: "svg" | "png") {
-    const phases = result?.roadmap || [];
-    if (!phases.length) return;
-    const width = 760, boxHeight = 58, gap = 28, height = phases.length * (boxHeight + gap) + 24;
-    const safe = (value: string) => value.replace(/[&<>"]/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[char] || char)).slice(0, 90);
-    const nodes = phases.map((phase, i) => {
-      const y = 12 + i * (boxHeight + gap);
-      const arrow = i ? `<path d="M380 ${y-gap+2} L380 ${y}" stroke="#71717a" stroke-width="2" fill="none"/><path d="M374 ${y-7} L380 ${y} L386 ${y-7}" stroke="#71717a" stroke-width="2" fill="none"/>` : "";
-      return `${arrow}<rect x="110" y="${y}" width="540" height="${boxHeight}" rx="12" fill="#ffffff" stroke="#d4d4d8"/><text x="380" y="${y+24}" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="600" fill="#18181b" text-anchor="middle">${String(i+1).padStart(2,"0")} · ${safe(phase.title)}</text><text x="380" y="${y+43}" font-family="Inter,Arial,sans-serif" font-size="10" fill="#71717a" text-anchor="middle">${safe(phase.goal)}</text>`;
-    }).join("");
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="#fafafa"/><text x="32" y="28" font-family="Inter,Arial,sans-serif" font-size="12" fill="#2563eb">BLUISKILL · ROADMAP</text>${nodes}</svg>`;
-    const blob = new Blob([svg], {type:"image/svg+xml;charset=utf-8"});
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    if (format === "svg") { anchor.href=url; anchor.download="bluiskill-roadmap.svg"; anchor.click(); URL.revokeObjectURL(url); return; }
-    const image = new Image();
-    image.onload = () => { const canvas=document.createElement("canvas"); canvas.width=width*2; canvas.height=height*2; const context=canvas.getContext("2d"); if(!context){URL.revokeObjectURL(url);return;} context.scale(2,2);context.drawImage(image,0,0);canvas.toBlob(png=>{if(!png)return;const pngUrl=URL.createObjectURL(png);anchor.href=pngUrl;anchor.download="bluiskill-roadmap.png";anchor.click();URL.revokeObjectURL(pngUrl);URL.revokeObjectURL(url);},"image/png"); };
-    image.onerror=()=>URL.revokeObjectURL(url);
-    image.src=url;
-  }
 
   const tabButton = (tab: ResultTab, label: string) => (
     <button key={tab} type="button" onClick={() => { setActiveTab(tab); setCopied(false); }}
@@ -214,7 +194,8 @@ export default function DashboardPage() {
               {activeTab === "roadmap" && (
                 <div className="space-y-3 p-4 sm:p-5">
                   <div className="rounded-xl border border-zinc-200 bg-zinc-50/60 p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-sm font-semibold text-zinc-900">Roadmap diagram</h3><div className="flex flex-wrap gap-2"><button type="button" onClick={() => void exportRoadmap("png")} className="rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700">Export PNG</button><button type="button" onClick={() => void exportRoadmap("svg")} className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-50">Download SVG</button><button type="button" onClick={() => { const blob=new Blob([mermaidSource()],{type:"text/plain;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="bluiskill-roadmap.mmd";a.click();URL.revokeObjectURL(url); }} className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-50">Mermaid .mmd</button></div></div>
+                    <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-sm font-semibold text-zinc-900">Roadmap diagram</h3><div className="flex flex-wrap gap-2"><button type="button" onClick={() => { const blob=new Blob([mermaidSource()],{type:"text/plain;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="bluiskill-roadmap.mmd";a.click();URL.revokeObjectURL(url); }} className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-50">Mermaid .mmd</button></div></div>
+                    <RoadmapDiagram phases={result.roadmap || []} />
                     <div className="mt-4 space-y-2">{(result.roadmap || []).map((phase,index)=><div key={phase.title+index} className="flex items-center gap-3"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-blue-50 text-xs font-semibold text-blue-700">{index+1}</span><div className="min-w-0 flex-1 rounded-lg border border-zinc-200 bg-white px-3 py-2"><p className="text-sm font-semibold text-zinc-900">{phase.title}</p><p className="mt-0.5 text-xs text-zinc-500">{phase.goal}</p></div></div>)}</div>
                     <details className="mt-4"><summary className="cursor-pointer text-xs font-semibold text-zinc-600">View Mermaid source</summary><pre className="mt-2 overflow-x-auto rounded-xl border border-zinc-800 bg-[#09090B] p-3 font-mono text-xs leading-5 text-zinc-100">{mermaidSource()}</pre></details>
                   </div>
