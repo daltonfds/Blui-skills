@@ -87,7 +87,7 @@ export default function DevToolboxPage() {
 
   const contextPrompt = useMemo(() => {
     const sections = [
-      "# Blui Context Refresh Prompt",
+      "# Blui Context refresh",
       "You are continuing an existing software project. Preserve working behaviour and build on the actual current repository.",
       "## Project\n" + (projectName.trim() || "Not specified"),
       "## Confirmed architecture and current design\n" + (architecture.trim() || "Not supplied; inspect the repository before deciding."),
@@ -186,7 +186,7 @@ export default function DevToolboxPage() {
     </section>}
 
     {activeTab==="export" && <section className="rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 sm:p-6">
-      <div className="flex items-center gap-2"><Archive size={18} className="text-zinc-700"/><h2 className="text-lg font-semibold">Markdown and ZIP export</h2></div>
+      <div className="flex items-center gap-2"><Archive size={18} className="text-zinc-700"/><h2 className="text-lg font-semibold">Export project files</h2></div>
       <p className="mt-1 text-sm text-zinc-500">Exports are generated in your browser, use no AI credits and create no database rows.</p>
       <div className="mt-5 flex flex-wrap gap-2"><button onClick={exportZip} className="inline-flex items-center gap-2 rounded-lg bg-zinc-950 px-4 py-2.5 text-sm font-semibold text-white hover:bg-zinc-800"><PackageOpen size={16}/>Download ZIP kit ({markdownFiles.length} files)</button></div>
       <div className="mt-4 divide-y divide-zinc-100 rounded-lg border border-zinc-200">{markdownFiles.map(file=><div key={file.name} className="flex flex-wrap items-center gap-3 p-3"><FileText size={16} className="text-zinc-400"/><span className="min-w-0 flex-1 break-all text-sm font-medium">{file.name}</span><button onClick={()=>downloadText(file.name.split("/").pop()||file.name,file.content)} className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-3 py-2 text-xs font-semibold"><Download size={14}/> .md / file</button></div>)}</div>
@@ -201,19 +201,19 @@ export default function DevToolboxPage() {
       <pre className="mt-3 whitespace-pre-wrap rounded-xl border border-zinc-800 bg-[#09090B] p-3 font-mono text-xs leading-5 text-zinc-100">{envExample || "# Add confirmed variable names above"}</pre>
       <label className="mt-6 block text-sm font-medium">Confirmed schema SQL<textarea value={schemaInput} onChange={e=>setSchemaInput(e.target.value)} rows={9} className="mt-2 w-full rounded-lg border border-zinc-200 p-3 font-mono text-xs leading-5" placeholder="Paste verified CREATE TABLE, constraints and RLS policies…"/></label>
       <div className="mt-2 flex flex-wrap gap-2"><button onClick={()=>void copy(schemaInput,"schema.sql")} className="inline-flex items-center gap-2 rounded-lg bg-zinc-950 px-3 py-2 text-sm font-semibold text-white"><Clipboard size={15}/>Copy schema.sql</button><button onClick={()=>downloadText("schema.sql",schemaInput,"text/sql;charset=utf-8")} className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm font-semibold"><Download size={15}/>Download schema.sql</button></div>
-      <p className="mt-3 text-xs leading-5 text-zinc-500">Review constraints, foreign keys, grants and RLS policies, then test the SQL in a non-production environment before applying it.</p>
+      
     </section>}
 
     {activeTab==="cost" && <section className="rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:border-zinc-300 sm:p-6">
-      <div className="flex items-center gap-2"><Calculator size={18} className="text-zinc-700"/><h2 className="text-lg font-semibold">Stack cost estimator</h2></div>
+      <div className="flex items-center gap-2"><Calculator size={18} className="text-zinc-700"/><h2 className="text-lg font-semibold">Stack calculator</h2></div>
       <p className="mt-1 text-sm text-zinc-500">Illustrative planning only, not a live quote or guarantee. Provider pricing, free-tier eligibility, limits, region, storage, bandwidth and model/token usage can change.</p>
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <label className="block text-sm font-medium">Stack assumption<select value={stack} onChange={e=>setStack(e.target.value)} className="mt-2 min-h-11 w-full rounded-lg border border-zinc-200 bg-white px-3"><option value="next-supabase">Next.js + Supabase + Gemini</option><option value="next-managed">Next.js + paid managed services</option><option value="custom">Custom / unknown</option></select></label>
         <label className="block text-sm font-medium">Monthly AI requests (rough proxy)<input type="number" min="0" max="10000000" value={monthlyUsers} onChange={e=>setMonthlyUsers(e.target.value)} className="mt-2 min-h-11 w-full rounded-lg border border-zinc-200 px-3"/></label>
       </div>
       <div className="mt-5 rounded-xl border border-zinc-200 bg-zinc-50 p-5"><p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Illustrative monthly baseline</p><p className="mt-2 text-3xl font-semibold">{stack==="custom" ? "Unknown" : "US$" + monthly.toFixed(2)}</p><p className="mt-2 text-sm leading-6 text-zinc-600">{estimate.note}</p><p className="mt-3 text-xs text-zinc-500">Calculation: {stack==="custom" ? "No assumptions available." : "US$"+estimate.base.toFixed(2)+" illustrative base + "+users.toLocaleString()+" requests × US$"+estimate.variable.toFixed(3)+" placeholder per request."}</p></div>
-      <p className="mt-4 text-xs leading-5 text-zinc-500">The request allowance is a simplified proxy, not token-based billing. Check official pricing and free-tier quotas before committing to a budget. This calculator does not fetch current provider prices.</p>
+      
     </section>}
-    <p className="mt-6 text-xs text-zinc-400">Blui Dev Toolbox · Fase 1 · downloads are local · prompt/config generation uses no AI credits.</p>
+    
   </div>;
 }
