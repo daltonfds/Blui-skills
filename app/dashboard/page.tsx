@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Check, Clipboard, LoaderCircle, Sparkles, Plus, ArrowRight, Layers3, Smartphone } from "lucide-react";
 import { RoadmapDiagram } from "@/components/roadmap-diagram";
 
@@ -24,7 +24,7 @@ const ideaChips = [
 ];
 
 export default function DashboardPage() {
-  const router = useRouter();
+  const router = useRouter();\n  const searchParams = useSearchParams();
   const [idea, setIdea] = useState("");
   const [stack, setStack] = useState(stacks[0].value);
   const [customStack, setCustomStack] = useState("");
@@ -35,7 +35,7 @@ export default function DashboardPage() {
   const [mobileStep, setMobileStep] = useState<MobileStep>("input");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState(false);\n\n  useEffect(() => {\n    const savedIdea = searchParams.get("idea");\n    const savedStack = searchParams.get("stack");\n    if (savedIdea) setIdea(savedIdea.slice(0, 12000));\n    if (savedStack && stacks.some((option) => option.value === savedStack)) setStack(savedStack);\n  }, [searchParams]);
 
   async function generate(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
