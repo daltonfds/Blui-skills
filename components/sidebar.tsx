@@ -32,7 +32,7 @@ export function Sidebar({ email, credits }: { email: string; credits: number }) 
         <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">Navigate</p>
         {links.map(({ href, label, icon: Icon }) => (
           <Link key={href} href={href} onClick={() => setMobileOpen(false)}
-            className={"flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path === href || (href !== "/dashboard" && path.startsWith(href + "/")) ? "bg-zinc-100 font-medium text-zinc-950" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}>
+            className={"flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path === href || (href !== "/dashboard" && path.startsWith(href + "/")) ? "bg-blue-50 font-semibold text-blue-800" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}>
             <Icon size={17} strokeWidth={1.8} /><span>{label}</span>
             {label === "Security audit" && <span className="ml-auto rounded border border-zinc-200 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-zinc-500">Beta</span>}{label === "Docs Generator" && <span className="ml-auto rounded bg-blue-50 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-blue-700">New</span>}
           </Link>
@@ -66,7 +66,7 @@ export function Sidebar({ email, credits }: { email: string; credits: number }) 
     <aside className="relative z-40 w-full shrink-0 border-b border-zinc-200 bg-white md:sticky md:top-0 md:flex md:h-screen md:w-60 md:flex-col md:border-b-0 md:border-r">
       <div className="flex min-h-[62px] items-center justify-between gap-3 px-4 md:min-h-0 md:justify-start md:px-5 md:pb-8 md:pt-6">
         <Link href="/dashboard" className="flex items-center gap-2.5" onClick={() => setMobileOpen(false)}>
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-zinc-950 text-white"><Zap size={17} fill="currentColor" /></span>
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-blue-600 text-white shadow-sm"><Zap size={17} fill="currentColor" /></span>
           <span><span className="block text-sm font-bold tracking-tight text-zinc-950">BLUI ARCHITECT</span><span className="mt-0.5 block text-[10px] font-medium tracking-[0.12em] text-zinc-400">WORKSPACE · V1.0</span></span>
         </Link>
         <div className="flex items-center gap-3 md:hidden">
