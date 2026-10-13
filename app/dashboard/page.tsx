@@ -123,7 +123,7 @@ export default function DashboardPage() {
             {error && <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3.5 py-3 text-sm leading-6 text-red-700">{error}</p>}
 
             <button type="submit" disabled={busy || idea.trim().length < 20 || (stack === "Custom" && customStack.trim().length < 3)}
-              className="mt-6 flex min-h-12 w-full items-center justify-center rounded-xl bg-zinc-950 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-zinc-800 active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:opacity-50">
+              className="mt-6 flex min-h-12 w-full items-center justify-center rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-black active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 disabled:cursor-not-allowed disabled:opacity-50">
               {busy ? <><LoaderCircle size={17} className="mr-2 animate-spin" />Generating…</> : "Generate"}
             </button>
           </form>
