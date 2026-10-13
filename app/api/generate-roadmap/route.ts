@@ -5,6 +5,7 @@ import { ROADMAP_SYSTEM } from "@/lib/prompts";
 import { roadmapInput } from "@/lib/validation";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 type RoadmapResult = {
   projectName: string;
