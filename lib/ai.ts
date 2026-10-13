@@ -3,8 +3,9 @@ type GeminiResponse = {
   error?: { message?: string; status?: string };
 };
 
-const FALLBACK_MODEL = "gemini-2.5-flash";
-const FAST_FALLBACK_MODEL = "gemini-2.5-flash-lite";
+// Latest stable Flash model for complex Architect planning and code generation.
+const FALLBACK_MODEL = "gemini-3.8-flash";
+const FAST_FALLBACK_MODEL = "gemini-3.5-flash-lite";
 
 async function requestGemini(model: string, key: string, system: string, input: string) {
   return fetch(
@@ -22,8 +23,8 @@ async function requestGemini(model: string, key: string, system: string, input: 
           responseMimeType: "application/json",
           temperature: 0.2,
           maxOutputTokens: 4096,
-          // Architect needs structured output, not extended internal reasoning.
-          thinkingConfig: { thinkingBudget: 0 },
+          // Gemini 3 models use thinkingLevel rather than the Gemini 2.5 thinkingBudget.
+          thinkingConfig: { thinkingLevel: "low" },
         },
       }),
       cache: "no-store",
@@ -44,11 +45,10 @@ export async function askGemini<T>(system: string, input: string): Promise<T> {
   let response: Response;
   try {
     response = await requestGemini(model, key, system, input);
-    // Some deployments have an obsolete GEMINI_MODEL configured. Retry once with
-    // the supported stable Flash model only when the configured model is missing.
+    // If an obsolete or unavailable model is configured, retry with the current stable Flash model.
     if ((response.status === 404 || response.status === 400) && model !== FALLBACK_MODEL) {
       const details = await response.clone().text().catch(() => "");
-      if (/model|not found|not supported|unknown/i.test(details)) {
+      if (/model|not found|not supported|unknown|thinkingbudget/i.test(details)) {
         console.warn("Configured Gemini model unavailable; retrying with stable fallback.", {
           configuredModel: model,
           fallbackModel: FALLBACK_MODEL,
@@ -108,7 +108,7 @@ export async function askGemini<T>(system: string, input: string): Promise<T> {
       throw new Error("A chave Gemini é inválida, não está ativa ou não tem acesso à API. Confirma GEMINI_API_KEY no Vercel.");
     }
     if (response.status === 404) {
-      throw new Error("O modelo Gemini configurado não foi encontrado. Define GEMINI_MODEL como gemini-2.5-flash no Vercel.");
+      throw new Error("O modelo Gemini configurado não foi encontrado. Define GEMINI_MODEL como gemini-3.8-flash no Vercel.");
     }
     if (response.status >= 500) {
       throw new Error("O serviço Gemini está temporariamente indisponível. Tenta novamente dentro de instantes.");
