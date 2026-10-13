@@ -3,12 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FileText, FolderKanban, LogOut, Menu, Plus, ShieldCheck, X, Zap } from "lucide-react";
+import { FileText, FolderKanban, LogOut, Menu, Plus, ShieldCheck, Wrench, X, Zap } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 const links = [
   { href: "/dashboard", label: "Architect & Prompt", icon: Plus },
   { href: "/dashboard/docs", label: "Docs Generator", icon: FileText },
+  { href: "/dashboard/toolbox", label: "Dev Toolbox", icon: Wrench },
   { href: "/dashboard/projects", label: "My Projects", icon: FolderKanban },
   { href: "/dashboard/audit", label: "Security audit", icon: ShieldCheck },
 ];
