@@ -141,15 +141,7 @@ export default function DashboardPage() {
           {!result && !busy && (
             <div className="flex min-h-[400px] flex-col items-center justify-center px-6 py-12 text-center sm:min-h-[540px]">
               <div className="grid h-12 w-12 place-items-center rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-500"><Layers3 size={22} /></div>
-              <h3 className="mt-4 text-base font-semibold text-zinc-900">Your plan will appear here</h3>
-              <p className="mt-2 max-w-sm text-sm leading-6 text-zinc-500">Describe your product, select a stack and generate a structured PRD, architecture, roadmap and ready-to-use coding prompt.</p>
-              <div className="mt-6 grid w-full max-w-md gap-2 text-left sm:grid-cols-2">
-                {["Product requirements", "Technical architecture", "Implementation roadmap", "Master prompt"].map((item, index) => (
-                  <div key={item} className="flex items-center gap-2 rounded-lg border border-zinc-100 bg-zinc-50/70 px-3 py-2.5 text-xs text-zinc-600">
-                    <span className="text-zinc-400">0{index + 1}</span>{item}
-                  </div>
-                ))}
-              </div>
+              <h3 className="text-sm font-medium text-zinc-500">Your result will appear here</h3>
             </div>
           )}
 
