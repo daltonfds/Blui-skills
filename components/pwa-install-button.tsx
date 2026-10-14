@@ -9,7 +9,6 @@ type InstallPromptEvent = Event & {
 };
 
 const PROMO_DISMISSED_KEY = "bluiskill-install-promo-dismissed";
-const PROMO_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 const APK_URL = "https://github.com/daltonfds/Blui-skills/releases/latest/download/app-debug.apk";
 let pendingInstallPrompt: InstallPromptEvent | null = null;
 
@@ -73,9 +72,9 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
     window.addEventListener("bluiskill:install-prompt-used", onPromptUsed);
 
     // A short, dismissible Android recommendation; never blocks the page.
-    if (enablePromo && isAndroid && !isInstalled) {
+    if (enablePromo && (isAndroid || isIOS) && !isInstalled) {
       const lastShown = Number(readStorage(PROMO_DISMISSED_KEY) || 0);
-      if (!lastShown || Date.now() - lastShown > PROMO_COOLDOWN_MS) {
+      if (!lastShown) {
         promoTimer.current = setTimeout(() => {
           writeStorage(PROMO_DISMISSED_KEY, String(Date.now()));
           setShowPromo(true);
@@ -133,16 +132,16 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
         <span>{label}</span>
       </button>}
 
-      {showPromo && android && !installed && (
+      {showPromo && (android || ios) && !installed && (
         <aside aria-label="Instalar BluiSkill" className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+12px)] z-[110] mx-auto max-w-md rounded-2xl border border-zinc-200 bg-white p-4 shadow-2xl sm:inset-x-auto sm:bottom-5 sm:right-5 sm:mx-0">
           <div className="flex items-start gap-3">
             <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-black text-sm font-bold text-white">B</span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-zinc-950">Instala a BluiSkill no teu Android</p>
-              <p className="mt-1 text-xs leading-5 text-zinc-600">Adiciona ao ecrã inicial como aplicação ou descarrega a versão Android.</p>
+              <p className="text-sm font-semibold text-zinc-950">Instalar a BluiSkill</p>
+              <p className="mt-1 text-xs leading-5 text-zinc-600">{ios ? "Adiciona a BluiSkill ao ecrã principal para a usar como aplicação." : "Instala pelo navegador ou adiciona ao ecrã inicial."}</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <button type="button" onClick={install} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-black px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-800"><Download size={14} /> Instalar pelo navegador</button>
-                <a href={APK_URL} className="inline-flex min-h-10 items-center justify-center rounded-lg border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-900 hover:bg-zinc-100">Descarregar APK</a>
+                <button type="button" onClick={install} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-black px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-800"><Download size={14} /> Instalar BluiSkill</button>
+                {android && <a href={APK_URL} className="inline-flex min-h-10 items-center justify-center rounded-lg border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-900 hover:bg-zinc-100">Descarregar APK</a>}
               </div>
               <button type="button" onClick={dismissPromo} className="mt-2 min-h-9 rounded-lg px-2 py-1 text-xs font-medium text-zinc-500 hover:bg-zinc-100">Agora não</button>
             </div>
