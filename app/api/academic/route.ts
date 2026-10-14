@@ -68,6 +68,8 @@ export async function POST(request: Request) {
     if (sourceText.length > 55000) return NextResponse.json({ error: "O texto da fonte excede 55.000 caracteres." }, { status: 413 });
     if (pdf && (pdf.type !== "application/pdf" || pdf.size > MAX_PDF_BYTES)) return NextResponse.json({ error: "O ficheiro deve ser PDF e ter no máximo 8 MB." }, { status: 400 });
     if (!sourceText && !pdf) return NextResponse.json({ error: "Cola o texto da fonte ou carrega um PDF." }, { status: 400 });
+    const outputLanguageRaw = String(form.get("language") || "Português");
+    const outputLanguage = ["Português","English","Español","Français"].includes(outputLanguageRaw) ? outputLanguageRaw : "Português";
     const metadata = {
       institution: String(form.get("institution") || "").slice(0,200),
       student: String(form.get("student") || "").slice(0,160),
@@ -81,7 +83,7 @@ export async function POST(request: Request) {
     const { data: profile, error: profileError } = await supabase.from("profiles").select("credits").eq("id",user.id).maybeSingle();
     if (profileError || !profile) return NextResponse.json({ error: "Não foi possível verificar os créditos." }, { status: 503 });
     if (profile.credits < 1) return NextResponse.json({ error: "Não tens créditos suficientes. Adiciona créditos antes de gerar." }, { status: 402 });
-    const input = { mode, topic, sourceText, sourceFileName: pdf?.name || null, metadata, style: metadata.style,
+    const input = { mode, topic, sourceText, sourceFileName: pdf?.name || null, metadata, style: metadata.style, language: outputLanguage,
       instructions: mode === "paper" ? "Cria um trabalho académico completo em Markdown, usando apenas citações verificáveis da fonte fornecida." : "Cria resumo, perguntas de escolha múltipla, perguntas abertas e flashcards para revisão espaçada." };
     const generated = await generate(input, pdf);
     if (!validOutput(generated, mode)) return NextResponse.json({ error: "O resultado ficou incompleto. Nenhum crédito foi usado; tenta novamente." }, { status: 502 });

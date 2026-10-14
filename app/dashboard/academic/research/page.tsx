@@ -17,7 +17,7 @@ export default function AcademicResearchPage() {
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState("");
   const [notice,setNotice]=useState("");
-  useEffect(()=>{try{const saved=window.localStorage.getItem("bluiskill-academic-research");if(saved){const item=JSON.parse(saved) as {topic?:string;content?:string;sources?:Array<{title:string;url:string}>;researchedAt?:string};if(item.topic)setTopic(item.topic);if(item.content&&item.sources?.length)setResult({title:item.topic||"Pesquisa guardada",content:item.content,sources:item.sources,researchedAt:item.researchedAt});}}catch{}},[]);
+  useEffect(()=>{try{const saved=window.localStorage.getItem("bluiskill-academic-research");if(saved){const item=JSON.parse(saved) as {topic?:string;content?:string;sources?:Array<{title:string;url:string}>;researchedAt?:string};if(item.topic)setTopic(item.topic);if(item.content&&item.sources?.length)setResult({title:item.topic||"Pesquisa guardada",content:item.content,sources:item.sources,researchedAt:item.researchedAt});}}catch{}const params=new URLSearchParams(window.location.search);const prompt=params.get("prompt");const selectedLanguage=params.get("language");if(prompt)setTopic(prompt.slice(0,2000));if(selectedLanguage&&["Português","English","Español","Français"].includes(selectedLanguage))setLanguage(selectedLanguage);},[]);
   async function research(event:React.FormEvent<HTMLFormElement>){
     event.preventDefault();setBusy(true);setError("");setNotice("");setResult(null);
     try{
