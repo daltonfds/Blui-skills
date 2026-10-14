@@ -11,7 +11,10 @@ export function RoadmapDiagram({ phases }: { phases: Phase[] }) {
   const gap = 34;
   const top = 28;
   const height = top * 2 + ps.length * nodeHeight + Math.max(0, ps.length - 1) * gap;
-  const escape = (value: string) => value.replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char] || char));
+  const escape = (value: string) => {
+    const entities: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" };
+    return value.replace(/[&<>"]/g, (char) => entities[char] ?? char);
+  };
   const svg = () => {
     const nodes = ps.map((phase, index) => {
       const y = top + index * (nodeHeight + gap);
