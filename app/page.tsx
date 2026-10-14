@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, ShieldCheck, Workflow, Layers3, Check } from "lucide-react";
+import { ArrowUpRight, ShieldCheck, Workflow, Layers3, Check, Download } from "lucide-react";
 import { PWAInstallButton } from "@/components/pwa-install-button";
 
 export default function Home() {
@@ -22,7 +22,11 @@ export default function Home() {
           <div className="mt-7 flex flex-col items-stretch gap-3 min-[420px]:flex-row min-[420px]:flex-wrap min-[420px]:items-center">
             <Link href="/signup" className="inline-flex min-h-12 items-center justify-center rounded-lg bg-black px-5 py-3 text-sm font-semibold text-white hover:bg-zinc-800">Start for free <ArrowUpRight className="ml-2 inline" size={16}/></Link>
             <Link href="/login" className="inline-flex min-h-12 items-center justify-center rounded-lg border border-zinc-300 px-5 py-3 text-sm font-medium hover:bg-zinc-100">Open workspace</Link>
+            <a href="https://github.com/daltonfds/Blui-skills/releases/latest/download/app-debug.apk" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-5 py-3 text-sm font-medium text-zinc-900 hover:bg-zinc-100" aria-label="Download BluiSkill for Android">
+              <Download size={16} /> Download Android APK
+            </a>
           </div>
+          <p className="mt-3 text-xs leading-5 text-zinc-500">Install the web app from your browser, or download the Android APK directly.</p>
           <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-500"><span><Check className="mr-1 inline text-black" size={15}/>10 starter credits</span><span><Check className="mr-1 inline text-black" size={15}/>Saved project roadmaps</span></div>
         </div>
 
