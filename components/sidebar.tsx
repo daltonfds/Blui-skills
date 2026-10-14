@@ -77,6 +77,6 @@ export function Sidebar({ email }: { email: string; credits?: number }) {
   return <aside className="relative z-40 w-full shrink-0 border-b border-zinc-200 bg-white md:sticky md:top-0 md:flex md:h-screen md:w-60 md:flex-col md:border-b-0 md:border-r">
     <div className="flex min-h-[62px] items-center justify-between gap-3 px-4 md:min-h-0 md:justify-start md:px-5 md:pb-8 md:pt-6"><Link href={isAcademic ? "/dashboard/academic" : "/dashboard"} className="flex items-center gap-2.5" onClick={() => setMobileOpen(false)}><span className="block text-base font-bold tracking-tight text-zinc-950">BluiSkill</span></Link><div className="flex items-center gap-3 md:hidden"><button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label={mobileOpen ? "Close menu" : "Open menu"} aria-expanded={mobileOpen} className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-200 text-zinc-700 hover:bg-zinc-50">{mobileOpen ? <X size={18}/> : <Menu size={18}/>}</button></div></div>
     <div className="hidden px-3 md:block">{navigation()}</div><div className="mt-auto hidden px-3 pb-5 md:block">{account()}</div>
-    {mobileOpen && <div className="border-t border-zinc-200 px-3 pb-4 pt-4 shadow-lg md:hidden">{navigation()}<div className="mt-4">{account()}</div></div>}
+    {mobileOpen && <div className="fixed left-0 top-[7.5rem] z-[100] max-h-[calc(100dvh-7.5rem)] w-[min(86vw,320px)] overflow-y-auto rounded-r-2xl border border-zinc-200 bg-white px-3 pb-4 pt-4 shadow-2xl md:hidden">{navigation()}<div className="mt-4">{account()}</div></div>}
   </aside>;
 }
