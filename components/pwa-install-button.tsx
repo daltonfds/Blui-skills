@@ -114,7 +114,7 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
               <p className="text-sm font-semibold text-zinc-950">Instala a BluiSkill no teu Android</p>
               <p className="mt-1 text-xs leading-5 text-zinc-600">Acede mais rapidamente pelo ecrã inicial, como uma aplicação.</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <button type="button" onClick={install} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-black px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-800"><Download size={14} /> Instalar agora</button>
+                <button type="button" onClick={install} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-black px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-800"><Download size={14} /> Instalar pelo navegador</button>\n                <a href="https://github.com/daltonfds/Blui-skills/releases/latest/download/app-debug.apk" className="inline-flex min-h-10 items-center justify-center rounded-lg border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-900 hover:bg-zinc-100">Descarregar APK</a>
                 <button type="button" onClick={dismissPromo} className="min-h-10 rounded-lg px-3 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-100">Agora não</button>
               </div>
             </div>
@@ -143,7 +143,7 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
             ) : (
               <div className="mt-4 space-y-3 text-sm leading-6 text-zinc-700">
                 <p>{android ? "No Android, abre o menu do navegador e escolhe “Instalar aplicação” ou “Adicionar ao ecrã principal”. A opção de instalação automática aparece quando o navegador a disponibiliza." : "Abre o menu do navegador e procura “Instalar aplicação” ou “Adicionar ao ecrã principal”."}</p>
-                <p>A BluiSkill é instalada directamente pelo navegador. Não precisas de descarregar um APK separado.</p>
+                {android && <a href="https://github.com/daltonfds/Blui-skills/releases/latest/download/app-debug.apk" className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-zinc-100"><Download size={16} /> Descarregar aplicação Android (APK)</a>}
               </div>
             )}
             <button type="button" onClick={() => setShowHelp(false)} className="mt-6 min-h-11 w-full rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white hover:bg-zinc-800">Entendi</button>
