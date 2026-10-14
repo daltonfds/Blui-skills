@@ -8,7 +8,7 @@ export default function Home() {
       <header className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-5 sm:py-5 md:px-8">
         <Link href="/" className="shrink-0 text-lg font-semibold tracking-tight sm:text-xl">BluiSkill</Link>
         <nav className="flex items-center gap-2 sm:gap-4 text-sm">
-          <PWAInstallButton compact />
+          <PWAInstallButton compact enablePromo={false} />
           <Link href="/login" className="hidden text-zinc-600 hover:text-black sm:inline">Log in</Link>
           <Link href="/signup" className="rounded-lg bg-black px-3 py-2.5 font-medium text-white hover:bg-zinc-800 sm:px-4">Get started <ArrowUpRight className="ml-1 inline" size={15}/></Link>
         </nav>
