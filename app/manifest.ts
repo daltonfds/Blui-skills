@@ -5,8 +5,8 @@ export default function manifest(): MetadataRoute.Manifest {
     id: "/",
     name: "BluiSkill",
     short_name: "BluiSkill",
-    description: "Plan, build and secure your work in one focused workspace.",
-    start_url: "/",
+    description: "Espaço de trabalho para desenvolver software, pesquisar, escrever e estudar.",
+    start_url: "/dashboard",
     scope: "/",
     display: "standalone",
     display_override: ["standalone", "minimal-ui"],
@@ -14,9 +14,11 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#000000",
     orientation: "any",
     icons: [
-      { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any maskable" }
+      { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
+      { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }
     ],
     categories: ["productivity", "education", "utilities"],
-    lang: "en"
+    lang: "pt"
   };
 }
