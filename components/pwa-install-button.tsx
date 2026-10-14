@@ -11,7 +11,7 @@ type InstallPromptEvent = Event & {
 const PROMO_DISMISSED_KEY = "bluiskill-install-promo-dismissed";
 const PROMO_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-export function PWAInstallButton({ compact = false }: { compact?: boolean }) {
+export function PWAInstallButton({ compact = false, showButton = true, enablePromo = true }: { compact?: boolean; showButton?: boolean; enablePromo?: boolean }) {
   const [promptEvent, setPromptEvent] = useState<InstallPromptEvent | null>(null);
   const [showHelp, setShowHelp] = useState(false);
   const [showPromo, setShowPromo] = useState(false);
@@ -48,7 +48,7 @@ export function PWAInstallButton({ compact = false }: { compact?: boolean }) {
     window.addEventListener("appinstalled", onInstalled);
 
     // Show a small, temporary Android install recommendation, not a blocking modal.
-    if (isAndroid && !isInstalled) {
+    if (enablePromo && isAndroid && !isInstalled) {
       const lastDismissed = Number(window.localStorage.getItem(PROMO_DISMISSED_KEY) || 0);
       if (!lastDismissed || Date.now() - lastDismissed > PROMO_COOLDOWN_MS) {
         promoTimer.current = setTimeout(() => {
@@ -64,7 +64,7 @@ export function PWAInstallButton({ compact = false }: { compact?: boolean }) {
       if (promoTimer.current) clearTimeout(promoTimer.current);
       if (promoCloseTimer.current) clearTimeout(promoCloseTimer.current);
     };
-  }, []);
+  }, [enablePromo]);
 
   async function install() {
     if (installed) return;
@@ -94,11 +94,11 @@ export function PWAInstallButton({ compact = false }: { compact?: boolean }) {
 
   return (
     <>
-      <button type="button" onClick={install} disabled={installed} aria-label={label}
+      {showButton && <button type="button" onClick={install} disabled={installed} aria-label={label}
         className={"inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold transition sm:text-sm " + (installed ? "border-zinc-200 bg-zinc-50 text-zinc-500" : "border-black bg-black text-white hover:bg-zinc-800")}>
         {installed ? <Check size={15} /> : <Download size={15} />}
         <span>{label}</span>
-      </button>
+      </button>}
 
       {showPromo && android && !installed && (
         <aside aria-label="Instalar BluiSkill" className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+12px)] z-[110] mx-auto max-w-md rounded-2xl border border-zinc-200 bg-white p-4 shadow-2xl sm:inset-x-auto sm:bottom-5 sm:right-5 sm:mx-0">
