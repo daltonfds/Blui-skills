@@ -68,7 +68,9 @@ export async function POST(request: Request) {
     if (sourceText.length > 55000) return NextResponse.json({ error: "O texto da fonte excede 55.000 caracteres." }, { status: 413 });
     if (pdf && (pdf.type !== "application/pdf" || pdf.size > MAX_PDF_BYTES)) return NextResponse.json({ error: "O ficheiro deve ser PDF e ter no máximo 8 MB." }, { status: 400 });
     if (!sourceText && !pdf) return NextResponse.json({ error: "Cola o texto da fonte ou carrega um PDF." }, { status: 400 });
-    const outputLanguageRaw = String(form.get("language") || "Português");\n    const outputLanguage = ["Português","English","Español","Français"].includes(outputLanguageRaw) ? outputLanguageRaw : "Português";\n    const metadata = {
+    const outputLanguageRaw = String(form.get("language") || "Português");
+    const outputLanguage = ["Português","English","Español","Français"].includes(outputLanguageRaw) ? outputLanguageRaw : "Português";
+    const metadata = {
       institution: String(form.get("institution") || "").slice(0,200),
       student: String(form.get("student") || "").slice(0,160),
       course: String(form.get("course") || "").slice(0,160),
