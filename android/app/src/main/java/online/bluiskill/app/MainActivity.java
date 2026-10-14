@@ -1,13 +1,10 @@
 package online.bluiskill.app;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.webkit.CookieManager;
@@ -18,9 +15,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
-
-import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends Activity {
     private WebView webView;
@@ -85,8 +79,10 @@ public class MainActivity extends Activity {
                 request.setTitle("BluiSkill download");
                 request.setDescription("A transferir ficheiro…");
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
-                    DownloadManager.Request.getDefaultFileName(url, contentDisposition, mimeType));
+                String filename = Uri.parse(url).getLastPathSegment();
+                if (filename == null || filename.trim().isEmpty()) filename = "bluiskill-download";
+                filename = filename.replaceAll("[^a-zA-Z0-9._-]", "_");
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
                 DownloadManager manager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                 manager.enqueue(request);
                 Toast.makeText(this, "Download iniciado", Toast.LENGTH_SHORT).show();
@@ -100,13 +96,15 @@ public class MainActivity extends Activity {
         } else {
             webView.restoreState(savedInstanceState);
         }
+    }
 
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override public void handleOnBackPressed() {
-                if (webView != null && webView.canGoBack()) webView.goBack();
-                else finish();
-            }
-        });
+    @Override
+    public void onBackPressed() {
+        if (webView != null && webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
