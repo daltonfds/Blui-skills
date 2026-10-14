@@ -23,7 +23,15 @@ export function WorkspaceHeader() {
 
   useEffect(() => {
     const savedLanguage = window.localStorage.getItem("bluiskill-language") as Language | null;
-    if (savedLanguage && savedLanguage in labels) setLanguage(savedLanguage);
+    const browserLanguage = window.navigator.language.toLowerCase().split("-")[0] as Language;
+    const initialLanguage = savedLanguage && savedLanguage in labels
+      ? savedLanguage
+      : browserLanguage in labels
+        ? browserLanguage
+        : "en";
+    setLanguage(initialLanguage);
+    document.documentElement.lang = initialLanguage;
+    if (!savedLanguage) window.localStorage.setItem("bluiskill-language", initialLanguage);
     if (!window.localStorage.getItem("bluiskill-workspace-selected-v2")) setShowWelcome(true);
   }, []);
 
@@ -52,7 +60,7 @@ export function WorkspaceHeader() {
             <Link href="/dashboard/academic" aria-current={active === "academic" ? "page" : undefined} className={"min-h-10 flex-1 rounded-lg border px-2 py-2 text-center text-[11px] font-semibold transition sm:flex-none sm:px-3 sm:text-sm " + (active === "academic" ? "border-black bg-black text-white" : "border-transparent text-zinc-600 hover:border-zinc-300 hover:text-black")}>{t.academic}</Link>
           </nav>
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
-            <PWAInstallButton compact enablePromo={false} />
+            <PWAInstallButton compact showButton={false} enablePromo />
             <Link href="/dashboard/billing" className="hidden text-xs font-medium text-zinc-700 underline-offset-4 hover:text-black hover:underline sm:inline sm:text-sm">{t.billing}</Link>
             <label className="flex items-center gap-1.5 text-xs text-zinc-600">
               <span className="sr-only sm:not-sr-only sm:inline">{t.language}</span>
