@@ -81,7 +81,7 @@ export async function POST(request: Request) {
     const { data: profile, error: profileError } = await supabase.from("profiles").select("credits").eq("id",user.id).maybeSingle();
     if (profileError || !profile) return NextResponse.json({ error: "Não foi possível verificar os créditos." }, { status: 503 });
     if (profile.credits < 1) return NextResponse.json({ error: "Não tens créditos suficientes. Adiciona créditos antes de gerar." }, { status: 402 });
-    const input = { mode, topic, sourceText, sourceFileName: pdf?.name || null, metadata, style: metadata.style,
+    const input = { mode, topic, sourceText, sourceFileName: pdf?.name || null, metadata, style: metadata.style, language: outputLanguage,
       instructions: mode === "paper" ? "Cria um trabalho académico completo em Markdown, usando apenas citações verificáveis da fonte fornecida." : "Cria resumo, perguntas de escolha múltipla, perguntas abertas e flashcards para revisão espaçada." };
     const generated = await generate(input, pdf);
     if (!validOutput(generated, mode)) return NextResponse.json({ error: "O resultado ficou incompleto. Nenhum crédito foi usado; tenta novamente." }, { status: 502 });
