@@ -13,10 +13,12 @@ export function PWAInstallButton({ compact = false }: { compact?: boolean }) {
   const [showHelp, setShowHelp] = useState(false);
   const [installed, setInstalled] = useState(false);
   const [ios, setIos] = useState(false);
+  const [android, setAndroid] = useState(false);
 
   useEffect(() => {
     const ua = window.navigator.userAgent.toLowerCase();
     setIos(/iphone|ipad|ipod/.test(ua) && !("MSStream" in window));
+    setAndroid(/android/.test(ua));
     setInstalled(window.matchMedia("(display-mode: standalone)").matches || Boolean((window.navigator as Navigator & { standalone?: boolean }).standalone));
 
     const onBeforeInstall = (event: Event) => {
@@ -77,8 +79,11 @@ export function PWAInstallButton({ compact = false }: { compact?: boolean }) {
               </ol>
             ) : (
               <div className="mt-4 space-y-3 text-sm leading-6 text-zinc-700">
-                <p>Se a opção de instalação não apareceu automaticamente, abre o menu do navegador e procura <strong>Instalar aplicação</strong> ou <strong>Adicionar ao ecrã principal</strong>.</p>
-                <p>Em alguns navegadores, a instalação só fica disponível depois de abrir o site directamente e actualizar a página.</p>
+                <p>{android ? "No Android, podes instalar a versão web pelo menu do navegador ou descarregar o APK abaixo." : "Abre o menu do navegador e procura Instalar aplicação ou Adicionar ao ecrã principal para instalar a versão web."}</p>
+                <p>A versão PWA é instalada pelo navegador. A versão APK é um aplicativo Android separado e também abre o serviço oficial BluiSkill.</p>
+                <a href="https://github.com/daltonfds/Blui-skills/releases/latest/download/app-debug.apk" className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-zinc-100">
+                  <Download size={16} /> Descarregar APK para Android
+                </a>
               </div>
             )}
             <button type="button" onClick={() => setShowHelp(false)} className="mt-6 min-h-11 w-full rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white hover:bg-zinc-800">Entendi</button>
