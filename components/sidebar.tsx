@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BookOpen, CreditCard, FileSearch, FileText, FolderKanban, GraduationCap, LibraryBig, LogOut, Menu, Plus, ShieldCheck, Wrench, X } from "lucide-react";
+import { BookOpen, CreditCard, FileSearch, FileText, FolderKanban, GraduationCap, LibraryBig, LogOut, Menu, Plus, Settings, ShieldCheck, Wrench, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 const developerLinks = [
@@ -62,7 +62,7 @@ export function Sidebar({ email }: { email: string; credits?: number }) {
         <Icon size={17} strokeWidth={1.8}/><span>{translate(label)}</span>
         {label === "Security audit" && <span className="ml-auto rounded border border-zinc-200 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-zinc-500">Beta</span>}
       </Link>)}
-      <div className="mt-3 border-t border-zinc-200 pt-3"><Link href="/dashboard/billing" onClick={() => setMobileOpen(false)} className={"flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path.startsWith("/dashboard/billing") ? "bg-zinc-100 font-semibold text-zinc-950" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}><CreditCard size={17} strokeWidth={1.8}/><span>{translate("Billing")}</span></Link></div>
+      <div className="mt-3 border-t border-zinc-200 pt-3"><Link href="/dashboard/settings" onClick={() => setMobileOpen(false)} className={"mb-1 flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path.startsWith("/dashboard/settings") ? "bg-zinc-100 font-semibold text-zinc-950" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}><Settings size={17} strokeWidth={1.8}/><span>Settings</span></Link><Link href="/dashboard/billing" onClick={() => setMobileOpen(false)} className={"flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path.startsWith("/dashboard/billing") ? "bg-zinc-100 font-semibold text-zinc-950" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}><CreditCard size={17} strokeWidth={1.8}/><span>{translate("Billing")}</span></Link></div>
     </nav>;
   }
 
