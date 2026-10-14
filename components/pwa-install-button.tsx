@@ -13,6 +13,22 @@ const PROMO_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 const APK_URL = "https://github.com/daltonfds/Blui-skills/releases/latest/download/app-debug.apk";
 let pendingInstallPrompt: InstallPromptEvent | null = null;
 
+function readStorage(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function writeStorage(key: string, value: string): void {
+  try {
+    window.localStorage.setItem(key, value);
+  } catch {
+    // Installation guidance must still work when browser storage is restricted.
+  }
+}
+
 export function PWAInstallButton({ compact = false, showButton = true, enablePromo = true }: { compact?: boolean; showButton?: boolean; enablePromo?: boolean }) {
   const [promptEvent, setPromptEvent] = useState<InstallPromptEvent | null>(null);
   const [showHelp, setShowHelp] = useState(false);
@@ -27,7 +43,7 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
     const ua = window.navigator.userAgent.toLowerCase();
     const isAndroid = /android/.test(ua);
     const isIOS = /iphone|ipad|ipod/.test(ua) && !("MSStream" in window);
-    const isInstalled = window.matchMedia("(display-mode: standalone)").matches ||
+    const isInstalled = (typeof window.matchMedia === "function" && window.matchMedia("(display-mode: standalone)").matches) ||
       Boolean((window.navigator as Navigator & { standalone?: boolean }).standalone);
 
     setAndroid(isAndroid);
@@ -58,10 +74,10 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
 
     // A short, dismissible Android recommendation; never blocks the page.
     if (enablePromo && isAndroid && !isInstalled) {
-      const lastShown = Number(window.localStorage.getItem(PROMO_DISMISSED_KEY) || 0);
+      const lastShown = Number(readStorage(PROMO_DISMISSED_KEY) || 0);
       if (!lastShown || Date.now() - lastShown > PROMO_COOLDOWN_MS) {
         promoTimer.current = setTimeout(() => {
-          window.localStorage.setItem(PROMO_DISMISSED_KEY, String(Date.now()));
+          writeStorage(PROMO_DISMISSED_KEY, String(Date.now()));
           setShowPromo(true);
           promoCloseTimer.current = setTimeout(() => setShowPromo(false), 12000);
         }, 4500);
@@ -89,6 +105,8 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
         await availablePrompt.prompt();
         const choice = await availablePrompt.userChoice;
         if (choice.outcome === "accepted") setInstalled(true);
+      } catch {
+        setShowHelp(true);
       } finally {
         pendingInstallPrompt = null;
         setPromptEvent(null);

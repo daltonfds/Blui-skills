@@ -1,4 +1,4 @@
-const CACHE_NAME = "bluiskill-shell-v2";
+const CACHE_NAME = "bluiskill-shell-v3";
 const OFFLINE_URL = "/offline";
 const APP_ICON = "/icon.svg";
 
@@ -16,7 +16,11 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((key) => key.startsWith("bluiskill-shell-") && key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then((keys) => Promise.all(
+        keys
+          .filter((key) => key.startsWith("bluiskill-shell-") && key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
+      ))
       .then(() => self.clients.claim())
   );
 });
@@ -27,6 +31,10 @@ self.addEventListener("fetch", (event) => {
 
   if (request.method !== "GET" || url.origin !== self.location.origin) return;
   if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/auth/")) return;
+
+  // Always fetch Next.js chunks from the network. Serving an old cached JS chunk
+  // after a deployment can cause a client-side exception during hydration.
+  if (url.pathname.startsWith("/_next/")) return;
 
   if (request.mode === "navigate") {
     event.respondWith(
@@ -41,15 +49,12 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (url.pathname.startsWith("/_next/static/") || url.pathname === APP_ICON) {
+  if (url.pathname === APP_ICON) {
     event.respondWith(
-      caches.match(request).then((cached) => cached || fetch(request).then((response) => {
-        if (response.ok) {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-        }
-        return response;
-      }))
+      fetch(request).catch(async () => {
+        const cached = await caches.match(APP_ICON);
+        return cached || new Response("", { status: 503 });
+      })
     );
   }
 });
