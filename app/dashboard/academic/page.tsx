@@ -1,28 +1,76 @@
-import Link from "next/link";
-import { BookOpen, FileSearch, FileText, LibraryBig, ArrowUpRight } from "lucide-react";
+"use client";
 
-const areas = [
-  { href: "/dashboard/academic/research", number: "01", title: "Pesquisa aprofundada", description: "Investiga um tema com pesquisa na web, reúne fontes e organiza evidências antes de escrever.", action: "Abrir pesquisa", icon: FileSearch },
-  { href: "/dashboard/academic/paper", number: "02", title: "Elaboração de trabalhos", description: "Transforma a pesquisa e os materiais fornecidos num documento estruturado com referências a verificar.", action: "Criar trabalho", icon: FileText },
-  { href: "/dashboard/academic/study", number: "03", title: "Set up de estudos", description: "Cria sínteses, perguntas de prática e cartões de revisão espaçada a partir da mesma matéria.", action: "Organizar estudos", icon: BookOpen },
-  { href: "/dashboard/academic/library", number: "04", title: "Biblioteca académica", description: "Volta a abrir pesquisas, trabalhos e sessões de estudo guardados na tua conta.", action: "Ver biblioteca", icon: LibraryBig },
+import Link from "next/link";
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowUpRight, BookOpen, FileSearch, FileText, LibraryBig, Search } from "lucide-react";
+
+type Objective = "research" | "paper" | "study";
+const objectives: Array<{ value: Objective; label: string; description: string }> = [
+  { value: "research", label: "Pesquisa aprofundada", description: "Investigar na web, comparar evidências e reunir fontes verificáveis." },
+  { value: "paper", label: "Elaboração de trabalhos", description: "Estruturar um trabalho académico a partir do tema e das fontes." },
+  { value: "study", label: "Organizar estudos", description: "Criar sínteses, perguntas de prática e cartões de revisão." },
 ];
 
 export default function AcademicHome() {
-  return <div className="mx-auto w-full max-w-6xl pb-12">
-    <header className="border-b border-zinc-200 pb-7">
+  const router = useRouter();
+  const [prompt, setPrompt] = useState("");
+  const [objective, setObjective] = useState<Objective>("research");
+  const [language, setLanguage] = useState("Português");
+  const [error, setError] = useState("");
+
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const value = prompt.trim();
+    if (value.length < 8) {
+      setError("Escreve um tema ou uma pergunta com pelo menos 8 caracteres.");
+      return;
+    }
+    const target = objective === "research" ? "/dashboard/academic/research" : objective === "paper" ? "/dashboard/academic/paper" : "/dashboard/academic/study";
+    const params = new URLSearchParams({ prompt: value, language });
+    router.push(target + "?" + params.toString());
+  }
+
+  return <div className="mx-auto w-full max-w-4xl pb-10 sm:pb-14">
+    <header className="pt-3 text-center sm:pt-10">
       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">BluiSkill / Academic</p>
-      <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Academic</h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-600">Um espaço de trabalho académico para pesquisar, escrever e estudar. Começa pela investigação e reutiliza o material nas etapas seguintes.</p>
+      <h1 className="mt-4 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Em que estás a trabalhar?</h1>
+      <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-zinc-600 sm:text-base">Pesquisa, escreve e estuda num único espaço. Começa com uma pergunta e escolhe o que queres fazer com ela.</p>
     </header>
-    <section className="mt-7 grid gap-4 md:grid-cols-2" aria-label="Áreas académicas">
-      {areas.map(({href,number,title,description,action,icon:Icon})=><Link key={href} href={href} className="group flex min-h-56 flex-col rounded-2xl border border-zinc-200 bg-white p-5 transition hover:border-zinc-500 sm:p-6">
-        <div className="flex items-start justify-between"><span className="text-xs font-mono text-zinc-400">{number}</span><Icon size={20} strokeWidth={1.7} className="text-zinc-700"/></div>
-        <h2 className="mt-6 text-lg font-semibold tracking-tight text-zinc-950">{title}</h2>
-        <p className="mt-2 max-w-lg text-sm leading-6 text-zinc-600">{description}</p>
-        <span className="mt-auto flex items-center gap-2 pt-6 text-sm font-semibold text-zinc-950">{action}<ArrowUpRight size={15} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"/></span>
-      </Link>)}
+
+    <form onSubmit={submit} className="mt-7 rounded-2xl border border-zinc-300 bg-white p-3 shadow-sm sm:mt-9 sm:p-5">
+      <label htmlFor="academic-prompt" className="sr-only">Tema ou pergunta</label>
+      <textarea id="academic-prompt" value={prompt} onChange={event => { setPrompt(event.target.value); setError(""); }} rows={4} maxLength={4000} placeholder="Escreve uma pergunta, descreve o tema ou explica o que precisas de descobrir…" className="min-h-32 w-full resize-y rounded-xl border-0 bg-transparent px-2 py-3 text-base leading-7 text-zinc-950 outline-none placeholder:text-zinc-400 focus:ring-0 sm:min-h-36 sm:px-3" />
+      <div className="mt-2 grid gap-3 border-t border-zinc-100 pt-3 sm:grid-cols-[minmax(0,1fr)_minmax(160px,auto)] sm:items-end">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="block text-xs font-medium text-zinc-600">Objetivo
+            <select value={objective} onChange={event => setObjective(event.target.value as Objective)} className="mt-1.5 min-h-11 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm font-medium text-zinc-900 outline-none focus:border-zinc-900 focus:bg-white">
+              {objectives.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}
+            </select>
+          </label>
+          <label className="block text-xs font-medium text-zinc-600">Idioma
+            <select value={language} onChange={event => setLanguage(event.target.value)} className="mt-1.5 min-h-11 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm font-medium text-zinc-900 outline-none focus:border-zinc-900 focus:bg-white">
+              <option>Português</option><option>English</option><option>Español</option><option>Français</option>
+            </select>
+          </label>
+        </div>
+        <button type="submit" className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800 sm:w-auto">
+          <Search size={16} /> Continuar <ArrowUpRight size={16} />
+        </button>
+      </div>
+      {error && <p role="alert" className="px-2 pt-2 text-sm text-zinc-700">{error}</p>}
+      <p className="px-2 pb-1 pt-3 text-xs leading-5 text-zinc-500">{objectives.find(item => item.value === objective)?.description}</p>
+    </form>
+
+    <section className="mt-8 sm:mt-10" aria-label="Áreas académicas">
+      <div className="mb-3 flex items-center justify-between"><h2 className="text-sm font-semibold text-zinc-900">Também podes abrir directamente</h2><span className="text-xs text-zinc-500">O teu espaço de trabalho</span></div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Link href="/dashboard/academic/research" className="flex min-h-20 items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-500"><span className="grid size-10 shrink-0 place-items-center rounded-lg bg-zinc-100"><FileSearch size={19}/></span><span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-zinc-950">Pesquisa aprofundada</span><span className="mt-1 block text-xs leading-5 text-zinc-600">Investiga com fontes na web</span></span><ArrowUpRight size={16} className="shrink-0 text-zinc-500"/></Link>
+        <Link href="/dashboard/academic/paper" className="flex min-h-20 items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-500"><span className="grid size-10 shrink-0 place-items-center rounded-lg bg-zinc-100"><FileText size={19}/></span><span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-zinc-950">Trabalhos académicos</span><span className="mt-1 block text-xs leading-5 text-zinc-600">Organiza um documento estruturado</span></span><ArrowUpRight size={16} className="shrink-0 text-zinc-500"/></Link>
+        <Link href="/dashboard/academic/study" className="flex min-h-20 items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-500"><span className="grid size-10 shrink-0 place-items-center rounded-lg bg-zinc-100"><BookOpen size={19}/></span><span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-zinc-950">Estudos e revisão</span><span className="mt-1 block text-xs leading-5 text-zinc-600">Sintetiza e testa o que aprendeste</span></span><ArrowUpRight size={16} className="shrink-0 text-zinc-500"/></Link>
+        <Link href="/dashboard/academic/library" className="flex min-h-20 items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-500"><span className="grid size-10 shrink-0 place-items-center rounded-lg bg-zinc-100"><LibraryBig size={19}/></span><span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-zinc-950">Biblioteca académica</span><span className="mt-1 block text-xs leading-5 text-zinc-600">Retoma os materiais guardados</span></span><ArrowUpRight size={16} className="shrink-0 text-zinc-500"/></Link>
+      </div>
     </section>
-    <aside className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-4 sm:p-5"><p className="text-sm font-semibold text-zinc-900">Fluxo recomendado</p><p className="mt-1 text-sm leading-6 text-zinc-600">Pesquisa aprofundada → trabalho académico → set up de estudos. O material da pesquisa pode ser transferido para as outras áreas sem voltar a introduzir o conteúdo.</p></aside>
+    <p className="mt-6 text-center text-xs leading-5 text-zinc-500">Verifica sempre as fontes, os dados e as normas da tua instituição antes de entregar um trabalho.</p>
   </div>;
 }
