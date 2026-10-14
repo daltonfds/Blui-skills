@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowUp, Clipboard, Ellipsis, FileText, LoaderCircle, Plus, Sparkles, X } from "lucide-react";
+import { ArrowUp, Clipboard, Download, Ellipsis, FileText, LoaderCircle, Plus, Sparkles, X } from "lucide-react";
+import { RoadmapDiagram } from "@/components/roadmap-diagram";
 
 type Phase = { title: string; goal: string; tasks: string[]; acceptanceCriteria: string[] };
 type Result = { projectName: string; prd: string; architecture: string; roadmap: Phase[]; masterPrompt: string; mermaid?: string };
@@ -65,6 +66,17 @@ export default function DashboardPage() {
     return result.roadmap.map((p, i) => `PHASE ${i + 1}: ${p.title}\nGoal: ${p.goal}\n\nTasks:\n${p.tasks.map((x) => "- " + x).join("\n")}\n\nAcceptance criteria:\n${p.acceptanceCriteria.map((x) => "- " + x).join("\n")}`).join("\n\n────────────────────\n\n");
   }
   async function copy() { try { await navigator.clipboard.writeText(contentForTab()); setCopied(true); setTimeout(() => setCopied(false), 1800); } catch { setError("Clipboard is unavailable. Select the text and copy it manually."); } }
+  function downloadMarkdown() {
+    if (!result) return;
+    const content = contentForTab();
+    const filename = (result.projectName || "bluiskill-output").replace(/[^a-z0-9-_]+/gi, "-").slice(0, 80) || "bluiskill-output";
+    const url = URL.createObjectURL(new Blob([content], { type: "text/markdown;charset=utf-8" }));
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename + "-" + tab + ".md";
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
 
   return <div className="relative mx-auto flex min-h-[calc(100dvh-190px)] w-full max-w-4xl flex-col pb-36">
     <div className="mb-8 flex items-start justify-between gap-3">
@@ -81,8 +93,8 @@ export default function DashboardPage() {
     </div>
     {open && result && <div className="fixed inset-0 z-[120] flex items-end justify-center bg-black/45 p-0 sm:items-center sm:p-5" onMouseDown={(e) => { if (e.target === e.currentTarget) setOpen(false); }}><section role="dialog" aria-modal="true" aria-labelledby="results-title" className="flex max-h-[92dvh] w-full max-w-4xl flex-col overflow-hidden rounded-t-2xl border border-zinc-200 bg-white shadow-2xl sm:rounded-2xl">
       <header className="flex items-start justify-between gap-4 border-b border-zinc-200 px-4 py-4 sm:px-6"><div className="min-w-0"><p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Structured output</p><h2 id="results-title" className="mt-1 truncate text-lg font-semibold text-zinc-950 sm:text-xl">{result.projectName}</h2></div><button type="button" onClick={() => setOpen(false)} aria-label="Close results" className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-200 text-zinc-600 hover:bg-zinc-50"><X size={17}/></button></header>
-      <div className="flex items-center justify-between border-b border-zinc-200 px-2 sm:px-4"><div className="flex min-w-0 gap-1 overflow-x-auto" role="tablist" aria-label="Result sections">{tabItems.map((t) => <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} onClick={() => { setTab(t.id); setCopied(false); }} className={"whitespace-nowrap border-b-2 px-3 py-3 text-xs font-semibold sm:text-sm " + (tab === t.id ? "border-black text-black" : "border-transparent text-zinc-500 hover:text-black")}>{t.label}</button>)}</div><button type="button" onClick={() => void copy()} className="ml-2 inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-zinc-200 px-2.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50"><Clipboard size={14}/><span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span></button></div>
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6">{tab === "roadmap" ? <div className="space-y-4">{result.roadmap.map((p, i) => <article key={p.title + i} className="rounded-xl border border-zinc-200 p-4"><p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">Phase {i + 1}</p><h3 className="mt-1 font-semibold text-zinc-950">{p.title}</h3><p className="mt-2 text-sm leading-6 text-zinc-600">{p.goal}</p><h4 className="mt-4 text-xs font-semibold uppercase text-zinc-500">Tasks</h4><ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-zinc-800">{p.tasks.map((x, j) => <li key={j}>{x}</li>)}</ul><h4 className="mt-4 text-xs font-semibold uppercase text-zinc-500">Acceptance criteria</h4><ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-zinc-800">{p.acceptanceCriteria.map((x, j) => <li key={j}>{x}</li>)}</ul></article>)}</div> : <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-7 text-zinc-800">{contentForTab() || "No content returned for this section."}</pre>}</div>
+      <div className="flex items-center justify-between border-b border-zinc-200 px-2 sm:px-4"><div className="flex min-w-0 gap-1 overflow-x-auto" role="tablist" aria-label="Result sections">{tabItems.map((t) => <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} onClick={() => { setTab(t.id); setCopied(false); }} className={"whitespace-nowrap border-b-2 px-3 py-3 text-xs font-semibold sm:text-sm " + (tab === t.id ? "border-black text-black" : "border-transparent text-zinc-500 hover:text-black")}>{t.label}</button>)}</div><div className="ml-2 flex shrink-0 items-center gap-1"><button type="button" onClick={() => void copy()} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-zinc-200 px-2.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50"><Clipboard size={14}/><span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span></button><button type="button" onClick={downloadMarkdown} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-zinc-200 px-2.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50" aria-label="Download Markdown"><Download size={14}/><span className="hidden sm:inline">Download .MD</span></button></div></div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6">{tab === "roadmap" ? <><RoadmapDiagram phases={result.roadmap}/><div className="space-y-4">{result.roadmap.map((p, i) => <article key={p.title + i} className="rounded-xl border border-zinc-200 p-4"><p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">Phase {i + 1}</p><h3 className="mt-1 font-semibold text-zinc-950">{p.title}</h3><p className="mt-2 text-sm leading-6 text-zinc-600">{p.goal}</p><h4 className="mt-4 text-xs font-semibold uppercase text-zinc-500">Tasks</h4><ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-zinc-800">{p.tasks.map((x, j) => <li key={j}>{x}</li>)}</ul><h4 className="mt-4 text-xs font-semibold uppercase text-zinc-500">Acceptance criteria</h4><ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-zinc-800">{p.acceptanceCriteria.map((x, j) => <li key={j}>{x}</li>)}</ul></article>)}</div></> : <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-7 text-zinc-800">{contentForTab() || "No content returned for this section."}</pre>}</div>
       <footer className="flex items-center justify-between border-t border-zinc-200 px-4 py-3 sm:px-6"><span className="text-xs text-zinc-500">BluiSkill · Generated output</span><button type="button" onClick={() => setOpen(false)} className="min-h-10 rounded-xl bg-black px-4 text-sm font-semibold text-white hover:bg-zinc-800">Done</button></footer>
     </section></div>}
   </div>;
