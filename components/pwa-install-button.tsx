@@ -39,6 +39,10 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
       pendingInstallPrompt = event as InstallPromptEvent;
       setPromptEvent(event as InstallPromptEvent);
     };
+    const onPromptUsed = () => {
+      pendingInstallPrompt = null;
+      setPromptEvent(null);
+    };
     const onInstalled = () => {
       setInstalled(true);
       setPromptEvent(null);
@@ -50,6 +54,7 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
 
     window.addEventListener("beforeinstallprompt", onBeforeInstall);
     window.addEventListener("appinstalled", onInstalled);
+    window.addEventListener("bluiskill:install-prompt-used", onPromptUsed);
 
     // A short, dismissible Android recommendation; never blocks the page.
     if (enablePromo && isAndroid && !isInstalled) {
@@ -66,6 +71,7 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
     return () => {
       window.removeEventListener("beforeinstallprompt", onBeforeInstall);
       window.removeEventListener("appinstalled", onInstalled);
+      window.removeEventListener("bluiskill:install-prompt-used", onPromptUsed);
       if (promoTimer.current) clearTimeout(promoTimer.current);
       if (promoCloseTimer.current) clearTimeout(promoCloseTimer.current);
     };
@@ -86,6 +92,7 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
       } finally {
         pendingInstallPrompt = null;
         setPromptEvent(null);
+        window.dispatchEvent(new Event("bluiskill:install-prompt-used"));
       }
       return;
     }
