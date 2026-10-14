@@ -10,6 +10,7 @@ type InstallPromptEvent = Event & {
 
 const PROMO_DISMISSED_KEY = "bluiskill-install-promo-dismissed";
 const PROMO_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
+let pendingInstallPrompt: InstallPromptEvent | null = null;
 
 export function PWAInstallButton({ compact = false, showButton = true, enablePromo = true }: { compact?: boolean; showButton?: boolean; enablePromo?: boolean }) {
   const [promptEvent, setPromptEvent] = useState<InstallPromptEvent | null>(null);
@@ -34,6 +35,7 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
 
     const onBeforeInstall = (event: Event) => {
       event.preventDefault();
+      pendingInstallPrompt = event as InstallPromptEvent;
       setPromptEvent(event as InstallPromptEvent);
     };
     const onInstalled = () => {
@@ -52,6 +54,7 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
       const lastDismissed = Number(window.localStorage.getItem(PROMO_DISMISSED_KEY) || 0);
       if (!lastDismissed || Date.now() - lastDismissed > PROMO_COOLDOWN_MS) {
         promoTimer.current = setTimeout(() => {
+          window.localStorage.setItem(PROMO_DISMISSED_KEY, String(Date.now()));
           setShowPromo(true);
           promoCloseTimer.current = setTimeout(() => setShowPromo(false), 12000);
         }, 4500);
@@ -71,12 +74,15 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
     setShowPromo(false);
     if (promoCloseTimer.current) clearTimeout(promoCloseTimer.current);
 
-    if (promptEvent) {
+    const availablePrompt = pendingInstallPrompt || promptEvent;
+    if (availablePrompt) {
+      pendingInstallPrompt = null;
       try {
-        await promptEvent.prompt();
-        const choice = await promptEvent.userChoice;
+        await availablePrompt.prompt();
+        const choice = await availablePrompt.userChoice;
         if (choice.outcome === "accepted") setInstalled(true);
       } finally {
+        pendingInstallPrompt = null;
         setPromptEvent(null);
       }
       return;
