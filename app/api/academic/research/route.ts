@@ -23,16 +23,16 @@ export async function POST(request: Request) {
     const key = process.env.GEMINI_API_KEY;
     if (!key) return NextResponse.json({ success: false, error: "Chave da API Gemini não configurada. Define GEMINI_API_KEY nas variáveis de ambiente da Vercel." }, { status: 503 });
     // Use a known-supported Gemini model instead of an arbitrary provider/model that can return HTTP 404.
-    const model = "gemini-2.5-flash";
+    const model = "gemini-3.8-flash";
     const prompt = `Conduct a ${depth} research report in ${language} on this question: ${topic}
 
 Use Google Search grounding to find relevant, credible and recent sources. Synthesize evidence, do not merely list search results. Structure the report with: research question and scope; executive summary; key findings with dates and geographic scope where relevant; competing explanations or points of disagreement; limitations and gaps; conclusion; and a short list of the most useful sources. Clearly distinguish established evidence from inference. Never invent studies, statistics, authors, quotations or publication dates. Prefer primary, official, academic and reputable sources. Make the report specific to the question. Write naturally and professionally, without generic AI filler. Return plain text with clear headings.`;
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-goog-api-key": key },
+      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
       body: JSON.stringify({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
-        tools: [{ google_search: {} }],
+        tools: [{ googleSearch: {} }],
         generationConfig: { temperature: 0.2, maxOutputTokens: 8192 },
       }),
       cache: "no-store",
@@ -42,7 +42,7 @@ Use Google Search grounding to find relevant, credible and recent sources. Synth
       const detail = await response.text().catch(() => "");
       console.error("Academic research failed", { status: response.status, detail: detail.slice(0, 250) });
       if (response.status === 429) return NextResponse.json({ success: false, error: "O limite da API Gemini foi atingido. Tenta novamente mais tarde." }, { status: 429 });
-      return NextResponse.json({ success: false, error: response.status === 404 ? "O modelo ou endpoint Gemini não foi encontrado (HTTP 404). Confirma a disponibilidade do modelo gemini-2.5-flash e a chave GEMINI_API_KEY." : response.status === 401 || response.status === 403 ? "A chave da API Gemini é inválida ou não tem permissões. Confirma GEMINI_API_KEY." : `A API Gemini falhou (HTTP ${response.status}). Tenta novamente mais tarde.` }, { status: 502 });
+      return NextResponse.json({ success: false, error: response.status === 404 ? "O modelo ou endpoint Gemini não foi encontrado (HTTP 404). Confirma se o modelo gemini-3.8-flash está disponível para este projeto e se GEMINI_API_KEY é válida." : response.status === 401 || response.status === 403 ? "A chave da API Gemini é inválida ou não tem permissões. Confirma GEMINI_API_KEY." : `A API Gemini falhou (HTTP ${response.status}). Tenta novamente mais tarde.` }, { status: 502 });
     }
     const data = await response.json();
     const candidate = data.candidates?.[0];
