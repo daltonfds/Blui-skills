@@ -64,8 +64,16 @@ export async function askGemini<T>(system: string, input: string): Promise<T> {
     throw new Error("Não foi possível contactar a API de IA. Verifica a ligação e tenta novamente.");
   }
 
-  // Retry transient Google API failures once, then use the faster Flash-Lite model.
-  if ([429, 500, 502, 503, 504].includes(response.status)) {
+  // A quota response is not transient within this request: return immediately to avoid
+  // multiplying requests against an exhausted RPM/RPD quota.
+  if (response.status === 429) {
+    const retryAfter = response.headers.get("retry-after");
+    const waitSeconds = retryAfter && /^\d+$/.test(retryAfter) ? Math.max(1, Number(retryAfter)) : 30;
+    throw new Error(`O limite de requisições da API Gemini foi atingido. Aguarda ${waitSeconds} segundos e tenta novamente.`);
+  }
+
+  // Retry other transient provider failures at most once, then use the faster Flash-Lite model.
+  if ([500, 502, 503, 504].includes(response.status)) {
     const initialStatus = response.status;
     await new Promise((resolve) => setTimeout(resolve, 900));
     try {

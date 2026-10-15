@@ -20,8 +20,6 @@ export function WorkspaceHeader() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    document.documentElement.lang = "en";
-    window.localStorage.setItem("bluiskill-language", "en");
     function closeOnOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) setMenuOpen(false);
     }
