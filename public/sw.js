@@ -1,6 +1,7 @@
 const CACHE_NAME = "bluiskill-shell-v3";
 const OFFLINE_URL = "/offline";
 const APP_ICON = "/icon.svg";
+const OFFICIAL_LOGO = "/images/logo.png";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -8,6 +9,7 @@ self.addEventListener("install", (event) => {
       .then(async (cache) => {
         await cache.add(OFFLINE_URL);
         await cache.add(APP_ICON).catch(() => undefined);
+        await cache.add(OFFICIAL_LOGO).catch(() => undefined);
       })
       .then(() => self.skipWaiting())
   );
