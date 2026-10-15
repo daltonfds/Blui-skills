@@ -5,6 +5,7 @@ interface LogoProps {
   className?: string;
   size?: "sm" | "md" | "lg";
   priority?: boolean;
+  href?: string;
 }
 
 const dimensions = {
@@ -13,12 +14,12 @@ const dimensions = {
   lg: { width: 180, height: 46 },
 } as const;
 
-export function Logo({ className = "", size = "md", priority = false }: LogoProps) {
+export function Logo({ className = "", size = "md", priority = false, href = "/" }: LogoProps) {
   const { width, height } = dimensions[size];
 
   return (
     <Link
-      href="/"
+      href={href}
       aria-label="BluiSkill — Home"
       className={`inline-flex min-w-0 items-center outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 ${className}`}
     >
