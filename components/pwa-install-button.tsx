@@ -141,7 +141,7 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
               <p className="mt-1 text-xs leading-5 text-zinc-600">{ios ? "Adiciona a BluiSkill ao ecrã principal para a usar como aplicação." : "Instala pelo navegador ou adiciona ao ecrã inicial."}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <button type="button" onClick={install} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-black px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-800"><Download size={14} /> Instalar BluiSkill</button>
-                {android && <a href={APK_URL} className="inline-flex min-h-10 items-center justify-center rounded-lg border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-900 hover:bg-zinc-100">Descarregar APK</a>}
+                {android && <a href={APK_URL} className="inline-flex min-h-10 items-center justify-center rounded-lg border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-900 hover:bg-zinc-100">Download APK</a>}
               </div>
               <button type="button" onClick={dismissPromo} className="mt-2 min-h-9 rounded-lg px-2 py-1 text-xs font-medium text-zinc-500 hover:bg-zinc-100">Not now</button>
             </div>
@@ -170,7 +170,7 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
             ) : (
               <div className="mt-4 space-y-3 text-sm leading-6 text-zinc-700">
                 <p>{android ? "No Android, abre o menu do navegador e escolhe “Instalar aplicação” ou “Adicionar ao ecrã principal”. Se o navegador suportar a instalação directa, aparecerá uma confirmação." : "Abre o menu do navegador e procura “Instalar aplicação” ou “Adicionar ao ecrã principal”."}</p>
-                <a href={APK_URL} className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-zinc-100"><Download size={16} /> Descarregar aplicação Android (APK)</a>
+                <a href={APK_URL} className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-3 text-sm font-semibold text-zinc-950 hover:bg-zinc-100"><Download size={16} /> Download Android app (APK)</a>
               </div>
             )}
             <button type="button" onClick={() => setShowHelp(false)} className="mt-6 min-h-11 w-full rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white hover:bg-zinc-800">Entendi</button>
