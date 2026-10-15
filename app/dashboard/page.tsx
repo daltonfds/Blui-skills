@@ -145,13 +145,13 @@ export default function DashboardPage() {
     {paywallOpen && <div className="fixed inset-0 z-[160] flex items-center justify-center bg-black/55 p-4" onMouseDown={(e) => { if (e.target === e.currentTarget) setPaywallOpen(false); }}>
       <section role="dialog" aria-modal="true" aria-labelledby="guest-paywall-title" className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl sm:p-8">
         <div className="mb-4 flex items-center justify-between"><span className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">BluiSkill · Access</span><button type="button" onClick={() => setPaywallOpen(false)} aria-label="Close paywall" className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-200 text-zinc-600 hover:bg-zinc-50"><X size={17}/></button></div>
-        <h2 id="guest-paywall-title" className="text-xl font-semibold tracking-tight text-zinc-950">Desbloqueie o acesso completo na BluiSkill</h2>
-        <p className="mt-3 text-sm leading-6 text-zinc-600">Crie uma conta gratuita em 5 segundos ou selecione um passe para utilizar esta funcionalidade avançada.</p>
+        <h2 id="guest-paywall-title" className="text-xl font-semibold tracking-tight text-zinc-950">Unlock full access to BluiSkill</h2>
+        <p className="mt-3 text-sm leading-6 text-zinc-600">Create a free account or choose a pass to use this advanced feature.</p>
         <div className="mt-6 grid gap-3">
-          <button type="button" onClick={() => router.push("/signup?next=%2Fdashboard")} className="min-h-11 rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white hover:bg-zinc-800">Entrar / Criar Conta</button>
-          <button type="button" onClick={() => router.push("/dashboard/billing")} className="min-h-11 rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm font-semibold text-zinc-900 hover:bg-zinc-50">Ver Planos a partir de $0.50</button>
+          <button type="button" onClick={() => router.push("/signup?next=%2Fdashboard")} className="min-h-11 rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white hover:bg-zinc-800">Sign in / Create account</button>
+          <button type="button" onClick={() => router.push("/dashboard/billing")} className="min-h-11 rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm font-semibold text-zinc-900 hover:bg-zinc-50">View plans from $0.49</button>
         </div>
-        <p className="mt-4 text-center text-xs leading-5 text-zinc-500">A conta desbloqueia o acesso autenticado. Os pagamentos online ainda não estão activados.</p>
+        <p className="mt-4 text-center text-xs leading-5 text-zinc-500">An account unlocks authenticated access. Online payments are not enabled yet.</p>
       </section>
     </div>}
   </div>;
