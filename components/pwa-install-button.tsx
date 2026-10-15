@@ -143,7 +143,7 @@ export function PWAInstallButton({ compact = false, showButton = true, enablePro
                 <button type="button" onClick={install} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-black px-3 py-2 text-xs font-semibold text-white hover:bg-zinc-800"><Download size={14} /> Instalar BluiSkill</button>
                 {android && <a href={APK_URL} className="inline-flex min-h-10 items-center justify-center rounded-lg border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-900 hover:bg-zinc-100">Descarregar APK</a>}
               </div>
-              <button type="button" onClick={dismissPromo} className="mt-2 min-h-9 rounded-lg px-2 py-1 text-xs font-medium text-zinc-500 hover:bg-zinc-100">Agora não</button>
+              <button type="button" onClick={dismissPromo} className="mt-2 min-h-9 rounded-lg px-2 py-1 text-xs font-medium text-zinc-500 hover:bg-zinc-100">Not now</button>
             </div>
             <button type="button" onClick={dismissPromo} aria-label="Fechar recomendação" className="grid size-8 shrink-0 place-items-center rounded-lg text-zinc-500 hover:bg-zinc-100"><X size={16} /></button>
           </div>
