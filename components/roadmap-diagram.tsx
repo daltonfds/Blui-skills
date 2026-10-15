@@ -4,7 +4,7 @@ import { Download, Image as ImageIcon } from "lucide-react";
 
 type Phase = { title: string; goal: string; tasks?: string[]; acceptanceCriteria?: string[] };
 
-export function RoadmapDiagram({ phases }: { phases: Phase[] }) {
+export function RoadmapDiagram({ phases, canExport = true, onLocked }: { phases: Phase[]; canExport?: boolean; onLocked?: () => void }) {
   const ps = phases.slice(0, 8);
   const width = 900;
   const nodeHeight = 76;
@@ -26,6 +26,7 @@ export function RoadmapDiagram({ phases }: { phases: Phase[] }) {
     return '<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + " " + height + '"><rect width="100%" height="100%" fill="#ffffff"/>' + nodes + "</svg>";
   };
   function downloadSvg() {
+    if (!canExport) { onLocked?.(); return; }
     const url = URL.createObjectURL(new Blob([svg()], { type: "image/svg+xml;charset=utf-8" }));
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -34,6 +35,7 @@ export function RoadmapDiagram({ phases }: { phases: Phase[] }) {
     URL.revokeObjectURL(url);
   }
   async function downloadPng() {
+    if (!canExport) { onLocked?.(); return; }
     const url = URL.createObjectURL(new Blob([svg()], { type: "image/svg+xml;charset=utf-8" }));
     try {
       const img = new window.Image();
