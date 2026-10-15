@@ -22,7 +22,8 @@ export async function POST(request: Request) {
 
     const key = process.env.GEMINI_API_KEY;
     if (!key) return NextResponse.json({ success: false, error: "Chave da API Gemini não configurada. Define GEMINI_API_KEY nas variáveis de ambiente da Vercel." }, { status: 503 });
-    // Use a known-supported Gemini model instead of an arbitrary provider/model that can return HTTP 404.\n    const model = "gemini-2.5-flash";
+    // Use a known-supported Gemini model instead of an arbitrary provider/model that can return HTTP 404.
+    const model = "gemini-2.5-flash";
     const prompt = `Conduct a ${depth} research report in ${language} on this question: ${topic}
 
 Use Google Search grounding to find relevant, credible and recent sources. Synthesize evidence, do not merely list search results. Structure the report with: research question and scope; executive summary; key findings with dates and geographic scope where relevant; competing explanations or points of disagreement; limitations and gaps; conclusion; and a short list of the most useful sources. Clearly distinguish established evidence from inference. Never invent studies, statistics, authors, quotations or publication dates. Prefer primary, official, academic and reputable sources. Make the report specific to the question. Write naturally and professionally, without generic AI filler. Return plain text with clear headings.`;
