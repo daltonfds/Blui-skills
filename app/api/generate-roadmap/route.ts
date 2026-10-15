@@ -78,14 +78,15 @@ export async function POST(request: Request) {
     // Check credits before paying for an AI request; the RPC below checks again atomically.
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("credits")
+      .select("credits,plan_type,pass_expires_at")
       .eq("id", user.id)
       .maybeSingle();
 
     if (profileError || !profile) {
       return NextResponse.json({ error: "Could not verify your credit balance. Please try again." }, { status: 503 });
     }
-    if (profile.credits < 1) {
+    const hasActivePass = ["daily_pass", "weekly_pass", "monthly_pass"].includes(profile.plan_type) && !!profile.pass_expires_at && new Date(profile.pass_expires_at).getTime() > Date.now();
+    if (profile.credits < 1 && !hasActivePass) {
       return NextResponse.json({ error: "You have no credits left. Please add credits before generating a roadmap." }, { status: 402 });
     }
 
