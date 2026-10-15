@@ -19,11 +19,11 @@ async function generate(input: Record<string, unknown>, pdf?: File) {
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error("Chave da API Gemini não configurada. Define GEMINI_API_KEY nas variáveis de ambiente da Vercel.");
   // Force a supported Gemini model to avoid stale or invalid model names returning HTTP 404.
-  const model = "gemini-2.5-flash";
+  const model = "gemini-3.8-flash";
   const parts: Array<Record<string, unknown>> = [{ text: JSON.stringify(input) }];
   if (pdf) parts.push({ inlineData: { mimeType: "application/pdf", data: Buffer.from(await pdf.arrayBuffer()).toString("base64") } });
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
-    method: "POST", headers: { "Content-Type": "application/json", "X-goog-api-key": key },
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+    method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key },
     body: JSON.stringify({ systemInstruction: { parts: [{ text: SYSTEM }] }, contents: [{ role: "user", parts }],
       generationConfig: { responseMimeType: "application/json", temperature: 0.2, maxOutputTokens: 8192 } }),
     cache: "no-store", signal: AbortSignal.timeout(55_000),
@@ -32,7 +32,7 @@ async function generate(input: Record<string, unknown>, pdf?: File) {
     const detail = await response.text().catch(() => "");
     console.error("Academic Gemini request failed", { status: response.status, detail: detail.slice(0,300) });
     if (response.status === 429) throw new Error("O limite da API Gemini foi atingido. Tenta novamente mais tarde.");
-    throw new Error(response.status === 404 ? "O modelo ou endpoint Gemini não foi encontrado (HTTP 404). Confirma a disponibilidade de gemini-2.5-flash." : response.status === 401 || response.status === 403 ? "A chave da API Gemini é inválida ou não tem permissões. Confirma GEMINI_API_KEY." : `A API Gemini falhou (HTTP ${response.status}). Tenta novamente mais tarde.`);
+    throw new Error(response.status === 404 ? "O modelo ou endpoint Gemini não foi encontrado (HTTP 404). Confirma se gemini-3.8-flash está disponível para este projeto." : response.status === 401 || response.status === 403 ? "A chave da API Gemini é inválida ou não tem permissões. Confirma GEMINI_API_KEY." : `A API Gemini falhou (HTTP ${response.status}). Tenta novamente mais tarde.`);
   }
   const data = await response.json();
   const raw = data.candidates?.[0]?.content?.parts?.map((part: {text?: string}) => part.text || "").join("");
