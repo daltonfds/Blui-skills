@@ -68,9 +68,9 @@ export function Sidebar({ email }: { email: string; credits?: number }) {
 
   function account() {
     return <div className="border-t border-zinc-200 pt-4">
-      <div className="flex items-center gap-2 px-1"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-700">{(email.charAt(0) || "U").toUpperCase()}</span><span className="min-w-0 flex-1 truncate text-xs text-zinc-600" title={email}>{email}</span></div>
+      <div className="flex items-center gap-2 px-1"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-700">{(email.charAt(0) || "G").toUpperCase()}</span><span className="min-w-0 flex-1 truncate text-xs text-zinc-600" title={email}>{email || "Guest session"}</span></div>
       <div className="mt-4 border-t border-zinc-100 pt-3"><p className="px-1 text-xs leading-5 text-zinc-500">{translate("Need help?")} <a className="font-medium text-zinc-700 underline underline-offset-2" href="mailto:support@bluiskill.com">support@bluiskill.com</a></p><div className="mt-2 flex gap-3 px-1 text-xs text-zinc-500"><Link href="/terms" className="hover:text-zinc-900">{translate("Terms")}</Link><Link href="/privacy" className="hover:text-zinc-900">{translate("Privacy")}</Link></div></div>
-      <button onClick={logout} className="mt-3 flex min-h-9 w-full items-center gap-2 rounded-lg px-2 text-sm text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950"><LogOut size={15}/>{translate("Sign out")}</button>
+      {email ? <button onClick={logout} className="mt-3 flex min-h-9 w-full items-center gap-2 rounded-lg px-2 text-sm text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950"><LogOut size={15}/>{translate("Sign out")}</button> : <div className="mt-3 grid grid-cols-2 gap-2"><Link href="/login?next=%2Fdashboard" className="rounded-lg border border-zinc-200 px-2 py-2 text-center text-xs font-semibold text-zinc-700 hover:bg-zinc-50">Entrar</Link><Link href="/signup?next=%2Fdashboard" className="rounded-lg bg-black px-2 py-2 text-center text-xs font-semibold text-white hover:bg-zinc-800">Criar conta</Link></div>}
     </div>;
   }
 
