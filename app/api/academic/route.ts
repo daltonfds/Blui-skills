@@ -80,7 +80,7 @@ export async function POST(request: Request) {
       date: String(form.get("date") || "").slice(0,40),
       style: String(form.get("style") || "ABNT"),
     };
-    const { data: profile, error: profileError } = await supabase.from("profiles").select("credits").eq("id",user.id).maybeSingle();
+    const { data: profile, error: profileError } = await supabase.from("profiles").select("credits,plan_type,pass_expires_at").eq("id",user.id).maybeSingle();
     if (profileError || !profile) return NextResponse.json({ error: "Não foi possível verificar os créditos." }, { status: 503 });
     const hasActivePass = ["daily_pass", "weekly_pass", "monthly_pass"].includes(profile.plan_type) && !!profile.pass_expires_at && new Date(profile.pass_expires_at).getTime() > Date.now();
     if (profile.credits < 1 && !hasActivePass) return NextResponse.json({ error: "Não tens créditos suficientes. Adiciona créditos ou ativa um passe para continuar." }, { status: 402 });
