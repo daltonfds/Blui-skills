@@ -47,10 +47,6 @@ export async function POST(request: Request) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) {
-      return NextResponse.json({ error: "Sign in to continue." }, { status: 401 });
-    }
-
     let body: unknown;
     try {
       body = await request.json();
@@ -64,6 +60,19 @@ export async function POST(request: Request) {
         { error: parsed.error.issues[0]?.message || "Invalid input." },
         { status: 400 },
       );
+    }
+
+    // Guest demos are generated without creating a Supabase profile, project, or credit record.
+    // The browser limits this anonymous path to one successful demo per localStorage profile.
+    if (!user) {
+      const generated = await askGemini<unknown>(
+        ROADMAP_SYSTEM,
+        JSON.stringify({ idea: parsed.data.idea, stack: parsed.data.stack, visualStyle: parsed.data.visualStyle, deviceSupport: parsed.data.deviceSupport }),
+      );
+      if (!isRoadmapResult(generated)) {
+        return NextResponse.json({ error: "The AI returned an incomplete roadmap. Please try again." }, { status: 502 });
+      }
+      return NextResponse.json({ result: generated, guestDemo: true });
     }
 
     // Check credits before paying for an AI request; the RPC below checks again atomically.
