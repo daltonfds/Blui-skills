@@ -17,8 +17,8 @@ function validOutput(value: unknown, mode: string): boolean {
 }
 async function generate(input: Record<string, unknown>, pdf?: File) {
   const key = process.env.GEMINI_API_KEY;
-  if (!key) throw new Error("A API de IA não está configurada. O administrador precisa definir GEMINI_API_KEY no Vercel.");
-  const model = process.env.GEMINI_MODEL?.trim() || "gemini-3.8-flash";
+  if (!key) throw new Error("Chave da API Gemini não configurada. Define GEMINI_API_KEY nas variáveis de ambiente da Vercel.");
+  // Force a supported Gemini model to avoid stale or invalid model names returning HTTP 404.\n  const model = "gemini-2.5-flash";
   const parts: Array<Record<string, unknown>> = [{ text: JSON.stringify(input) }];
   if (pdf) parts.push({ inlineData: { mimeType: "application/pdf", data: Buffer.from(await pdf.arrayBuffer()).toString("base64") } });
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
@@ -30,8 +30,8 @@ async function generate(input: Record<string, unknown>, pdf?: File) {
   if (!response.ok) {
     const detail = await response.text().catch(() => "");
     console.error("Academic Gemini request failed", { status: response.status, detail: detail.slice(0,300) });
-    if (response.status === 429) throw new Error("Limite da API de IA atingido. Tenta novamente mais tarde.");
-    throw new Error(`A geração académica falhou (HTTP ${response.status}). Confirma a configuração Gemini e tenta novamente.`);
+    if (response.status === 429) throw new Error("O limite da API Gemini foi atingido. Tenta novamente mais tarde.");
+    throw new Error(response.status === 404 ? "O modelo ou endpoint Gemini não foi encontrado (HTTP 404). Confirma a disponibilidade de gemini-2.5-flash." : response.status === 401 || response.status === 403 ? "A chave da API Gemini é inválida ou não tem permissões. Confirma GEMINI_API_KEY." : `A API Gemini falhou (HTTP ${response.status}). Tenta novamente mais tarde.`);
   }
   const data = await response.json();
   const raw = data.candidates?.[0]?.content?.parts?.map((part: {text?: string}) => part.text || "").join("");
@@ -102,7 +102,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ id: generationId, result: generated, mode });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Erro inesperado.";
-    return NextResponse.json({ error: message }, { status: /migração|Supabase/i.test(message) ? 503 : 502 });
+    return NextResponse.json({ success: false, error: /timeout|abort/i.test(message) ? "A geração demorou demasiado tempo. Tenta novamente." : message }, { status: /migração|Supabase|Gemini|API/i.test(message) ? 503 : 502 });
   }
 }
 
