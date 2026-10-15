@@ -42,7 +42,7 @@ export function WorkspaceHeader() {
   return (
     <header className="relative z-30 border-b border-zinc-200 bg-white pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex min-h-16 max-w-[1600px] items-center justify-between gap-3 px-3 py-2 sm:px-6">
-        <Logo size="sm" priority className="shrink-0" />
+        <Logo size="sm" showName priority className="shrink-0" />
         <div className="relative min-w-0 flex-1 sm:flex-none" ref={menuRef}>
           <button type="button" aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)} className="flex min-h-11 max-w-full items-center gap-2 rounded-xl border border-transparent px-3 text-left transition hover:border-zinc-200 hover:bg-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
             <span className="min-w-0"><span className="block truncate text-sm font-semibold text-zinc-950">{current.title}</span><span className="hidden text-xs text-zinc-500 sm:block">Workspace</span></span>
