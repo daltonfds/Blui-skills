@@ -103,9 +103,9 @@ export async function POST(request: Request) {
     const hasActivePass = ["daily_pass", "weekly_pass", "monthly_pass"].includes(profile.plan_type) && !!profile.pass_expires_at && new Date(profile.pass_expires_at).getTime() > Date.now();
     if (profile.credits < 1 && !hasActivePass) return NextResponse.json({ error: "You do not have enough credits. Add credits or activate a pass to continue." }, { status: 402 });
     const input = { mode, topic, sourceText, sourceFileName: pdf?.name || null, metadata, style: metadata.style, language: outputLanguage,
-      instructions: mode === "paper" ? "Cria um trabalho académico completo em Markdown, usando apenas citações verificáveis da fonte fornecida." : "Cria resumo, perguntas de escolha múltipla, perguntas abertas e flashcards para revisão espaçada." };
+      instructions: mode === "paper" ? "Create a complete academic paper in Markdown using only verifiable citations from the supplied source." : "Cria resumo, perguntas de escolha múltipla, perguntas abertas e flashcards para revisão espaçada." };
     const generated = await generate(input, pdf);
-    if (!validOutput(generated, mode)) return NextResponse.json({ error: "O resultado ficou incompleto. Nenhum crédito foi usado; tenta novamente." }, { status: 502 });
+    if (!validOutput(generated, mode)) return NextResponse.json({ error: "The result was incomplete. No credit was used; please try again." }, { status: 502 });
     const title = String((generated as Record<string, unknown>).title || topic).slice(0,160);
     const cards = mode === "study" ? (generated as Record<string, unknown>).cards as unknown[] : [];
     const { data: generationId, error: saveError } = await supabase.rpc("create_academic_generation", {
@@ -130,7 +130,7 @@ export async function PATCH(request: Request) {
   if (!user) return NextResponse.json({ error: "Sign in to continue." }, { status: 401 });
   try {
     const body = await request.json();
-    if (typeof body.cardId !== "string" || !["again","hard","good","easy"].includes(body.result)) return NextResponse.json({ error: "Revisão inválida." }, { status: 400 });
+    if (typeof body.cardId !== "string" || !["again","hard","good","easy"].includes(body.result)) return NextResponse.json({ error: "Invalid review request." }, { status: 400 });
     const { data, error } = await supabase.rpc("review_academic_card", { p_card_id: body.cardId, p_result: body.result });
     if (error) return NextResponse.json({ error: "Could not save the review. Check the Academic Supabase migration." }, { status: 503 });
     return NextResponse.json({ dueAt: data });
