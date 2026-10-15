@@ -1,7 +1,7 @@
-const CACHE_NAME = "bluiskill-shell-v3";
+const CACHE_NAME = "bluiskill-shell-v4";
 const OFFLINE_URL = "/offline";
 const APP_ICON = "/icon.svg";
-const OFFICIAL_LOGO = "/images/logo.png";
+const OFFICIAL_LOGO = "/images/file_000000006f30820eb678e91926f79313.png";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
