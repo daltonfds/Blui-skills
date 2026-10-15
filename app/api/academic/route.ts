@@ -18,7 +18,8 @@ function validOutput(value: unknown, mode: string): boolean {
 async function generate(input: Record<string, unknown>, pdf?: File) {
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error("Chave da API Gemini não configurada. Define GEMINI_API_KEY nas variáveis de ambiente da Vercel.");
-  // Force a supported Gemini model to avoid stale or invalid model names returning HTTP 404.\n  const model = "gemini-2.5-flash";
+  // Force a supported Gemini model to avoid stale or invalid model names returning HTTP 404.
+  const model = "gemini-2.5-flash";
   const parts: Array<Record<string, unknown>> = [{ text: JSON.stringify(input) }];
   if (pdf) parts.push({ inlineData: { mimeType: "application/pdf", data: Buffer.from(await pdf.arrayBuffer()).toString("base64") } });
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
