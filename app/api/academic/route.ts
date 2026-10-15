@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 const MAX_PDF_BYTES = 8 * 1024 * 1024;
-const SYSTEM = `You are Blui Academic Master, a careful academic writing and study assistant. Write in a formal, impersonal academic style in the requested output language. If the language is Auto-detect, infer the language from the user topic and supplied source text, then use that language consistently. Avoid stock AI clichés. Use only the supplied source and metadata as evidence. Never invent quotations, page numbers, authors, publication dates, DOIs or bibliographic references. If source metadata is missing, flag it as [DADOS BIBLIOGRÁFICOS A CONFIRMAR]. Distinguish the user's source from verified external research: no web research tool is available in this request, so do not claim to have performed external research. Return valid JSON only.
+const SYSTEM = `You are Blui Academic Master, a careful academic writing and study assistant. Write in a formal, impersonal academic style in the requested output language. If the language is Auto-detect, infer the language from the user topic and supplied source text, then use that language consistently. Avoid stock AI clichés. Use only the supplied source and metadata as evidence. Never invent quotations, page numbers, authors, publication dates, DOIs or bibliographic references. If source metadata is missing, flag it as [BIBLIOGRAPHIC DETAILS TO VERIFY]. Distinguish the user's source from verified external research: no web research tool is available in this request, so do not claim to have performed external research. Return valid JSON only.
 For mode paper return {"title":"...","content":"complete Markdown document","referencesNote":"..."} with cover, title page, table of contents with section headings (do not invent page numbers), introduction, general and specific objectives, methodology/source analysis, detailed theory/development with traceable citations from source, conclusion, and references. Follow requested ABNT or APA style as closely as possible while noting that final institutional formatting should be checked.
 For mode study return {"title":"...","summary":"...","cards":[{"topic":"...","question":"...","answer":"...","options":["A...","B...","C...","D..."],"type":"multiple_choice|open_question|flashcard"}]} with 8–16 source-grounded cards including a mix of quizzes, open questions and flashcards. For multiple choice, exactly one option must be correct and explain why in answer. No unsupported facts.`;
 
@@ -66,14 +66,14 @@ export async function GET() {
     supabase.from("academic_study_cards").select("id,generation_id,topic,question,answer,options,card_type,interval_step,due_at").eq("user_id", user.id).lte("due_at", new Date().toISOString()).order("due_at").limit(50),
     supabase.from("profiles").select("credits,plan_type,pass_expires_at").eq("id", user.id).maybeSingle(),
   ]);
-  if (historyError || cardsError) return NextResponse.json({ error: "Aplica a migração Academic do Supabase antes de usar este módulo." }, { status: 503 });
+  if (historyError || cardsError) return NextResponse.json({ error: "Apply the Academic Supabase migration before using this module." }, { status: 503 });
   return NextResponse.json({ generations: generations ?? [], dueCards: cards ?? [], credits: profile?.credits ?? null });
 }
 
 export async function POST(request: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Inicia sessão para continuar." }, { status: 401 });
+  if (!user) return NextResponse.json({ error: "Sign in to continue." }, { status: 401 });
   try {
     const form = await request.formData();
     const mode = String(form.get("mode") || "");
@@ -127,12 +127,12 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Inicia sessão para continuar." }, { status: 401 });
+  if (!user) return NextResponse.json({ error: "Sign in to continue." }, { status: 401 });
   try {
     const body = await request.json();
     if (typeof body.cardId !== "string" || !["again","hard","good","easy"].includes(body.result)) return NextResponse.json({ error: "Revisão inválida." }, { status: 400 });
     const { data, error } = await supabase.rpc("review_academic_card", { p_card_id: body.cardId, p_result: body.result });
-    if (error) return NextResponse.json({ error: "Não foi possível guardar a revisão. Confirma a migração Academic." }, { status: 503 });
+    if (error) return NextResponse.json({ error: "Could not save the review. Check the Academic Supabase migration." }, { status: 503 });
     return NextResponse.json({ dueAt: data });
   } catch { return NextResponse.json({ error: "Pedido de revisão inválido." }, { status: 400 }); }
 }
