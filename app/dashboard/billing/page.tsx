@@ -69,29 +69,29 @@ export default function BillingPage() {
   }, []);
 
   const currency: Currency = country === "mozambique" ? "MZN" : country === "brazil" ? "BRL" : country === "south-africa" ? "ZAR" : "USD";
-  const countryLabel = country === "mozambique" ? "Moçambique" : country === "brazil" ? "Brasil" : country === "south-africa" ? "África do Sul" : "Internacional";
+  const countryLabel = country === "mozambique" ? "Mozambique" : country === "brazil" ? "Brazil" : country === "south-africa" ? "South Africa" : "International";
   const paymentBadges = currency === "MZN"
     ? [{ label: "M-Pesa", icon: Smartphone }, { label: "eMola", icon: WalletCards }]
     : currency === "BRL"
       ? [{ label: "PIX", icon: Smartphone }]
       : currency === "ZAR"
-        ? [{ label: "Cartão", icon: CreditCard }]
-        : [{ label: "Cartão internacional", icon: CreditCard }];
+        ? [{ label: "Card", icon: CreditCard }]
+        : [{ label: "International card", icon: CreditCard }];
 
   return (
     <div className="mx-auto w-full max-w-6xl pb-12">
       <header className="max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">BLUISKILL · FATURAÇÃO</p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Escolha o seu plano</h1>
-        <p className="mt-3 text-sm leading-6 text-zinc-600 sm:text-base">Preços simples para uma geração ou acesso por período. Os valores acompanham o país guardado no seu perfil.</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">BLUISKILL · BILLING</p>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Choose your plan</h1>
+        <p className="mt-3 text-sm leading-6 text-zinc-600 sm:text-base">Simple pricing for one generation or time-based access. Prices follow the country saved in your profile.</p>
       </header>
 
       <section className="mt-7 rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2"><Globe2 size={18} className="text-blue-600"/><h2 className="font-semibold text-zinc-950">Preços locais</h2></div>
-          <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-800">{profileLoaded ? countryLabel : "A detetar país…"} · {currency}</span>
+          <div className="flex items-center gap-2"><Globe2 size={18} className="text-blue-600"/><h2 className="font-semibold text-zinc-950">Local pricing</h2></div>
+          <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-800">{profileLoaded ? countryLabel : "Detecting country…"} · {currency}</span>
         </div>
-        <p className="mt-2 text-sm text-zinc-500">Selecione um plano para o destacar. A moeda é definida pelo país do seu perfil.</p>
+        <p className="mt-2 text-sm text-zinc-500">Select a plan to highlight it. Currency is determined by your profile country.</p>
       </section>
 
       <section className="mt-5 grid items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Planos disponíveis">
@@ -100,7 +100,7 @@ export default function BillingPage() {
           const monthly = plan.id === "monthly";
           return (
             <article key={plan.id} className={"relative flex min-w-0 flex-col rounded-2xl border bg-white p-5 transition " + (monthly ? "border-2 border-[#3B82F6] shadow-[0_8px_28px_rgba(59,130,246,0.10)]" : selected ? "border-blue-500 ring-2 ring-blue-500/10" : "border-zinc-200")}>
-              {monthly && <span className="absolute -top-3 left-4 rounded-full bg-[#3B82F6] px-3 py-1 text-[11px] font-semibold text-white">Melhor valor</span>}
+              {monthly && <span className="absolute -top-3 left-4 rounded-full bg-[#3B82F6] px-3 py-1 text-[11px] font-semibold text-white">Best value</span>}
               <div className="flex min-h-14 items-start justify-between gap-2 pt-1">
                 <div><h2 className="text-base font-semibold text-zinc-950">{plan.title}</h2><p className="mt-1 text-xs text-zinc-500">{plan.duration}</p></div>
                 {selected && <span className="grid size-6 shrink-0 place-items-center rounded-full bg-blue-50 text-blue-700"><Check size={15}/></span>}
@@ -111,14 +111,14 @@ export default function BillingPage() {
                 {paymentBadges.map(({ label, icon: Icon }) => <span key={label} className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 px-2.5 py-1.5 text-xs font-medium text-zinc-700"><Icon size={13}/>{label}</span>)}
               </div>
               <button type="button" aria-pressed={selected} onClick={() => setSelectedPlan(plan.id)} className={"mt-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 " + (selected ? "bg-blue-700 text-white hover:bg-blue-800" : "bg-blue-600 text-white hover:bg-blue-700")}>
-                {selected ? <><Check size={16}/>Plano selecionado</> : "Selecionar Plano"}
+                {selected ? <><Check size={16}/>Plan selected</> : "Select plan"}
               </button>
             </article>
           );
         })}
       </section>
 
-      <p className="mt-5 text-xs leading-5 text-zinc-500">Os métodos de pagamento apresentados indicam as opções locais pretendidas. A seleção de um plano não efetua uma cobrança; o processamento de pagamentos deve estar ativo antes de concluir uma compra.</p>
+      <p className="mt-5 text-xs leading-5 text-zinc-500">The payment methods shown indicate intended local options. Selecting a plan does not charge you; payment processing must be enabled before a purchase can be completed.</p>
     </div>
   );
 }
