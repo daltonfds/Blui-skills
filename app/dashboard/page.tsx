@@ -33,17 +33,27 @@ export default function DashboardPage() {
   const [isGuest, setIsGuest] = useState(false);
   const [guestReady, setGuestReady] = useState(false);
   const [guestDemoUsed, setGuestDemoUsed] = useState(false);
+  const [accessLabel, setAccessLabel] = useState("");
   const [paywallOpen, setPaywallOpen] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let mounted = true;
-    createClient().auth.getUser().then(({ data: { user } }) => {
+    const sb = createClient();
+    sb.auth.getUser().then(async ({ data: { user } }) => {
       if (!mounted) return;
       const guest = !user;
       setIsGuest(guest);
       setGuestDemoUsed(guest && window.localStorage.getItem("bluiskill-guest-demo-used-v1") === "1");
+      if (user) {
+        const { data: profile } = await sb.from("profiles").select("plan_type,pass_expires_at,credits").eq("id", user.id).maybeSingle();
+        if (mounted && profile) {
+          const expiry = profile.pass_expires_at ? new Date(profile.pass_expires_at).getTime() : 0;
+          const active = ["daily_pass", "weekly_pass", "monthly_pass"].includes(profile.plan_type) && expiry > Date.now();
+          setAccessLabel(active ? "Passe ativo · expira em " + new Intl.DateTimeFormat("pt-PT", { dateStyle: "short", timeStyle: "short" }).format(new Date(expiry)) : String(profile.credits) + " crédito(s) disponível(is)");
+        }
+      }
       setGuestReady(true);
     }).catch(() => {
       if (!mounted) return;
@@ -113,7 +123,7 @@ export default function DashboardPage() {
 
   return <div className="relative mx-auto flex min-h-[calc(100dvh-190px)] w-full max-w-4xl flex-col pb-36">
     <div className="mb-8 flex items-start justify-between gap-3">
-      <div><p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">Developer Studio</p><h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">What are we building?</h1><p className="mt-2 max-w-xl text-sm leading-6 text-zinc-500">Describe your idea. BluiSkill will organise the specification, architecture and delivery plan.</p>{isGuest && <p className="mt-3 inline-flex rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-600">{guestDemoUsed ? "Free demo used · create an account to continue" : "Guest mode · 1 free Developer Studio demo"}</p>}</div>
+      <div><p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">Developer Studio</p><h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">What are we building?</h1><p className="mt-2 max-w-xl text-sm leading-6 text-zinc-500">Describe your idea. BluiSkill will organise the specification, architecture and delivery plan.</p>{isGuest ? <p className="mt-3 inline-flex rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-600">{guestDemoUsed ? "Free demo used · create an account to continue" : "Guest mode · 1 free Developer Studio demo"}</p> : accessLabel && <p className="mt-3 inline-flex rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-600">{accessLabel}</p>}</div>
       <button type="button" onClick={reset} className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-700 hover:border-zinc-400"><Plus size={16}/><span className="hidden sm:inline">New chat</span></button>
     </div>
     {messages.length === 0 ? <div className="grid gap-3 sm:grid-cols-3">{starters.map(([title, description]) => <button key={title} type="button" onClick={() => setInput(title === "Plan a product" ? "Help me plan a new software product, including target users, core features, pricing and launch roadmap." : title === "Design an architecture" ? "Design a production-ready software architecture including database, authentication, APIs and deployment." : "Create a detailed master prompt for an AI coding assistant to build my product in testable phases.")} className="rounded-2xl border border-zinc-200 bg-white p-4 text-left hover:border-zinc-400 hover:bg-zinc-50"><span className="grid h-9 w-9 place-items-center rounded-xl border border-zinc-200 text-zinc-700"><Sparkles size={17}/></span><span className="mt-4 block text-sm font-semibold text-zinc-900">{title}</span><span className="mt-1 block text-xs leading-5 text-zinc-500">{description}</span></button>)}</div> : <div className="space-y-6">{messages.map((m) => <article key={m.id} className={m.role === "user" ? "ml-6 rounded-2xl bg-zinc-100 px-4 py-3.5 sm:ml-20 sm:px-5" : "mr-2 px-1 py-2 sm:mr-10"}><p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-500">{m.role === "user" ? "You" : "BluiSkill"}</p><p className="whitespace-pre-wrap text-sm leading-7 text-zinc-800">{m.content}</p>{m.result && <button type="button" onClick={() => { setResult(m.result || null); setOpen(true); }} className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-xl bg-black px-4 text-sm font-medium text-white hover:bg-zinc-800"><FileText size={16}/>View structured results<Ellipsis size={17}/></button>}</article>)}{busy && <div role="status" className="flex items-center gap-3 px-2 py-4 text-sm text-zinc-500"><LoaderCircle size={18} className="animate-spin"/>Building your project plan…</div>}<div ref={bottomRef}/></div>}
