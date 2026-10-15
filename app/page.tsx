@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white pb-[env(safe-area-inset-bottom)] text-zinc-950">
       <header className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-5 sm:py-5 md:px-8">
-        <Logo size="md" priority className="shrink-0" />
+        <Logo size="md" showName priority className="shrink-0" />
         <nav className="flex items-center gap-2 sm:gap-4 text-sm">
           <PWAInstallButton compact enablePromo={false} />
           <Link href="/login" className="hidden text-zinc-600 hover:text-black sm:inline">Log in</Link>
