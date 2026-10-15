@@ -65,7 +65,7 @@ Use Google Search grounding to find relevant, credible and recent sources. Synth
     if (!response.ok) {
       const detail = await response.text().catch(() => "");
       console.error("Academic research failed", { status: response.status, detail: detail.slice(0, 250) });
-      if (response.status === 429) return NextResponse.json({ success: false, error: "The Gemini API rate limit was reached. Please try again later." }, { status: 429 });
+      if (response.status === 429) return NextResponse.json({ success: false, code: "RATE_LIMIT_EXCEEDED", retryAfterSeconds: 30, error: "O limite de requisições da API Gemini foi atingido. Aguarda 30 segundos e tenta novamente." }, { status: 429, headers: { "Retry-After": "30" } });
       return NextResponse.json({ success: false, error: response.status === 404 ? "Gemini model or endpoint not found (HTTP 404). Check model availability and API access." : response.status === 401 || response.status === 403 ? "The Gemini API key is invalid or lacks permission. Check GEMINI_API_KEY." : `Gemini API request failed (HTTP ${response.status}) after retries. Please try again later.` }, { status: 502 });
     }
     const data = await response.json();
