@@ -53,7 +53,7 @@ export default function DashboardPage() {
           const expiry = profile.pass_expires_at ? new Date(profile.pass_expires_at).getTime() : 0;
           const active = ["daily_pass", "weekly_pass", "monthly_pass"].includes(profile.plan_type) && expiry > Date.now();
           setHasPaidAccess(active || Number(profile.credits || 0) > 0);
-          setAccessLabel(active ? "Passe ativo · expira em " + new Intl.DateTimeFormat("pt-PT", { dateStyle: "short", timeStyle: "short" }).format(new Date(expiry)) : String(profile.credits) + " credit(s) available");
+          setAccessLabel(active ? "Active pass · expires on " + new Intl.DateTimeFormat("en-US", { dateStyle: "short", timeStyle: "short" }).format(new Date(expiry)) : String(profile.credits) + " credit(s) available");
         }
       }
       setGuestReady(true);
