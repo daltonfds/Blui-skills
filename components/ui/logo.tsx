@@ -9,9 +9,9 @@ interface LogoProps {
 }
 
 const dimensions = {
-  sm: { width: 110, height: 28 },
-  md: { width: 140, height: 36 },
-  lg: { width: 180, height: 46 },
+  sm: { width: 38, height: 38 },
+  md: { width: 54, height: 54 },
+  lg: { width: 112, height: 112 },
 } as const;
 
 export function Logo({ className = "", size = "md", priority = false, href = "/" }: LogoProps) {
@@ -25,11 +25,11 @@ export function Logo({ className = "", size = "md", priority = false, href = "/"
     >
       <Image
         src="/images/logo.png"
-        alt="BluiSkill"
+        alt="BluiSkill official logo"
         width={width}
         height={height}
         priority={priority}
-        className="h-auto max-w-full object-contain"
+        className="block shrink-0 object-contain"
       />
     </Link>
   );
