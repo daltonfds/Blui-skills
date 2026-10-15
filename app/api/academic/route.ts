@@ -46,7 +46,7 @@ export async function GET() {
   const [{ data: generations, error: historyError }, { data: cards, error: cardsError }, { data: profile }] = await Promise.all([
     supabase.from("academic_generations").select("id,mode,title,output_data,created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(20),
     supabase.from("academic_study_cards").select("id,generation_id,topic,question,answer,options,card_type,interval_step,due_at").eq("user_id", user.id).lte("due_at", new Date().toISOString()).order("due_at").limit(50),
-    supabase.from("profiles").select("credits").eq("id", user.id).maybeSingle(),
+    supabase.from("profiles").select("credits,plan_type,pass_expires_at").eq("id", user.id).maybeSingle(),
   ]);
   if (historyError || cardsError) return NextResponse.json({ error: "Aplica a migração Academic do Supabase antes de usar este módulo." }, { status: 503 });
   return NextResponse.json({ generations: generations ?? [], dueCards: cards ?? [], credits: profile?.credits ?? null });
@@ -82,7 +82,8 @@ export async function POST(request: Request) {
     };
     const { data: profile, error: profileError } = await supabase.from("profiles").select("credits").eq("id",user.id).maybeSingle();
     if (profileError || !profile) return NextResponse.json({ error: "Não foi possível verificar os créditos." }, { status: 503 });
-    if (profile.credits < 1) return NextResponse.json({ error: "Não tens créditos suficientes. Adiciona créditos antes de gerar." }, { status: 402 });
+    const hasActivePass = ["daily_pass", "weekly_pass", "monthly_pass"].includes(profile.plan_type) && !!profile.pass_expires_at && new Date(profile.pass_expires_at).getTime() > Date.now();
+    if (profile.credits < 1 && !hasActivePass) return NextResponse.json({ error: "Não tens créditos suficientes. Adiciona créditos ou ativa um passe para continuar." }, { status: 402 });
     const input = { mode, topic, sourceText, sourceFileName: pdf?.name || null, metadata, style: metadata.style, language: outputLanguage,
       instructions: mode === "paper" ? "Cria um trabalho académico completo em Markdown, usando apenas citações verificáveis da fonte fornecida." : "Cria resumo, perguntas de escolha múltipla, perguntas abertas e flashcards para revisão espaçada." };
     const generated = await generate(input, pdf);
