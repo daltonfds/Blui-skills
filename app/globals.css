@@ -9,6 +9,10 @@ body { margin: 0; background: #fafafa; color: #09090b; font-family: var(--font-i
 button,a,input,textarea,select { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 2px solid #2563EB; outline-offset: 3px; }
 @media (max-width: 640px) {
-  input, textarea, select { font-size: 16px !important; }
+  input, select { font-size: 16px !important; }
+  textarea { font-size: 14px !important; }
+  body { font-size: 14px; }
+  h1 { font-size: 1.375rem !important; line-height: 1.35 !important; }
+  h2 { font-size: 1.125rem !important; line-height: 1.4 !important; }
   button, a { touch-action: manipulation; }
 }
