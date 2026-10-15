@@ -42,13 +42,15 @@ export async function POST(request: Request) {
     if (!key) return NextResponse.json({ success: false, error: "Gemini API key is not configured. Add GEMINI_API_KEY to the Vercel environment." }, { status: 503 });
     // Use a known-supported Gemini model instead of an arbitrary provider/model that can return HTTP 404.
     const model = "gemini-3.8-flash";
-    const outputLanguageInstruction = language === "Auto-detect" ? "Detect the language of the research question and write the full report in that same language." : `Write the full report in ${language}.`;
+    const outputLanguageInstruction = language === "Auto-detect" ? "Detect the language of the research question and write the full report entirely in that language, without switching languages." : `Write the full report entirely in ${language}.`;
     const depthLabel = depth === "overview" ? "overview" : depth === "comparative" ? "comparative" : "comprehensive";
     const prompt = `Conduct a ${depthLabel} research report. ${outputLanguageInstruction} Research question: ${topic}
 
 Use Google Search grounding to find relevant, credible and recent sources. Synthesize evidence, do not merely list search results. Structure the report with: research question and scope; executive summary; key findings with dates and geographic scope where relevant; competing explanations or points of disagreement; limitations and gaps; conclusion; and a short list of the most useful sources. Clearly distinguish established evidence from inference. Never invent studies, statistics, authors, quotations or publication dates. Prefer primary, official, academic and reputable sources. Make the report specific to the question. Write naturally and professionally, without generic AI filler. Return plain text with clear headings.`;
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+    const systemInstruction = `Atuas como um Arquiteto de Software Principal e Pesquisador Académico Sénior. Deteta o idioma do pedido; se estiver em Português, escreve todo o relatório em Português formal e natural, sem mudar para Inglês. Produz análise profunda, específica e estruturada, não um resumo genérico. Usa Markdown limpo com títulos claros. Distingue factos verificados, inferências, desacordos e limitações. Nunca inventes referências, citações, autores, datas, estatísticas ou URLs. Usa pesquisa Google apenas para fontes efetivamente devolvidas pela ferramenta e cita as fontes relevantes. Cumpre a profundidade solicitada e responde no idioma explicitamente escolhido pelo utilizador.`;
     const payload = JSON.stringify({
+      systemInstruction: { parts: [{ text: systemInstruction }] },
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       tools: [{ googleSearch: {} }],
       generationConfig: { temperature: 0.2, maxOutputTokens: 8192 },
