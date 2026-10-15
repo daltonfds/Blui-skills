@@ -31,17 +31,11 @@ export function Logo({
       className={`inline-flex min-w-0 items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 ${className}`}
     >
       <Image
-        src="/images/logo.png"
+        src="/images/file_000000006f30820eb678e91926f79313.png"
         alt="BluiSkill official logo"
         width={width}
         height={height}
         priority={priority}
-        onError={(event) => {
-          // Keep the interface usable until the official PNG is uploaded.
-          if (!event.currentTarget.src.endsWith("/icon.svg")) {
-            event.currentTarget.src = "/icon.svg";
-          }
-        }}
         className="block shrink-0 rounded-lg object-contain"
       />
       {showName && (
