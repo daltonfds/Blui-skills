@@ -1,75 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Check, CreditCard, Globe2, Smartphone, WalletCards } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
-const modules = ["Developer Studio", "Academic Workspace"] as const;
+type Currency = "USD" | "MZN" | "BRL" | "ZAR";
+type TierKey = "single" | "daily" | "weekly" | "monthly";
 type CountryGroup = "international" | "mozambique" | "brazil" | "south-africa";
 
-const pricing: Record<CountryGroup, {
-  currency: string;
-  locale: string;
-  countryLabel: string;
-  prices: { id: string; title: string; period: string; price: number }[];
-}> = {
-  international: {
-    currency: "USD", locale: "en-US", countryLabel: "International",
-    prices: [
-      { id: "use", title: "Pay per use", period: "one generation", price: 0.49 },
-      { id: "1", title: "Daily pass", period: "24 hours", price: 1.99 },
-      { id: "7", title: "Weekly pass", period: "7 days", price: 4.99 },
-      { id: "30", title: "Monthly pass", period: "30 days", price: 14.99 },
-    ],
-  },
-  mozambique: {
-    currency: "MZN", locale: "pt-MZ", countryLabel: "Moçambique",
-    prices: [
-      { id: "use", title: "Avulso", period: "uma geração", price: 29 },
-      { id: "1", title: "Passe diário", period: "24 horas", price: 129 },
-      { id: "7", title: "Passe semanal", period: "7 dias", price: 299 },
-      { id: "30", title: "Passe mensal", period: "30 dias", price: 890 },
-    ],
-  },
-  brazil: {
-    currency: "BRL", locale: "pt-BR", countryLabel: "Brasil",
-    prices: [
-      { id: "use", title: "Avulso", period: "uma geração", price: 2.49 },
-      { id: "1", title: "Passe diário", period: "24 horas", price: 9.9 },
-      { id: "7", title: "Passe semanal", period: "7 dias", price: 24.9 },
-      { id: "30", title: "Passe mensal", period: "30 dias", price: 69.9 },
-    ],
-  },
-  "south-africa": {
-    currency: "ZAR", locale: "en-ZA", countryLabel: "South Africa",
-    prices: [
-      { id: "use", title: "Pay per use", period: "one generation", price: 7.99 },
-      { id: "1", title: "Daily pass", period: "24 hours", price: 29.99 },
-      { id: "7", title: "Weekly pass", period: "7 days", price: 79.99 },
-      { id: "30", title: "Monthly pass", period: "30 days", price: 239.99 },
-    ],
-  },
+const PRICING_TIERS: Record<Currency, Record<TierKey, number>> = {
+  USD: { single: 0.49, daily: 0.99, weekly: 1.99, monthly: 4.99 },
+  MZN: { single: 29.00, daily: 69.00, weekly: 129.00, monthly: 299.00 },
+  BRL: { single: 2.49, daily: 4.90, weekly: 9.90, monthly: 24.90 },
+  ZAR: { single: 7.99, daily: 14.99, weekly: 29.99, monthly: 79.99 },
 };
 
-function countryGroup(country: unknown): CountryGroup {
-  const normalized = typeof country === "string" ? country.trim().toLowerCase() : "";
-  if (["mozambique", "moçambique", "moz"].includes(normalized)) return "mozambique";
-  if (["brazil", "brasil", "br"].includes(normalized)) return "brazil";
-  if (["south africa", "south-africa", "áfrica do sul", "africa do sul", "za"].includes(normalized)) return "south-africa";
+const PLANS: Array<{ id: TierKey; title: string; description: string }> = [
+  { id: "single", title: "Single use", description: "One generation" },
+  { id: "daily", title: "Daily pass", description: "24-hour access" },
+  { id: "weekly", title: "Weekly pass", description: "7-day access" },
+  { id: "monthly", title: "Monthly pass", description: "30-day access" },
+];
+
+const MODULES = [
+  { id: "developer", title: "Developer Studio", description: "Architecture, prompts, documentation and security reviews." },
+  { id: "academic", title: "Academic Workspace", description: "Deep Research, academic writing, study guides and revision cards." },
+  { id: "complete", title: "Complete Workspace", description: "Access to both Developer Studio and Academic Workspace." },
+];
+
+function countryGroup(value: unknown): CountryGroup {
+  const country = typeof value === "string" ? value.trim().toLowerCase() : "";
+  if (["mozambique", "moçambique", "moz", "mz"].includes(country)) return "mozambique";
+  if (["brazil", "brasil", "br"].includes(country)) return "brazil";
+  if (["south africa", "south-africa", "south_africa", "áfrica do sul", "africa do sul", "za"].includes(country)) return "south-africa";
   return "international";
 }
 
-function formatPrice(value: number, group: CountryGroup): string {
-  if (group === "mozambique") return `${value.toLocaleString("pt-MZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MZN`;
-  if (group === "brazil") return `R$ ${value.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  if (group === "south-africa") return `R${value.toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  return `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+function formatPrice(amount: number, currency: Currency) {
+  if (currency === "MZN") return `${amount.toLocaleString("pt-MZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MT`;
+  if (currency === "BRL") return `R$ ${amount.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  if (currency === "ZAR") return `R${amount.toLocaleString("en-ZA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `$${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 export default function BillingPage() {
-  const [selected, setSelected] = useState<string[]>(["Developer Studio"]);
-  const [duration, setDuration] = useState("30");
-  const [group, setGroup] = useState<CountryGroup>("international");
-  const [countryLoaded, setCountryLoaded] = useState(false);
+  const [country, setCountry] = useState<CountryGroup>("international");
+  const [selectedPlan, setSelectedPlan] = useState<TierKey>("monthly");
+  const [selectedModule, setSelectedModule] = useState("complete");
+  const [profileLoaded, setProfileLoaded] = useState(false);
+  const [checkoutNotice, setCheckoutNotice] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -77,80 +56,90 @@ export default function BillingPage() {
       try {
         const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
-        if (!active || !user) {
-          if (active) setCountryLoaded(true);
-          return;
+        if (!active) return;
+        if (user) {
+          const { data: profile } = await supabase.from("profiles").select("country").eq("id", user.id).maybeSingle();
+          if (active) setCountry(countryGroup(profile?.country ?? user.user_metadata?.country));
+        } else if (typeof navigator !== "undefined") {
+          const locale = navigator.language.toLowerCase();
+          if (locale.endsWith("-mz")) setCountry("mozambique");
+          else if (locale.endsWith("-br")) setCountry("brazil");
+          else if (locale.endsWith("-za")) setCountry("south-africa");
         }
-        const { data: profile } = await supabase.from("profiles").select("country").eq("id", user.id).maybeSingle();
-        const country = profile?.country ?? user.user_metadata?.country;
-        if (active) setGroup(countryGroup(country));
       } catch (error) {
         console.error("Could not load billing country", error);
       } finally {
-        if (active) setCountryLoaded(true);
+        if (active) setProfileLoaded(true);
       }
     }
     void loadCountry();
     return () => { active = false; };
   }, []);
 
-  const plan = pricing[group];
-  const activeDuration = plan.prices.find((item) => item.id === duration) ?? plan.prices[3];
-  const total = activeDuration.price * selected.length;
+  const currency: Currency = country === "mozambique" ? "MZN" : country === "brazil" ? "BRL" : country === "south-africa" ? "ZAR" : "USD";
+  const selectedPrice = PRICING_TIERS[currency][selectedPlan];
+  const selectedModuleInfo = MODULES.find((item) => item.id === selectedModule) ?? MODULES[2];
+  const countryLabel = country === "mozambique" ? "Mozambique" : country === "brazil" ? "Brazil" : country === "south-africa" ? "South Africa" : "International";
+  const paymentMethods = useMemo(() => {
+    if (currency === "MZN") return [{ label: "M-Pesa", icon: Smartphone }, { label: "eMola", icon: WalletCards }];
+    if (currency === "BRL") return [{ label: "PIX", icon: Smartphone }];
+    return [{ label: "Credit / debit cards", icon: CreditCard }];
+  }, [currency]);
 
   return (
-    <div className="mx-auto w-full max-w-4xl">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">BluiSkill</p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-950">Billing</h1>
-      <p className="mt-2 text-sm leading-6 text-zinc-500">Pricing adapts to the country saved in your profile.</p>
+    <div className="mx-auto w-full max-w-6xl pb-12">
+      <header className="max-w-3xl">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">BLUISKILL · PRICING</p>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Choose the right access for your work</h1>
+        <p className="mt-3 text-sm leading-6 text-zinc-600 sm:text-base">Straightforward pricing for individual generations or time-based access. Prices adapt to your saved country.</p>
+      </header>
 
-      <section className="mt-6 rounded-2xl border border-zinc-200 bg-white p-5">
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <div>
-            <h2 className="font-semibold text-zinc-950">Prices for {plan.countryLabel}</h2>
-            <p className="mt-1 text-sm text-zinc-500">{countryLoaded ? `Currency: ${plan.currency}` : "Loading profile currency…"}</p>
-          </div>
-          <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700">{plan.currency}</span>
+      <section className="mt-7 rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2"><Globe2 size={18} className="text-blue-600"/><h2 className="font-semibold text-zinc-950">Local pricing</h2></div>
+          <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-800">{profileLoaded ? countryLabel : "Detecting country…"} · {currency}</span>
         </div>
-        <div className="mt-4 divide-y divide-zinc-100">
-          {plan.prices.map((item) => (
-            <div key={item.id} className="flex items-center justify-between gap-4 py-3">
-              <div>
-                <p className="text-sm font-medium text-zinc-900">{item.title}</p>
-                <p className="mt-0.5 text-xs text-zinc-500">{item.period}</p>
-              </div>
-              <strong className="whitespace-nowrap text-base font-semibold text-zinc-950">{formatPrice(item.price, group)}</strong>
-            </div>
-          ))}
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {PLANS.map((plan) => {
+            const active = selectedPlan === plan.id;
+            return <button key={plan.id} type="button" aria-pressed={active} onClick={() => { setSelectedPlan(plan.id); setCheckoutNotice(false); }} className={`rounded-xl border p-4 text-left transition focus-visible:outline-blue-600 ${active ? "border-blue-600 bg-blue-50/60 ring-2 ring-blue-600/15" : "border-zinc-200 bg-white hover:border-zinc-400"}`}>
+              <span className="flex items-start justify-between gap-2"><span className="text-sm font-semibold text-zinc-900">{plan.title}</span>{active && <Check size={16} className="text-blue-700"/>}</span>
+              <span className="mt-3 block text-2xl font-bold tracking-tight text-zinc-950">{formatPrice(PRICING_TIERS[currency][plan.id], currency)}</span>
+              <span className="mt-1 block text-xs text-zinc-500">{plan.description}</span>
+            </button>;
+          })}
         </div>
+        <p className="mt-4 text-xs text-zinc-500">All prices are displayed in the currency associated with your profile. International users see USD.</p>
       </section>
 
-      <section className="mt-5 rounded-2xl border border-zinc-200 bg-white p-5">
-        <h2 className="font-semibold text-zinc-950">Configure your pass</h2>
-        <p className="mt-1 text-sm leading-6 text-zinc-500">Select one or both workspaces and a duration. Prices use your profile country.</p>
-        <div className="mt-4 grid gap-2 sm:grid-cols-2">
-          {modules.map((module) => (
-            <label key={module} className="flex min-h-12 items-center gap-3 rounded-xl border border-zinc-200 p-3 text-sm text-zinc-800">
-              <input type="checkbox" checked={selected.includes(module)} onChange={(event) => setSelected((current) => event.target.checked ? [...current.filter((item) => item !== module), module] : current.filter((item) => item !== module))} className="accent-black" />
-              {module}
-            </label>
-          ))}
-        </div>
-        <label className="mt-5 block text-sm font-medium text-zinc-800">Access option
-          <select value={duration} onChange={(event) => setDuration(event.target.value)} className="mt-2 w-full rounded-xl border border-zinc-200 bg-white p-3 text-sm">
-            {plan.prices.map((item) => <option key={item.id} value={item.id}>{item.title} · {item.period} · {formatPrice(item.price, group)}</option>)}
-          </select>
-        </label>
-        <div className="mt-5 rounded-xl bg-zinc-50 p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Indicative total</p>
-          <p className="mt-1 text-2xl font-semibold text-zinc-950">{formatPrice(total, group)}</p>
-          <p className="mt-1 text-xs text-zinc-500">{selected.length} module(s) × {formatPrice(activeDuration.price, group)} per module.</p>
-        </div>
-        <div className="mt-4 rounded-xl border border-zinc-200 p-4 text-sm leading-6 text-zinc-600">
-          Online checkout is not enabled yet. These are the intended prices only; no payment is taken from this page. Payment methods will be advertised only after merchant setup and verified test transactions.
-        </div>
-        <button disabled className="mt-4 w-full cursor-not-allowed rounded-xl bg-zinc-200 px-4 py-3 text-sm font-semibold text-zinc-500">Checkout unavailable — payment setup required</button>
-        <p className="mt-3 text-xs text-zinc-500">Support: support@bluiskill.com</p>
+      <section className="mt-5 grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+        <article className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
+          <h2 className="text-lg font-semibold text-zinc-950">Choose your workspace</h2>
+          <p className="mt-1 text-sm leading-6 text-zinc-500">Select the tools you want to access with this plan.</p>
+          <div className="mt-4 space-y-3">
+            {MODULES.map((module) => <button key={module.id} type="button" aria-pressed={selectedModule === module.id} onClick={() => { setSelectedModule(module.id); setCheckoutNotice(false); }} className={`flex w-full items-start gap-3 rounded-xl border p-4 text-left transition ${selectedModule === module.id ? "border-blue-600 bg-blue-50/60" : "border-zinc-200 hover:border-zinc-400"}`}>
+              <span className={`mt-0.5 grid size-5 shrink-0 place-items-center rounded-full border ${selectedModule === module.id ? "border-blue-600 bg-blue-600 text-white" : "border-zinc-300 text-transparent"}`}><Check size={13}/></span>
+              <span><span className="block text-sm font-semibold text-zinc-950">{module.title}</span><span className="mt-1 block text-xs leading-5 text-zinc-600">{module.description}</span></span>
+            </button>)}
+          </div>
+        </article>
+
+        <aside className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
+          <h2 className="text-lg font-semibold text-zinc-950">Your selection</h2>
+          <p className="mt-1 text-sm text-zinc-500">{selectedModuleInfo.title} · {PLANS.find((item) => item.id === selectedPlan)?.title}</p>
+          <p className="mt-4 text-3xl font-bold tracking-tight text-zinc-950">{formatPrice(selectedPrice, currency)}</p>
+          <p className="mt-1 text-xs text-zinc-500">{PLANS.find((item) => item.id === selectedPlan)?.description}</p>
+          <div className="mt-5 border-t border-zinc-100 pt-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Payment options for {countryLabel}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {paymentMethods.map(({ label, icon: Icon }) => <span key={label} className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-xs font-medium text-zinc-700"><Icon size={14}/>{label}</span>)}
+            </div>
+            <p className="mt-2 text-xs leading-5 text-zinc-500">Payment providers are not connected yet. These are the intended local options; no payment will be taken.</p>
+          </div>
+          <button type="button" onClick={() => setCheckoutNotice(true)} className="mt-5 min-h-12 w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">Continue with this plan</button>
+          {checkoutNotice && <p role="status" className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-5 text-amber-900">Your selection is ready, but secure checkout has not been activated yet. No charge has been made. Payment integration is required before subscriptions can be purchased.</p>}
+          <p className="mt-4 text-xs text-zinc-500">Need help? <a className="underline underline-offset-4 hover:text-blue-700" href="mailto:support@bluiskill.com">support@bluiskill.com</a></p>
+        </aside>
       </section>
     </div>
   );
