@@ -10,42 +10,29 @@ const developerLinks = [
   { href: "/dashboard", label: "Architect & Prompt", icon: Plus },
   { href: "/dashboard/docs", label: "Docs Generator", icon: FileText },
   { href: "/dashboard/docs/legal", label: "Legal & Compliance Kit", icon: ShieldCheck },
-  { href: "/dashboard/toolbox", label: "Dev Toolbox", icon: Wrench },
+  { href: "/dashboard/toolbox", label: "Developer Toolbox", icon: Wrench },
   { href: "/dashboard/projects", label: "My Projects", icon: FolderKanban },
-  { href: "/dashboard/audit", label: "Security audit", icon: ShieldCheck },
+  { href: "/dashboard/audit", label: "Security Audit", icon: ShieldCheck },
 ];
 const academicLinks = [
-  { href: "/dashboard/academic", label: "Academic overview", icon: GraduationCap },
+  { href: "/dashboard/academic", label: "Academic Overview", icon: GraduationCap },
   { href: "/dashboard/academic/research", label: "Deep Research", icon: FileSearch },
   { href: "/dashboard/academic/paper", label: "Academic Writing", icon: FileText },
-  { href: "/dashboard/academic/study", label: "Study Setup", icon: BookOpen },
+  { href: "/dashboard/academic/study", label: "Study & Revision", icon: BookOpen },
   { href: "/dashboard/academic/library", label: "Academic Library", icon: LibraryBig },
 ];
-const translations: Record<string, Record<string, string>> = {
-  pt: { "Architect & Prompt": "Arquitectura e Prompt", "Docs Generator": "Gerador de Documentos", "Legal & Compliance Kit": "Legal e Conformidade", "Dev Toolbox": "Ferramentas Dev", "My Projects": "Meus Projectos", "Security audit": "Auditoria de Segurança", "Academic overview": "Visão geral", "Deep Research": "Pesquisa Aprofundada", "Academic Writing": "Trabalhos Académicos", "Study Setup": "Set up de Estudos", "Academic Library": "Biblioteca Académica", "Billing": "Faturação", "Need help?": "Precisas de ajuda?", "Sign out": "Terminar sessão", "Terms": "Termos", "Privacy": "Privacidade" },
-  en: {},
-  es: { "Architect & Prompt": "Arquitectura y prompts", "Docs Generator": "Generador de documentos", "Legal & Compliance Kit": "Legal y cumplimiento", "Dev Toolbox": "Herramientas Dev", "My Projects": "Mis proyectos", "Security audit": "Auditoría de seguridad", "Academic overview": "Vista general", "Deep Research": "Investigación profunda", "Academic Writing": "Trabajos académicos", "Study Setup": "Espacio de estudio", "Academic Library": "Biblioteca académica", "Billing": "Facturación", "Need help?": "¿Necesitas ayuda?", "Sign out": "Cerrar sesión", "Terms": "Términos", "Privacy": "Privacidad" },
-  fr: { "Architect & Prompt": "Architecture et prompts", "Docs Generator": "Générateur de documents", "Legal & Compliance Kit": "Juridique et conformité", "Dev Toolbox": "Outils Dev", "My Projects": "Mes projets", "Security audit": "Audit de sécurité", "Academic overview": "Vue d’ensemble", "Deep Research": "Recherche approfondie", "Academic Writing": "Travaux académiques", "Study Setup": "Espace d’étude", "Academic Library": "Bibliothèque académique", "Billing": "Facturation", "Need help?": "Besoin d’aide ?", "Sign out": "Se déconnecter", "Terms": "Conditions", "Privacy": "Confidentialité" },
-};
 
 export function Sidebar({ email }: { email: string; credits?: number }) {
   const path = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [language, setLanguage] = useState("pt");
-  useEffect(() => {
-    const saved = window.localStorage.getItem("bluiskill-language");
-    if (saved && translations[saved]) setLanguage(saved);
-    const onLanguageChange = (event: Event) => {
-      const value = (event as CustomEvent).detail;
-      if (typeof value === "string" && translations[value]) setLanguage(value);
-    };
-    window.addEventListener("bluiskill:language-change", onLanguageChange);
-    return () => window.removeEventListener("bluiskill:language-change", onLanguageChange);
-  }, []);
-  const translate = (value: string) => translations[language]?.[value] || value;
   const isAcademic = path.startsWith("/dashboard/academic");
   const visibleLinks = isAcademic ? academicLinks : developerLinks;
+
+  useEffect(() => {
+    document.documentElement.lang = "en";
+    window.localStorage.setItem("bluiskill-language", "en");
+  }, []);
 
   async function logout() {
     const sb = createClient();
@@ -57,20 +44,23 @@ export function Sidebar({ email }: { email: string; credits?: number }) {
 
   function navigation() {
     return <nav className="flex flex-col gap-1" aria-label={isAcademic ? "Academic navigation" : "Developer Studio navigation"}>
-      <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">{isAcademic ? "Academic" : "Developer Studio"}</p>
-      {visibleLinks.map(({ href, label, icon: Icon }) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className={"flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path === href || (href !== "/dashboard" && path.startsWith(href + "/")) ? "bg-zinc-100 font-semibold text-zinc-950" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}>
-        <Icon size={17} strokeWidth={1.8}/><span>{translate(label)}</span>
-        {label === "Security audit" && <span className="ml-auto rounded border border-zinc-200 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-zinc-500">Beta</span>}
+      <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">{isAcademic ? "Academic Workspace" : "Developer Studio"}</p>
+      {visibleLinks.map(({ href, label, icon: Icon }) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className={"flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path === href || (href !== "/dashboard" && path.startsWith(href + "/")) ? "bg-blue-50 font-semibold text-blue-800" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}>
+        <Icon size={17} strokeWidth={1.8}/><span>{label}</span>
+        {label === "Security Audit" && <span className="ml-auto rounded border border-zinc-200 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-zinc-500">Beta</span>}
       </Link>)}
-      <div className="mt-3 border-t border-zinc-200 pt-3"><Link href="/dashboard/settings" onClick={() => setMobileOpen(false)} className={"mb-1 flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path.startsWith("/dashboard/settings") ? "bg-zinc-100 font-semibold text-zinc-950" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}><Settings size={17} strokeWidth={1.8}/><span>Settings</span></Link><Link href="/dashboard/billing" onClick={() => setMobileOpen(false)} className={"flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path.startsWith("/dashboard/billing") ? "bg-zinc-100 font-semibold text-zinc-950" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}><CreditCard size={17} strokeWidth={1.8}/><span>{translate("Billing")}</span></Link></div>
+      <div className="mt-3 border-t border-zinc-200 pt-3">
+        <Link href="/dashboard/settings" onClick={() => setMobileOpen(false)} className={"mb-1 flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path.startsWith("/dashboard/settings") ? "bg-blue-50 font-semibold text-blue-800" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}><Settings size={17} strokeWidth={1.8}/><span>Settings</span></Link>
+        <Link href="/dashboard/billing" onClick={() => setMobileOpen(false)} className={"flex min-h-10 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition " + (path.startsWith("/dashboard/billing") ? "bg-blue-50 font-semibold text-blue-800" : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950")}><CreditCard size={17} strokeWidth={1.8}/><span>Pricing & Billing</span></Link>
+      </div>
     </nav>;
   }
 
   function account() {
     return <div className="border-t border-zinc-200 pt-4">
       <div className="flex items-center gap-2 px-1"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-700">{(email.charAt(0) || "G").toUpperCase()}</span><span className="min-w-0 flex-1 truncate text-xs text-zinc-600" title={email}>{email || "Guest session"}</span></div>
-      <div className="mt-4 border-t border-zinc-100 pt-3"><p className="px-1 text-xs leading-5 text-zinc-500">{translate("Need help?")} <a className="font-medium text-zinc-700 underline underline-offset-2" href="mailto:support@bluiskill.com">support@bluiskill.com</a></p><div className="mt-2 flex gap-3 px-1 text-xs text-zinc-500"><Link href="/terms" className="hover:text-zinc-900">{translate("Terms")}</Link><Link href="/privacy" className="hover:text-zinc-900">{translate("Privacy")}</Link></div></div>
-      {email ? <button onClick={logout} className="mt-3 flex min-h-9 w-full items-center gap-2 rounded-lg px-2 text-sm text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950"><LogOut size={15}/>{translate("Sign out")}</button> : <div className="mt-3 grid grid-cols-2 gap-2"><Link href="/login?next=%2Fdashboard" className="rounded-lg border border-zinc-200 px-2 py-2 text-center text-xs font-semibold text-zinc-700 hover:bg-zinc-50">Entrar</Link><Link href="/signup?next=%2Fdashboard" className="rounded-lg bg-black px-2 py-2 text-center text-xs font-semibold text-white hover:bg-zinc-800">Criar conta</Link></div>}
+      <div className="mt-4 border-t border-zinc-100 pt-3"><p className="px-1 text-xs leading-5 text-zinc-500">Need help? <a className="font-medium text-zinc-700 underline underline-offset-2" href="mailto:support@bluiskill.com">support@bluiskill.com</a></p><div className="mt-2 flex gap-3 px-1 text-xs text-zinc-500"><Link href="/terms" className="hover:text-zinc-900">Terms</Link><Link href="/privacy" className="hover:text-zinc-900">Privacy</Link></div></div>
+      {email ? <button onClick={logout} className="mt-3 flex min-h-9 w-full items-center gap-2 rounded-lg px-2 text-sm text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950"><LogOut size={15}/>Sign out</button> : <div className="mt-3 grid grid-cols-2 gap-2"><Link href="/login?next=%2Fdashboard" className="rounded-lg border border-zinc-200 px-2 py-2 text-center text-xs font-semibold text-zinc-700 hover:bg-zinc-50">Sign in</Link><Link href="/signup?next=%2Fdashboard" className="rounded-lg bg-blue-600 px-2 py-2 text-center text-xs font-semibold text-white hover:bg-blue-700">Create account</Link></div>}
     </div>;
   }
 
