@@ -14,9 +14,15 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const [country, setCountry] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
   const router = useRouter();
   const params = useSearchParams();
   const signup = mode === "signup";
+
+  function safeNext() {
+    const next = params.get("next");
+    return next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+  }
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,28 +34,18 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         const { data, error } = await sb.auth.signUp({
           email,
           password,
-          options: { data: { full_name: name, country }, emailRedirectTo: `${SITE_URL}/auth/callback` },
+          options: { data: { full_name: name, country }, emailRedirectTo: `${SITE_URL}/auth/callback?next=%2Fdashboard` },
         });
         if (error) throw error;
-
-        // Supabase creates a session immediately only when Confirm email is disabled.
-        // If it is enabled, try password sign-in and surface the required dashboard setting.
         if (!data.session) {
-          const { error: loginError } = await sb.auth.signInWithPassword({ email, password });
-          if (loginError) {
-            if (/email not confirmed/i.test(loginError.message)) {
-              throw new Error("Email confirmation is still enabled in Supabase. Disable Authentication → Sign In / Providers → Email → Confirm email to enable instant signup.");
-            }
-            throw loginError;
-          }
+          setMessage("Check your inbox to confirm your email and finish creating your account.");
+          return;
         }
       } else {
         const { error } = await sb.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-
-      const next = params.get("next");
-      router.push(next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard");
+      router.push(safeNext());
       router.refresh();
     } catch (err) {
       setMessage(err instanceof Error ? err.message : "Authentication failed. Please try again.");
@@ -58,18 +54,25 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     }
   }
 
-  async function oauth(provider: "google" | "github") {
+  async function sendMagicLink() {
+    if (!email.trim()) {
+      setMessage("Enter your email address first.");
+      return;
+    }
     setBusy(true);
     setMessage("");
+    setMagicLinkSent(false);
     try {
       const sb = createClient();
-      const next = params.get("next");
-      const redirectTo = new URL("/auth/callback", SITE_URL);
-      if (next && next.startsWith("/") && !next.startsWith("//")) redirectTo.searchParams.set("next", next);
-      const { error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo: redirectTo.toString() } });
+      const { error } = await sb.auth.signInWithOtp({
+        email: email.trim(),
+        options: { emailRedirectTo: `${SITE_URL}/auth/callback?next=${encodeURIComponent(safeNext())}` },
+      });
       if (error) throw error;
+      setMagicLinkSent(true);
+      setMessage("If this email is registered, a secure sign-in link will arrive shortly. Check your inbox.");
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "OAuth sign-in failed. Check Supabase provider settings.");
+      setMessage(err instanceof Error ? err.message : "Could not send a sign-in link. Please try again.");
     } finally {
       setBusy(false);
     }
@@ -78,15 +81,15 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   return (
     <form onSubmit={submit} className="mt-8 space-y-4">
       {signup && <>
-        <label className="block text-sm text-zinc-800">Full name<input required value={name} onChange={e => setName(e.target.value)} autoComplete="name" className="mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-zinc-950 placeholder:text-zinc-400 focus:border-zinc-900 focus:bg-white focus:outline-none" /></label>
-        <label className="block text-sm text-zinc-800">Country<select required value={country} onChange={e => setCountry(e.target.value)} className="mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-zinc-950 focus:border-zinc-900 focus:bg-white focus:outline-none"><option value="">Choose your country</option>{["Mozambique", "South Africa", "Brazil", "France", "United States", "United Kingdom", "Portugal", "Angola", "Nigeria", "Kenya", "India", "Other"].map(c => <option key={c} value={c}>{c}</option>)}</select><span className="mt-1 block text-xs text-zinc-500">Used to show relevant payment options. Availability depends on configured providers.</span></label>
+        <label className="block text-sm text-zinc-800">Full name<input required value={name} onChange={e => setName(e.target.value)} autoComplete="name" className="mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-zinc-950 placeholder:text-zinc-400 focus:border-blue-600 focus:bg-white focus:outline-none" /></label>
+        <label className="block text-sm text-zinc-800">Country<select required value={country} onChange={e => setCountry(e.target.value)} className="mt-2 w-full rounded-xl border border-zinc-200 bg-zinc-50/50 px-4 py-3 text-zinc-950 focus:border-blue-600 focus:bg-white focus:outline-none"><option value="">Choose your country</option>{["Mozambique", "South Africa", "Brazil", "France", "United States", "United Kingdom", "Portugal", "Angola", "Nigeria", "Kenya", "India", "Other"].map(c => <option key={c} value={c}>{c}</option>)}</select><span className="mt-1 block text-xs text-zinc-500">Used to display local pricing and payment options.</span></label>
       </>}
-      <label className="block text-sm text-zinc-800">Email address<input required type="email" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" className="mt-2 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-950" /></label>
-      <label className="block text-sm text-zinc-800">Password<input required minLength={8} type="password" value={password} onChange={e => setPassword(e.target.value)} autoComplete={signup ? "new-password" : "current-password"} className="mt-2 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-950" /></label>
-      {!signup && <div className="grid grid-cols-2 gap-2"><button type="button" disabled={busy} onClick={() => void oauth("google")} className="rounded-xl border border-zinc-200 bg-white px-3 py-3 text-sm font-medium text-zinc-800 hover:bg-zinc-50 disabled:opacity-50">Continue with Google</button><button type="button" disabled={busy} onClick={() => void oauth("github")} className="rounded-xl border border-zinc-200 bg-white px-3 py-3 text-sm font-medium text-zinc-800 hover:bg-zinc-50 disabled:opacity-50">Continue with GitHub</button></div>}
-      {message && <p role="status" className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-sm text-zinc-700">{message}</p>}
-      <button disabled={busy} className="w-full rounded-xl bg-black px-4 py-3 font-semibold text-white shadow-xs transition hover:bg-zinc-800 active:scale-[0.99] disabled:opacity-60">{busy ? "Please wait…" : signup ? "Create account" : "Sign in"}</button>
-      <p className="text-center text-sm text-zinc-600">{signup ? "Already have an account?" : "New to BluiSkill?"} <Link className="font-medium text-black hover:underline" href={signup ? "/login" : "/signup"}>{signup ? "Sign in" : "Create an account"}</Link></p>
+      <label className="block text-sm text-zinc-800">Email address<input required type="email" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" className="mt-2 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-950 focus:border-blue-600 focus:outline-none" /></label>
+      <label className="block text-sm text-zinc-800">Password<input required={!signup} minLength={8} type="password" value={password} onChange={e => setPassword(e.target.value)} autoComplete={signup ? "new-password" : "current-password"} className="mt-2 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-950 focus:border-blue-600 focus:outline-none" /></label>
+      {message && <p role="status" aria-live="polite" className={`rounded-lg border p-3 text-sm ${magicLinkSent ? "border-emerald-200 bg-emerald-50 text-emerald-900" : "border-zinc-200 bg-zinc-50 text-zinc-700"}`}>{message}</p>}
+      <button disabled={busy} className="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.99] disabled:opacity-60">{busy ? "Please wait…" : signup ? "Create account" : "Sign in"}</button>
+      {!signup && <button type="button" disabled={busy} onClick={() => void sendMagicLink()} className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm font-semibold text-zinc-800 transition hover:border-blue-600 hover:text-blue-700 disabled:opacity-60">{busy ? "Sending…" : "Email me a sign-in link"}</button>}
+      <p className="text-center text-sm text-zinc-600">{signup ? "Already have an account?" : "New to BluiSkill?"} <Link className="font-medium text-blue-700 hover:underline" href={signup ? "/login" : "/signup"}>{signup ? "Sign in" : "Create an account"}</Link></p>
     </form>
   );
 }
